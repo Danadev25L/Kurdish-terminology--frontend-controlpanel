@@ -18,7 +18,7 @@ const statusOptions = [
   { value: "", label: "All Statuses" },
   { value: "draft", label: "Draft" },
   { value: "threshold", label: "Threshold" },
-  { value: "consensus", label: "Consensus" },
+  { value: "voting", label: "Voting" },
   { value: "review", label: "Board Review" },
   { value: "published", label: "Published" },
   { value: "recalled", label: "Recalled" },

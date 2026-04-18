@@ -63,14 +63,14 @@ export default function ConceptDetailPage() {
 
   const isDraft = concept.status === "draft";
   const isThreshold = concept.status === "threshold";
-  const isConsensus = concept.status === "consensus";
+  const isVoting = concept.status === "voting";
   const candidateCount = candidates?.length ?? 0;
 
   const tabs = [
     { id: "overview", label: "Overview" },
     { id: "candidates", label: "Candidates", count: candidateCount },
     { id: "discussions", label: "Discussions" },
-    ...(isThreshold || isConsensus
+    ...(isThreshold || isVoting
       ? [{ id: "voting", label: "Voting" }]
       : []),
   ];
@@ -131,7 +131,7 @@ export default function ConceptDetailPage() {
             {isThreshold && (
               <ThresholdVotePanel conceptId={Number(conceptId)} />
             )}
-            {isConsensus && (
+            {isVoting && (
               <>
                 <VoteMatrix
                   conceptId={Number(conceptId)}

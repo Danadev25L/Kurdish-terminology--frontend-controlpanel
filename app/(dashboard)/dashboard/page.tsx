@@ -58,7 +58,7 @@ export default function DashboardPage() {
       let action = "Review";
       if (c.status === "draft") action = "Discussion open";
       if (c.status === "threshold") action = "Vote: Threshold";
-      if (c.status === "consensus") action = "Vote: Consensus";
+      if (c.status === "voting") action = "Vote: Consensus";
       if (c.status === "review") action = "Board review";
       if (c.status === "recalled") action = "Reopened";
 
