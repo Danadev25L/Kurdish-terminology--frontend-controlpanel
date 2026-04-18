@@ -39,7 +39,7 @@ export default function ConceptsPage() {
   params.set("page", String(page));
 
   const { data, isLoading } = useApi<PaginatedResponse<Concept>>(
-    `/api/concepts?${params}`,
+    `/api/v1/concepts?${params}`,
     { pollingInterval: 120000 }
   );
 

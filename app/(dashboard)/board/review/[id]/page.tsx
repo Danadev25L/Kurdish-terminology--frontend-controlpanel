@@ -30,12 +30,12 @@ export default function BoardExaminationPage() {
   const [loading, setLoading] = useState(false);
 
   const { data: concept, isLoading } = useApi<Concept>(
-    `/api/concepts/${conceptId}`,
+    `/api/v1/concepts/${conceptId}`,
     { pollingInterval: 120000 }
   );
 
   const { data: candidates } = useApi<Candidate[]>(
-    `/api/concepts/${conceptId}/candidates`
+    `/api/v1/concepts/${conceptId}/candidates`
   );
 
   const handleApprove = useCallback(async () => {

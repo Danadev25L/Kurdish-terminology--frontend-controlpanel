@@ -19,7 +19,7 @@ export function DashboardHeader() {
   const menuRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
-  const { data: notifications } = useApi<Notification[]>("/api/notifications", {
+  const { data: notifications } = useApi<Notification[]>("/api/v1/notifications", {
     pollingInterval: 120000,
   });
   const notifStore = useNotificationStore();

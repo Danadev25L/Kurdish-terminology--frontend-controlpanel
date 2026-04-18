@@ -28,7 +28,7 @@ export function DiscussionThread({ conceptId }: DiscussionThreadProps) {
   const [submitting, setSubmitting] = useState(false);
 
   const { data: discussions, isLoading, refetch } = useApi<Discussion[]>(
-    `/api/concepts/${conceptId}/discussions`,
+    `/api/v1/concepts/${conceptId}/discussions`,
     { pollingInterval: 120000 }
   );
 

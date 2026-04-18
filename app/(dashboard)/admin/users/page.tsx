@@ -26,7 +26,7 @@ export default function AdminUsersPage() {
   const [creating, setCreating] = useState(false);
 
   const { data, isLoading, refetch } = useApi<PaginatedResponse<User>>(
-    `/api/users?page=${page}`
+    `/api/v1/users?page=${page}`
   );
 
   const handleCreate = useCallback(

@@ -42,12 +42,12 @@ export default function DashboardPage() {
   const router = useRouter();
 
   const { data: concepts, isLoading: cLoading } = useApi<PaginatedResponse<Concept>>(
-    "/api/concepts",
+    "/api/v1/concepts",
     { pollingInterval: 120000 }
   );
 
   const { data: notifications, isLoading: nLoading } = useApi<Notification[]>(
-    "/api/notifications",
+    "/api/v1/notifications",
     { pollingInterval: 120000 }
   );
 
@@ -78,7 +78,7 @@ export default function DashboardPage() {
         new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
     );
 
-  const unreadCount = notifications?.filter((n) => !n.read).length ?? 0;
+  const unreadCount = Array.isArray(notifications) ? notifications.filter((n) => !n.read).length : 0;
 
   return (
     <div className="space-y-6">

@@ -11,7 +11,7 @@ import type { Domain } from "@/lib/api/types";
 
 export default function DomainsPage() {
   const router = useRouter();
-  const { data: domains, isLoading } = useApi<Domain[]>("/api/domains");
+  const { data: domains, isLoading } = useApi<Domain[]>("/api/v1/domains");
 
   return (
     <div className="space-y-6">

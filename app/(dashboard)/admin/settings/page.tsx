@@ -10,7 +10,7 @@ import { updateSetting } from "@/lib/api/settings";
 import type { Setting } from "@/lib/api/types";
 
 export default function AdminSettingsPage() {
-  const { data: settings, isLoading, refetch } = useApi<Setting[]>("/api/settings");
+  const { data: settings, isLoading, refetch } = useApi<Setting[]>("/api/v1/settings");
   const [edited, setEdited] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 

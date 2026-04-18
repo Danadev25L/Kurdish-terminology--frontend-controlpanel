@@ -28,12 +28,12 @@ export default function ConceptDetailPage() {
   const [activeTab, setActiveTab] = useState("overview");
 
   const { data: concept, isLoading, refetch } = useApi<Concept>(
-    `/api/concepts/${conceptId}`,
+    `/api/v1/concepts/${conceptId}`,
     { pollingInterval: 120000 }
   );
 
   const { data: candidates } = useApi<Candidate[]>(
-    `/api/concepts/${conceptId}/candidates`
+    `/api/v1/concepts/${conceptId}/candidates`
   );
 
   const handleWithdraw = useCallback(

@@ -18,9 +18,9 @@ export default function DomainDetailPage() {
   const { isAdmin, isDomainHead } = useRole();
   const canManage = isAdmin || isDomainHead;
 
-  const { data: domain, isLoading } = useApi<Domain>(`/api/domains/${domainId}`);
+  const { data: domain, isLoading } = useApi<Domain>(`/api/v1/domains/${domainId}`);
   const { data: members } = useApi<DomainMember[]>(
-    `/api/domains/${domainId}/members`
+    `/api/v1/domains/${domainId}/members`
   );
 
   if (isLoading) {
@@ -71,9 +71,9 @@ export default function DomainDetailPage() {
                 </tr>
               </thead>
               <tbody>
-                {members.map((member) => (
+                {members.map((member, index) => (
                   <tr
-                    key={member.user_id}
+                    key={member.user_id ?? member.id ?? index}
                     className="border-b border-border"
                   >
                     <td className="px-3 py-3">
@@ -97,6 +97,7 @@ export default function DomainDetailPage() {
                             { value: "observer", label: "Observer" },
                           ]}
                           value={member.role}
+                          onChange={() => {}}
                           className="w-28"
                         />
                       ) : (

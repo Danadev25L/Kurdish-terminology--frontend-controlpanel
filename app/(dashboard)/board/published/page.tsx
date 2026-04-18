@@ -30,7 +30,7 @@ export default function BoardPublishedPage() {
   params.set("page", String(page));
 
   const { data, isLoading, refetch } = useApi<PaginatedResponse<Concept>>(
-    `/api/concepts?${params}`,
+    `/api/v1/concepts?${params}`,
     { pollingInterval: 120000 }
   );
 
@@ -38,7 +38,7 @@ export default function BoardPublishedPage() {
     if (!recallId || !recallReason.trim()) return;
     setRecallLoading(true);
     try {
-      await api.post(`/api/concepts/${recallId}/reopen`, {
+      await api.post(`/api/v1/concepts/${recallId}/reopen`, {
         reason: recallReason,
       });
       setRecallOpen(false);

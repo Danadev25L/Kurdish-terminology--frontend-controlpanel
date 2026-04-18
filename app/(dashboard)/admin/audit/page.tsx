@@ -13,7 +13,7 @@ export default function AdminAuditPage() {
   const [page, setPage] = useState(1);
 
   const { data, isLoading } = useApi<PaginatedResponse<AuditEvent>>(
-    `/api/audit-events?page=${page}`
+    `/api/v1/audit-events?page=${page}`
   );
 
   return (

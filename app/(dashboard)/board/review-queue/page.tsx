@@ -37,7 +37,7 @@ export default function BoardReviewQueuePage() {
   params.set("page", String(page));
 
   const { data, isLoading, refetch } = useApi<PaginatedResponse<ReviewQueueItem>>(
-    `/api/board/review-queue?${params}`,
+    `/api/v1/board/review-queue?${params}`,
     { pollingInterval: 120000 }
   );
 

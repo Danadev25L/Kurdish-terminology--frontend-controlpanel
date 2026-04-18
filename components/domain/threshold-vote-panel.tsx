@@ -18,7 +18,7 @@ export function ThresholdVotePanel({ conceptId }: ThresholdVotePanelProps) {
   const [voted, setVoted] = useState(false);
 
   const { data: result, isLoading, refetch } = useApi<ThresholdResult>(
-    `/api/concepts/${conceptId}/threshold-votes`
+    `/api/v1/concepts/${conceptId}/threshold-votes`
   );
 
   const handleVote = useCallback(
