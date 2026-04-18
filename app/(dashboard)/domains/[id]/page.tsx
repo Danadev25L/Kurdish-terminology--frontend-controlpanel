@@ -71,9 +71,9 @@ export default function DomainDetailPage() {
                 </tr>
               </thead>
               <tbody>
-                {members.map((member, index) => (
+                {members.map((member) => (
                   <tr
-                    key={member.user_id ?? member.id ?? index}
+                    key={member.user_id}
                     className="border-b border-border"
                   >
                     <td className="px-3 py-3">
