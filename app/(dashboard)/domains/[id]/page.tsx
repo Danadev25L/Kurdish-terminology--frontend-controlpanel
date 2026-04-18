@@ -64,16 +64,16 @@ export default function DomainDetailPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border text-start text-xs font-medium uppercase text-muted">
-                  <th className="px-3 py-2">User</th>
-                  <th className="px-3 py-2">Role</th>
-                  <th className="px-3 py-2">Joined</th>
-                  {canManage ? <th className="px-3 py-2">Actions</th> : null}
+                  <th key="header-user" className="px-3 py-2">User</th>
+                  <th key="header-role" className="px-3 py-2">Role</th>
+                  <th key="header-joined" className="px-3 py-2">Joined</th>
+                  {canManage ? <th key="header-actions" className="px-3 py-2">Actions</th> : null}
                 </tr>
               </thead>
               <tbody>
-                {members.map((member) => (
+                {members.map((member, index) => (
                   <tr
-                    key={member.user_id}
+                    key={`member-${member.user_id ?? index}`}
                     className="border-b border-border"
                   >
                     <td className="px-3 py-3">
