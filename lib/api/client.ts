@@ -1,5 +1,8 @@
 import { useAuthStore } from "@/stores/auth-store";
 
+// API base URL from environment variable
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
 export class ApiError extends Error {
   status: number;
   errors: Record<string, string[]>;
@@ -32,7 +35,10 @@ async function apiClient<T>(
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const res = await fetch(endpoint, {
+  // Prepend API base URL to relative endpoints
+  const url = endpoint.startsWith('http') ? endpoint : `${API_URL}${endpoint}`;
+
+  const res = await fetch(url, {
     ...options,
     headers,
   });

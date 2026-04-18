@@ -25,7 +25,7 @@ export const useAuthStore = create<AuthState>()(
           email,
           password,
         });
-        set({ user: res.user, token: res.access_token, isLoading: false });
+        set({ user: res.user, token: res.token, isLoading: false });
       },
 
       logout: async () => {
