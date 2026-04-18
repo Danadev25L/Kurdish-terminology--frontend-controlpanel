@@ -8,7 +8,7 @@ export function getLexicon(
   const searchParams = new URLSearchParams();
   if (params?.page) searchParams.set("page", String(params.page));
   return api.get<PaginatedResponse<LexiconWord>>(
-    `/api/v1/lexicons/${type}?${searchParams}`
+    `/v1/lexicons/${type}?${searchParams}`
   );
 }
 
@@ -16,7 +16,7 @@ export function createLexiconWord(
   type: "english" | "kurdish",
   data: { word: string; part_of_speech: string; etymology?: string; root_word?: string }
 ) {
-  return api.post<LexiconWord>(`/api/v1/lexicons/${type}`, data);
+  return api.post<LexiconWord>(`/v1/lexicons/${type}`, data);
 }
 
 export function updateLexiconWord(
@@ -24,9 +24,9 @@ export function updateLexiconWord(
   id: number,
   data: Partial<{ word: string; part_of_speech: string; etymology: string; root_word: string }>
 ) {
-  return api.patch<LexiconWord>(`/api/v1/lexicons/${type}/${id}`, data);
+  return api.patch<LexiconWord>(`/v1/lexicons/${type}/${id}`, data);
 }
 
 export function deleteLexiconWord(type: "english" | "kurdish", id: number) {
-  return api.del(`/api/v1/lexicons/${type}/${id}`);
+  return api.del(`/v1/lexicons/${type}/${id}`);
 }
