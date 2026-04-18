@@ -6,11 +6,11 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { getSettings, updateSetting } from "@/lib/api/settings";
+import { updateSetting } from "@/lib/api/settings";
 import type { Setting } from "@/lib/api/types";
 
 export default function AdminSettingsPage() {
-  const { data: settings, isLoading, refetch } = useApi<Setting[]>(getSettings);
+  const { data: settings, isLoading, refetch } = useApi<Setting[]>("/api/v1/admin/settings");
   const [edited, setEdited] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
