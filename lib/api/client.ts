@@ -2,7 +2,8 @@ import { useAuthStore } from "@/stores/auth-store";
 import type { LoginResponse } from "./types";
 
 // API base URL from environment variable
-// Note: Next.js rewrites /api/* to backend, so we use relative /api/v1/* paths
+// In production, use direct URL to backend
+// In development with npm run dev, Next.js rewrites /api/* to backend
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 // Track ongoing token refresh to prevent multiple simultaneous refresh attempts
@@ -44,7 +45,7 @@ async function refreshAccessToken(): Promise<string | null> {
   }
 
   try {
-    const response = await fetch('/api/v1/auth/refresh', {
+    const response = await fetch(`${API_URL}/api/v1/auth/refresh`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -85,9 +86,9 @@ async function apiClient<T>(
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  // Use relative URLs for Next.js rewrite to backend
-  // Backend routes are at /api/v1/* and Next.js rewrites them to the backend
-  const url = endpoint.startsWith('http') ? endpoint : endpoint;
+  // Build full URL - use API_URL + endpoint
+  // Endpoint should be like /api/v1/auth/login
+  const url = endpoint.startsWith('http') ? endpoint : `${API_URL}${endpoint}`;
 
   const res = await fetch(url, {
     ...options,
