@@ -9,10 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
 import { Spinner } from "@/components/ui/spinner";
 import { Pagination } from "@/components/ui/pagination";
-import { createUser, assignRoles } from "@/lib/api/users";
+import { createUser, assignRoles, getUsers } from "@/lib/api/users";
 import type { User, PaginatedResponse } from "@/lib/api/types";
 
-const allRoles = ["admin", "main_board", "domain_head", "field_expert"];
+const allRoles = ["admin", "main_board", "domain-head", "expert"];
 
 export default function AdminUsersPage() {
   const [page, setPage] = useState(1);
@@ -26,7 +26,7 @@ export default function AdminUsersPage() {
   const [creating, setCreating] = useState(false);
 
   const { data, isLoading, refetch } = useApi<PaginatedResponse<User>>(
-    `/api/v1/users?page=${page}`
+    `/api/v1/admin/users?page=${page}`
   );
 
   const handleCreate = useCallback(
