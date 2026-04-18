@@ -74,7 +74,7 @@ export interface LexiconSynonym {
 export type ConceptStatus =
   | "draft"
   | "threshold"
-  | "consensus"
+  | "voting"
   | "review"
   | "published"
   | "recalled";

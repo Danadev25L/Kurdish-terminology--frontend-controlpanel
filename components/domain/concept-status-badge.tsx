@@ -7,7 +7,7 @@ const statusConfig: Record<
 > = {
   draft: { label: "Draft", variant: "default" },
   threshold: { label: "Threshold", variant: "warning" },
-  consensus: { label: "Consensus", variant: "primary" },
+  voting: { label: "Voting", variant: "primary" },
   review: { label: "Board Review", variant: "primary" },
   published: { label: "Published", variant: "success" },
   recalled: { label: "Recalled", variant: "danger" },
