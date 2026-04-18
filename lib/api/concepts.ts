@@ -26,7 +26,7 @@ export function createConcept(data: {
   english_term: string;
   definition: string;
 }) {
-  return api.post<Concept>("/api/api/v1/concepts", data);
+  return api.post<Concept>("/api/v1/concepts", data);
 }
 
 export function updateConcept(

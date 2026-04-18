@@ -2,7 +2,7 @@ import { api } from "./client";
 import type { Domain, DomainMember } from "./types";
 
 export function getDomains() {
-  return api.get<Domain[]>("/api/api/v1/domains");
+  return api.get<Domain[]>("/api/v1/domains");
 }
 
 export function getDomain(id: number | string) {
@@ -15,7 +15,7 @@ export function createDomain(data: {
   description?: string;
   head_user_id?: number;
 }) {
-  return api.post<Domain>("/api/api/v1/domains", data);
+  return api.post<Domain>("/api/v1/domains", data);
 }
 
 export function updateDomain(
