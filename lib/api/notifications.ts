@@ -2,9 +2,9 @@ import { api } from "./client";
 import type { Notification } from "./types";
 
 export function getNotifications() {
-  return api.get<Notification[]>("/api/notifications");
+  return api.get<Notification[]>("/api/v1/notifications");
 }
 
 export function markNotificationRead(id: number) {
-  return api.patch(`/api/notifications/${id}/read`);
+  return api.patch(`/api/v1/notifications/${id}/read`);
 }

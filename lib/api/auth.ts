@@ -2,13 +2,13 @@ import { api } from "./client";
 import type { User, LoginResponse } from "./types";
 
 export function login(email: string, password: string) {
-  return api.post<LoginResponse>("/api/auth/login", { email, password });
+  return api.post<LoginResponse>("/api/v1/auth/login", { email, password });
 }
 
 export function logout() {
-  return api.post("/api/auth/logout");
+  return api.post("/api/v1/auth/logout");
 }
 
 export function getMe() {
-  return api.get<User>("/api/auth/me");
+  return api.get<User>("/api/v1/auth/me");
 }

@@ -24,24 +24,24 @@ export function getReviewQueue(filters: ReviewQueueFilters = {}) {
   if (filters.sort) params.set("sort", filters.sort);
   if (filters.page) params.set("page", String(filters.page));
   return api.get<PaginatedResponse<ReviewQueueItem>>(
-    `/api/board/review-queue?${params}`
+    `/api/v1/board/review-queue?${params}`
   );
 }
 
 export function approveConcept(conceptId: number, note?: string) {
-  return api.post<BoardDecision>(`/api/concepts/${conceptId}/board/approve`, {
+  return api.post<BoardDecision>(`/api/v1/concepts/${conceptId}/board/approve`, {
     note,
   });
 }
 
 export function vetoConcept(conceptId: number, reason: string) {
-  return api.post<BoardDecision>(`/api/concepts/${conceptId}/board/veto`, {
+  return api.post<BoardDecision>(`/api/v1/concepts/${conceptId}/board/veto`, {
     reason,
   });
 }
 
 export function batchApprove(conceptIds: number[]) {
-  return api.post<BatchApproveResult>("/api/board/batch-approve", {
+  return api.post<BatchApproveResult>("/api/v1/board/batch-approve", {
     concept_ids: conceptIds,
   });
 }

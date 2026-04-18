@@ -37,14 +37,6 @@ async function apiClient<T>(
     headers,
   });
 
-  if (res.status === 401) {
-    useAuthStore.getState().logout();
-    if (typeof window !== "undefined") {
-      window.location.href = "/login";
-    }
-    throw new ApiError(401, "Unauthorized");
-  }
-
   if (res.status === 204) {
     return undefined as T;
   }
@@ -52,11 +44,31 @@ async function apiClient<T>(
   const data = await res.json();
 
   if (!res.ok) {
+    if (res.status === 401) {
+      useAuthStore.getState().logout();
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
+    }
     throw new ApiError(
       res.status,
       data.message ?? "An error occurred",
       data.errors ?? {}
     );
+  }
+
+  // Unwrap backend's { data, meta?, ... } response wrapper
+  if (data && typeof data === "object" && "data" in data) {
+    if (data.meta && typeof data.meta.total === "number") {
+      return {
+        data: data.data,
+        current_page: data.meta.current_page,
+        last_page: data.meta.last_page,
+        per_page: data.meta.per_page,
+        total: data.meta.total,
+      } as T;
+    }
+    return data.data as T;
   }
 
   return data as T;

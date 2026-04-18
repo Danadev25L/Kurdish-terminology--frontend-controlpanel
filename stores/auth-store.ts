@@ -21,16 +21,16 @@ export const useAuthStore = create<AuthState>()(
       isLoading: true,
 
       login: async (email: string, password: string) => {
-        const res = await api.post<LoginResponse>("/api/auth/login", {
+        const res = await api.post<LoginResponse>("/api/v1/auth/login", {
           email,
           password,
         });
-        set({ user: res.user, token: res.token, isLoading: false });
+        set({ user: res.user, token: res.access_token, isLoading: false });
       },
 
       logout: async () => {
         try {
-          await api.post("/api/auth/logout");
+          await api.post("/api/v1/auth/logout");
         } catch {
           // Token may already be invalid
         }
@@ -46,7 +46,7 @@ export const useAuthStore = create<AuthState>()(
           return;
         }
         try {
-          const user = await api.get<User>("/api/auth/me");
+          const user = await api.get<User>("/api/v1/auth/me");
           set({ user, isLoading: false });
         } catch {
           set({ user: null, token: null, isLoading: false });
