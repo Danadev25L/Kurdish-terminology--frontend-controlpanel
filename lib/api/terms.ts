@@ -10,9 +10,9 @@ export function searchTerms(params: {
   if (params.q) searchParams.set("q", params.q);
   if (params.page) searchParams.set("page", String(params.page));
   if (params.per_page) searchParams.set("per_page", String(params.per_page));
-  return api.get<PaginatedResponse<PublicTerm>>(`/v1/terms?${searchParams}`);
+  return api.get<PaginatedResponse<PublicTerm>>(`/api/v1/terms?${searchParams}`);
 }
 
 export function getTerm(id: string | number) {
-  return api.get<PublicTerm>(`/v1/terms/${id}`);
+  return api.get<PublicTerm>(`/api/v1/terms/${id}`);
 }

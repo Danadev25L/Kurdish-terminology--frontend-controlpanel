@@ -1,7 +1,23 @@
 import { useAuthStore } from "@/stores/auth-store";
+import type { LoginResponse } from "./types";
 
 // API base URL from environment variable
+// Note: Next.js rewrites /api/* to backend, so we use relative /api/v1/* paths
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
+// Track ongoing token refresh to prevent multiple simultaneous refresh attempts
+let isRefreshing = false;
+// Queue of requests to retry after token refresh
+let refreshSubscribers: Array<(token: string) => void> = [];
+
+function subscribeTokenRefresh(cb: (token: string) => void) {
+  refreshSubscribers.push(cb);
+}
+
+function onTokenRefreshed(token: string) {
+  refreshSubscribers.forEach((cb) => cb(token));
+  refreshSubscribers = [];
+}
 
 export class ApiError extends Error {
   status: number;
@@ -19,11 +35,45 @@ export class ApiError extends Error {
   }
 }
 
+async function refreshAccessToken(): Promise<string | null> {
+  const authStore = useAuthStore.getState();
+  const refreshToken = authStore.refreshToken;
+
+  if (!refreshToken) {
+    return null;
+  }
+
+  try {
+    const response = await fetch('/api/v1/auth/refresh', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data: LoginResponse = await response.json();
+
+    // Update auth store with new tokens
+    authStore.setTokens(data.token, data.refresh_token ?? refreshToken);
+
+    return data.token;
+  } catch {
+    return null;
+  }
+}
+
 async function apiClient<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const token = useAuthStore.getState().token;
+  const authStore = useAuthStore.getState();
+  let token = authStore.token;
 
   const headers: HeadersInit = {
     "Content-Type": "application/json",
@@ -35,8 +85,9 @@ async function apiClient<T>(
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  // Prepend API base URL to relative endpoints
-  const url = endpoint.startsWith('http') ? endpoint : `${API_URL}${endpoint}`;
+  // Use relative URLs for Next.js rewrite to backend
+  // Backend routes are at /api/v1/* and Next.js rewrites them to the backend
+  const url = endpoint.startsWith('http') ? endpoint : endpoint;
 
   const res = await fetch(url, {
     ...options,
@@ -50,12 +101,38 @@ async function apiClient<T>(
   const data = await res.json();
 
   if (!res.ok) {
+    // Handle 401 Unauthorized - attempt token refresh
     if (res.status === 401) {
-      useAuthStore.getState().logout();
+      // Skip refresh for auth endpoints (login, refresh, etc)
+      const isAuthEndpoint = endpoint.includes('/auth/login') ||
+                            endpoint.includes('/auth/refresh') ||
+                            endpoint.includes('/auth/logout');
+
+      if (!isAuthEndpoint && authStore.refreshToken && !isRefreshing) {
+        isRefreshing = true;
+
+        try {
+          const newToken = await refreshAccessToken();
+
+          if (newToken) {
+            isRefreshing = false;
+            onTokenRefreshed(newToken);
+
+            // Retry the original request with new token
+            return apiClient<T>(endpoint, options);
+          }
+        } finally {
+          isRefreshing = false;
+        }
+      }
+
+      // If refresh failed or not possible, logout and redirect
+      authStore.logout();
       if (typeof window !== "undefined") {
         window.location.href = "/login";
       }
     }
+
     throw new ApiError(
       res.status,
       data.message ?? "An error occurred",

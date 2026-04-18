@@ -2,11 +2,11 @@ import { api } from "./client";
 import type { Domain, DomainMember } from "./types";
 
 export function getDomains() {
-  return api.get<Domain[]>("/v1/domains");
+  return api.get<Domain[]>("/api/api/v1/domains");
 }
 
 export function getDomain(id: number | string) {
-  return api.get<Domain>(`/v1/domains/${id}`);
+  return api.get<Domain>(`/api/v1/domains/${id}`);
 }
 
 export function createDomain(data: {
@@ -15,25 +15,25 @@ export function createDomain(data: {
   description?: string;
   head_user_id?: number;
 }) {
-  return api.post<Domain>("/v1/domains", data);
+  return api.post<Domain>("/api/api/v1/domains", data);
 }
 
 export function updateDomain(
   id: number,
   data: Partial<{ name: string; slug: string; description: string; head_user_id: number }>
 ) {
-  return api.patch<Domain>(`/v1/domains/${id}`, data);
+  return api.patch<Domain>(`/api/v1/domains/${id}`, data);
 }
 
 export function getDomainMembers(domainId: number | string) {
-  return api.get<DomainMember[]>(`/v1/domains/${domainId}/members`);
+  return api.get<DomainMember[]>(`/api/v1/domains/${domainId}/members`);
 }
 
 export function addDomainMember(
   domainId: number,
   data: { user_id: number; role: "expert" | "observer" }
 ) {
-  return api.post(`/v1/domains/${domainId}/members`, data);
+  return api.post(`/api/v1/domains/${domainId}/members`, data);
 }
 
 export function updateDomainMember(
@@ -41,5 +41,5 @@ export function updateDomainMember(
   userId: number,
   data: { role: "expert" | "observer" }
 ) {
-  return api.patch(`/v1/domains/${domainId}/members/${userId}`, data);
+  return api.patch(`/api/v1/domains/${domainId}/members/${userId}`, data);
 }

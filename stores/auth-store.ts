@@ -6,10 +6,12 @@ import type { User, LoginResponse } from "@/lib/api/types";
 interface AuthState {
   user: User | null;
   token: string | null;
+  refreshToken: string | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: User) => void;
+  setTokens: (token: string, refreshToken: string) => void;
   hydrate: () => Promise<void>;
 }
 
@@ -18,6 +20,7 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       token: null,
+      refreshToken: null,
       isLoading: true,
 
       login: async (email: string, password: string) => {
@@ -25,7 +28,12 @@ export const useAuthStore = create<AuthState>()(
           email,
           password,
         });
-        set({ user: res.user, token: res.token, isLoading: false });
+        set({
+          user: res.user,
+          token: res.token,
+          refreshToken: res.refresh_token ?? null,
+          isLoading: false,
+        });
       },
 
       logout: async () => {
@@ -34,7 +42,11 @@ export const useAuthStore = create<AuthState>()(
         } catch {
           // Token may already be invalid
         }
-        set({ user: null, token: null, isLoading: false });
+        set({ user: null, token: null, refreshToken: null, isLoading: false });
+      },
+
+      setTokens: (token: string, refreshToken: string) => {
+        set({ token, refreshToken });
       },
 
       setUser: (user: User) => set({ user }),
@@ -49,13 +61,16 @@ export const useAuthStore = create<AuthState>()(
           const user = await api.get<User>("/api/v1/auth/me");
           set({ user, isLoading: false });
         } catch {
-          set({ user: null, token: null, isLoading: false });
+          set({ user: null, token: null, refreshToken: null, isLoading: false });
         }
       },
     }),
     {
       name: "ktp-auth",
-      partialize: (state) => ({ token: state.token }),
+      partialize: (state) => ({
+        token: state.token,
+        refreshToken: state.refreshToken,
+      }),
     }
   )
 );

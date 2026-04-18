@@ -6,13 +6,13 @@ import type {
 } from "./types";
 
 export function getDialectEquity() {
-  return api.get<DialectEquityData[]>("/v1/board/analytics/dialect-equity");
+  return api.get<DialectEquityData[]>("/api/v1/board/analytics/dialect-equity");
 }
 
 export function getWordVersatility() {
-  return api.get<WordVersatilityData[]>("/v1/board/analytics/word-versatility");
+  return api.get<WordVersatilityData[]>("/api/v1/board/analytics/word-versatility");
 }
 
 export function getDomainHealth() {
-  return api.get<DomainHealthData[]>("/v1/board/analytics");
+  return api.get<DomainHealthData[]>("/api/v1/board/analytics");
 }

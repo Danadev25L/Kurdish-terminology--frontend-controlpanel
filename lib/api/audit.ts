@@ -12,9 +12,9 @@ export function getAuditEvents(filters: AuditFilters = {}) {
   if (filters.page) params.set("page", String(filters.page));
   if (filters.user_id) params.set("user_id", String(filters.user_id));
   if (filters.action) params.set("action", filters.action);
-  return api.get<PaginatedResponse<AuditEvent>>(`/v1/audit-events?${params}`);
+  return api.get<PaginatedResponse<AuditEvent>>(`/api/v1/audit-events?${params}`);
 }
 
 export function getAuditEvent(id: number) {
-  return api.get<AuditEvent>(`/v1/audit-events/${id}`);
+  return api.get<AuditEvent>(`/api/v1/audit-events/${id}`);
 }
