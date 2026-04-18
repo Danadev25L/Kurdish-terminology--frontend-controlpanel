@@ -1,0 +1,88 @@
+import { useAuthStore } from "@/stores/auth-store";
+
+export class ApiError extends Error {
+  status: number;
+  errors: Record<string, string[]>;
+
+  constructor(
+    status: number,
+    message: string,
+    errors: Record<string, string[]> = {}
+  ) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.errors = errors;
+  }
+}
+
+async function apiClient<T>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<T> {
+  const token = useAuthStore.getState().token;
+
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+    ...((options.headers as Record<string, string>) ?? {}),
+  };
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  const res = await fetch(endpoint, {
+    ...options,
+    headers,
+  });
+
+  if (res.status === 401) {
+    useAuthStore.getState().logout();
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    }
+    throw new ApiError(401, "Unauthorized");
+  }
+
+  if (res.status === 204) {
+    return undefined as T;
+  }
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new ApiError(
+      res.status,
+      data.message ?? "An error occurred",
+      data.errors ?? {}
+    );
+  }
+
+  return data as T;
+}
+
+export const api = {
+  get: <T>(url: string) => apiClient<T>(url, { method: "GET" }),
+
+  post: <T>(url: string, body?: unknown) =>
+    apiClient<T>(url, {
+      method: "POST",
+      body: body ? JSON.stringify(body) : undefined,
+    }),
+
+  patch: <T>(url: string, body?: unknown) =>
+    apiClient<T>(url, {
+      method: "PATCH",
+      body: body ? JSON.stringify(body) : undefined,
+    }),
+
+  del: <T>(url: string) => apiClient<T>(url, { method: "DELETE" }),
+
+  upload: <T>(url: string, formData: FormData) =>
+    apiClient<T>(url, {
+      method: "POST",
+      headers: {} as Record<string, string>, // remove Content-Type for FormData
+      body: formData,
+    }),
+};

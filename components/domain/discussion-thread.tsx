@@ -1,0 +1,122 @@
+"use client";
+
+import { useState, useCallback } from "react";
+import { useApi } from "@/lib/hooks/use-api";
+import { useRole } from "@/lib/hooks/use-role";
+import { useAuth } from "@/lib/hooks/use-auth";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Spinner } from "@/components/ui/spinner";
+import { DiscussionReply } from "./discussion-reply";
+import {
+  createDiscussion,
+  replyToDiscussion,
+  addReaction,
+  deleteDiscussion,
+} from "@/lib/api/discussions";
+import type { Discussion } from "@/lib/api/types";
+import { timeAgo } from "@/lib/utils/format";
+
+interface DiscussionThreadProps {
+  conceptId: string;
+}
+
+export function DiscussionThread({ conceptId }: DiscussionThreadProps) {
+  const { isAdmin, isDomainHead } = useRole();
+  const { user } = useAuth();
+  const [newBody, setNewBody] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const { data: discussions, isLoading, refetch } = useApi<Discussion[]>(
+    `/api/concepts/${conceptId}/discussions`,
+    { pollingInterval: 120000 }
+  );
+
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!newBody.trim()) return;
+      setSubmitting(true);
+      try {
+        await createDiscussion(Number(conceptId), { body: newBody.trim() });
+        setNewBody("");
+        refetch();
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [conceptId, newBody, refetch]
+  );
+
+  const handleReply = useCallback(
+    async (discussionId: number, body: string, parentId?: number) => {
+      await replyToDiscussion(discussionId, {
+        body,
+        parent_id: parentId,
+      });
+      refetch();
+    },
+    [refetch]
+  );
+
+  const handleReact = useCallback(
+    async (discussionId: number) => {
+      await addReaction(discussionId);
+      refetch();
+    },
+    [refetch]
+  );
+
+  const handleDelete = useCallback(
+    async (discussionId: number) => {
+      await deleteDiscussion(discussionId);
+      refetch();
+    },
+    [refetch]
+  );
+
+  if (isLoading) return <Spinner />;
+
+  const topLevel = (discussions ?? []).filter((d) => !d.parent_id && !d.deleted_at);
+
+  return (
+    <div className="space-y-4">
+      {/* New discussion form */}
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <Textarea
+          value={newBody}
+          onChange={(e) => setNewBody(e.target.value)}
+          placeholder="Start a new discussion..."
+          rows={3}
+        />
+        <Button type="submit" size="sm" loading={submitting}>
+          Post
+        </Button>
+      </form>
+
+      {/* Thread list */}
+      {topLevel.length === 0 ? (
+        <p className="py-4 text-center text-sm text-muted">
+          No discussions yet. Start one above.
+        </p>
+      ) : (
+        <div className="space-y-4">
+          {topLevel.map((discussion) => (
+            <DiscussionReply
+              key={discussion.id}
+              discussion={discussion}
+              canModerate={isAdmin || isDomainHead}
+              currentUserId={user?.id}
+              onReply={handleReply}
+              onReact={handleReact}
+              onDelete={handleDelete}
+              replies={(discussions ?? []).filter(
+                (d) => d.parent_id === discussion.id && !d.deleted_at
+              )}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

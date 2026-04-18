@@ -1,0 +1,61 @@
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { api } from "@/lib/api/client";
+import type { User, LoginResponse } from "@/lib/api/types";
+
+interface AuthState {
+  user: User | null;
+  token: string | null;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+  setUser: (user: User) => void;
+  hydrate: () => Promise<void>;
+}
+
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set, get) => ({
+      user: null,
+      token: null,
+      isLoading: true,
+
+      login: async (email: string, password: string) => {
+        const res = await api.post<LoginResponse>("/api/auth/login", {
+          email,
+          password,
+        });
+        set({ user: res.user, token: res.token, isLoading: false });
+      },
+
+      logout: async () => {
+        try {
+          await api.post("/api/auth/logout");
+        } catch {
+          // Token may already be invalid
+        }
+        set({ user: null, token: null, isLoading: false });
+      },
+
+      setUser: (user: User) => set({ user }),
+
+      hydrate: async () => {
+        const token = get().token;
+        if (!token) {
+          set({ isLoading: false });
+          return;
+        }
+        try {
+          const user = await api.get<User>("/api/auth/me");
+          set({ user, isLoading: false });
+        } catch {
+          set({ user: null, token: null, isLoading: false });
+        }
+      },
+    }),
+    {
+      name: "ktp-auth",
+      partialize: (state) => ({ token: state.token }),
+    }
+  )
+);
