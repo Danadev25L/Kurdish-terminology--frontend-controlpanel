@@ -67,7 +67,7 @@ export default function DomainDetailPage() {
                   <th className="px-3 py-2">User</th>
                   <th className="px-3 py-2">Role</th>
                   <th className="px-3 py-2">Joined</th>
-                  {canManage && <th className="px-3 py-2">Actions</th>}
+                  {canManage ? <th className="px-3 py-2">Actions</th> : null}
                 </tr>
               </thead>
               <tbody>
@@ -109,13 +109,13 @@ export default function DomainDetailPage() {
                     <td className="px-3 py-3 text-sm text-muted">
                       {member.joined_at}
                     </td>
-                    {canManage && (
+                    {canManage ? (
                       <td className="px-3 py-3">
                         <Button variant="ghost" size="sm">
                           Remove
                         </Button>
                       </td>
-                    )}
+                    ) : null}
                   </tr>
                 ))}
               </tbody>
