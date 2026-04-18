@@ -4,7 +4,7 @@ import type { LoginResponse } from "./types";
 // API base URL from environment variable
 // In production, use direct URL to backend
 // In development with npm run dev, Next.js rewrites /api/* to backend
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
 // Track ongoing token refresh to prevent multiple simultaneous refresh attempts
 let isRefreshing = false;
