@@ -85,7 +85,7 @@ export default function AdminReferencesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Reference Library</h1>
+        <h1 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#111827]">Reference Library</h1>
         <Button onClick={() => setCreateOpen(true)}>Add Source</Button>
       </div>
 
@@ -96,13 +96,13 @@ export default function AdminReferencesPage() {
               <div>
                 <CardTitle>{source.name}</CardTitle>
                 {source.description && (
-                  <p className="mt-1 text-sm text-muted">
+                  <p className="mt-1 text-[13px] text-[#9ca3af]">
                     {source.description}
                   </p>
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-muted">
+                <span className="text-[13px] text-[#9ca3af]">
                   {source.entry_count ?? 0} entries
                 </span>
                 <Button
@@ -129,7 +129,7 @@ export default function AdminReferencesPage() {
       </div>
 
       {sources.length === 0 && (
-        <p className="py-8 text-center text-sm text-muted">
+        <p className="py-8 text-center text-[13px] text-[#9ca3af]">
           No reference sources yet.
         </p>
       )}

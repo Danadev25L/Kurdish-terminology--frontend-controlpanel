@@ -65,7 +65,7 @@ export default function ConceptDetailPage() {
   }
 
   if (!concept) {
-    return <p className="text-center text-muted">Concept not found.</p>;
+    return <p className="text-center text-[#9ca3af]">Concept not found.</p>;
   }
 
   const isDraft = concept.status === "draft";
@@ -91,12 +91,12 @@ export default function ConceptDetailPage() {
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#111827]">
               {concept.english_term?.word ?? "Untitled Concept"}
             </h1>
             <ConceptStatusBadge status={concept.status} />
           </div>
-          <p className="mt-1 text-sm text-muted">
+          <p className="mt-1 text-[13px] text-[#9ca3af]">
             {concept.domain?.name} &middot; Created {formatDate(concept.created_at)}
           </p>
         </div>
@@ -157,7 +157,7 @@ export default function ConceptDetailPage() {
                   candidates={candidates ?? []}
                 />
                 <Card>
-                  <h3 className="mb-4 text-lg font-semibold text-gray-900">
+                  <h3 className="mb-4 text-[14px] font-bold text-[#111827]">
                     Consensus Scores
                   </h3>
                   <ConsensusChart
@@ -179,33 +179,33 @@ function OverviewTab({ concept }: { concept: Concept }) {
     <div className="grid gap-6 lg:grid-cols-3">
       <div className="lg:col-span-2 space-y-4">
         <Card>
-          <h3 className="mb-2 text-sm font-medium text-muted">Definition</h3>
-          <p className="text-gray-900">{concept.definition}</p>
+          <h3 className="mb-2 text-sm font-medium text-[#9ca3af]">Definition</h3>
+          <p className="text-[#111827]">{concept.definition}</p>
         </Card>
 
         <Card>
-          <h3 className="mb-3 text-sm font-medium text-muted">Details</h3>
+          <h3 className="mb-3 text-sm font-medium text-[#9ca3af]">Details</h3>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <p className="text-xs text-muted">English Term</p>
+              <p className="text-xs text-[#9ca3af]">English Term</p>
               <p className="text-sm font-medium">
                 {concept.english_term?.word ?? "—"}
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted">Domain</p>
+              <p className="text-xs text-[#9ca3af]">Domain</p>
               <p className="text-sm font-medium">
                 {concept.domain?.name ?? "—"}
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted">Stage Entered</p>
+              <p className="text-xs text-[#9ca3af]">Stage Entered</p>
               <p className="text-sm font-medium">
                 {formatDate(concept.stage_entered_at)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted">Priority</p>
+              <p className="text-xs text-[#9ca3af]">Priority</p>
               <p className="text-sm font-medium capitalize">
                 {concept.priority}
               </p>
@@ -217,10 +217,10 @@ function OverviewTab({ concept }: { concept: Concept }) {
       {/* Reference sidebar placeholder */}
       <div>
         <Card>
-          <h3 className="mb-3 text-sm font-medium text-muted">
+          <h3 className="mb-3 text-sm font-medium text-[#9ca3af]">
             Reference Context
           </h3>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-[#9ca3af]">
             Dictionary definitions will appear here.
           </p>
         </Card>
@@ -243,7 +243,7 @@ function CandidatesTab({
   if (candidates.length === 0) {
     return (
       <Card>
-        <p className="text-center text-sm text-muted">
+        <p className="text-center text-sm text-[#9ca3af]">
           No candidates proposed yet.
         </p>
       </Card>
@@ -283,25 +283,25 @@ function HistoryTab({ conceptId }: { conceptId: string }) {
   if (!history || history.length === 0) {
     return (
       <Card>
-        <p className="text-center text-sm text-muted">No history recorded yet.</p>
+        <p className="text-center text-sm text-[#9ca3af]">No history recorded yet.</p>
       </Card>
     );
   }
 
   return (
     <Card>
-      <h3 className="mb-4 text-lg font-semibold text-gray-900">Concept History</h3>
+      <h3 className="mb-4 text-[14px] font-bold text-[#111827]">Concept History</h3>
       <div className="space-y-3">
         {history.map((entry) => (
-          <div key={entry.id} className="flex items-start gap-3 border-b border-border pb-3 last:border-0">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-light">
-              <svg className="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+          <div key={entry.id} className="flex items-start gap-3 border-b border-[#f3f4f6] pb-3 last:border-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f0f0ff]">
+              <svg className="h-4 w-4 text-[#6366f1]" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">{entry.description}</p>
-              <p className="text-xs text-muted">
+              <p className="text-sm font-medium text-[#111827]">{entry.description}</p>
+              <p className="text-xs text-[#9ca3af]">
                 {entry.user?.name ?? "Unknown"} · {formatDate(entry.created_at)}
               </p>
             </div>
@@ -328,7 +328,7 @@ function MetricsTab({ conceptId }: { conceptId: string }) {
   if (!metrics) {
     return (
       <Card>
-        <p className="text-center text-sm text-muted">No metrics available yet.</p>
+        <p className="text-center text-sm text-[#9ca3af]">No metrics available yet.</p>
       </Card>
     );
   }
@@ -336,39 +336,39 @@ function MetricsTab({ conceptId }: { conceptId: string }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <Card padding>
-        <p className="text-sm text-muted">Total Candidates</p>
-        <p className="text-2xl font-bold text-gray-900">{metrics.total_candidates}</p>
-        <p className="text-xs text-muted">{metrics.active_candidates} active</p>
+        <p className="text-sm text-[#9ca3af]">Total Candidates</p>
+        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">{metrics.total_candidates}</p>
+        <p className="text-xs text-[#9ca3af]">{metrics.active_candidates} active</p>
       </Card>
       <Card padding>
-        <p className="text-sm text-muted">Total Votes</p>
-        <p className="text-2xl font-bold text-gray-900">{metrics.total_votes}</p>
+        <p className="text-sm text-[#9ca3af]">Total Votes</p>
+        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">{metrics.total_votes}</p>
       </Card>
       <Card padding>
-        <p className="text-sm text-muted">Discussions</p>
-        <p className="text-2xl font-bold text-gray-900">{metrics.total_discussions}</p>
+        <p className="text-sm text-[#9ca3af]">Discussions</p>
+        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">{metrics.total_discussions}</p>
       </Card>
       <Card padding>
-        <p className="text-sm text-muted">Avg Consensus</p>
-        <p className="text-2xl font-bold text-gray-900">
+        <p className="text-sm text-[#9ca3af]">Avg Consensus</p>
+        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">
           {metrics.avg_consensus_score.toFixed(2)}
         </p>
       </Card>
       <Card padding>
-        <p className="text-sm text-muted">Controversy Score</p>
-        <p className="text-2xl font-bold text-gray-900">
+        <p className="text-sm text-[#9ca3af]">Controversy Score</p>
+        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">
           {metrics.controversy_score.toFixed(2)}
         </p>
       </Card>
       <Card padding>
-        <p className="text-sm text-muted">Participation</p>
-        <p className="text-2xl font-bold text-gray-900">
+        <p className="text-sm text-[#9ca3af]">Participation</p>
+        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">
           {(metrics.participation_rate * 100).toFixed(0)}%
         </p>
       </Card>
       <Card padding>
-        <p className="text-sm text-muted">Days in Stage</p>
-        <p className="text-2xl font-bold text-gray-900">{metrics.days_in_stage}</p>
+        <p className="text-sm text-[#9ca3af]">Days in Stage</p>
+        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">{metrics.days_in_stage}</p>
       </Card>
     </div>
   );
@@ -390,26 +390,26 @@ function ActivityTab({ conceptId }: { conceptId: string }) {
   if (!activities || activities.length === 0) {
     return (
       <Card>
-        <p className="text-center text-sm text-muted">No recent activity.</p>
+        <p className="text-center text-sm text-[#9ca3af]">No recent activity.</p>
       </Card>
     );
   }
 
   return (
     <Card>
-      <h3 className="mb-4 text-lg font-semibold text-gray-900">Recent Activity</h3>
+      <h3 className="mb-4 text-[14px] font-bold text-[#111827]">Recent Activity</h3>
       <div className="space-y-3">
         {activities.map((activity) => (
-          <div key={activity.id} className="flex items-start gap-3 border-b border-border pb-3 last:border-0">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface">
-              <svg className="h-4 w-4 text-muted" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+          <div key={activity.id} className="flex items-start gap-3 border-b border-[#f3f4f6] pb-3 last:border-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f9fafb]">
+              <svg className="h-4 w-4 text-[#9ca3af]" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z" />
               </svg>
             </div>
             <div className="flex-1">
-              <p className="text-sm text-gray-900">{activity.description}</p>
-              <p className="text-xs text-muted">
+              <p className="text-sm text-[#111827]">{activity.description}</p>
+              <p className="text-xs text-[#9ca3af]">
                 {activity.user?.name ?? "Unknown"} · {formatDate(activity.created_at)}
               </p>
             </div>

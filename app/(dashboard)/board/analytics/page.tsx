@@ -26,7 +26,7 @@ export default function BoardAnalyticsPage() {
   return (
     <RoleGate roles={["main_board", "admin"]}>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#111827]">
           Platform Analytics
         </h1>
 
@@ -41,7 +41,7 @@ export default function BoardAnalyticsPage() {
             ) : dialectData && dialectData.length > 0 ? (
               <DialectEquityChart data={dialectData} />
             ) : (
-              <p className="text-sm text-muted">No data available.</p>
+              <p className="text-[13px] text-[#9ca3af]">No data available.</p>
             )}
           </Card>
 
@@ -55,7 +55,7 @@ export default function BoardAnalyticsPage() {
             ) : healthData && healthData.length > 0 ? (
               <DomainHealthChart data={healthData} />
             ) : (
-              <p className="text-sm text-muted">No data available.</p>
+              <p className="text-[13px] text-[#9ca3af]">No data available.</p>
             )}
           </Card>
         </div>
@@ -65,7 +65,7 @@ export default function BoardAnalyticsPage() {
           <CardHeader>
             <CardTitle>Word Versatility</CardTitle>
           </CardHeader>
-          <p className="mb-4 text-sm text-muted">
+          <p className="mb-4 text-[13px] text-[#9ca3af]">
             Shows Kurdish words shared across multiple concepts.
           </p>
           {vLoading ? (
@@ -73,7 +73,7 @@ export default function BoardAnalyticsPage() {
           ) : versatilityData && versatilityData.length > 0 ? (
             <WordVersatilityChart data={versatilityData} />
           ) : (
-            <p className="text-sm text-muted">No data available.</p>
+            <p className="text-[13px] text-[#9ca3af]">No data available.</p>
           )}
         </Card>
       </div>

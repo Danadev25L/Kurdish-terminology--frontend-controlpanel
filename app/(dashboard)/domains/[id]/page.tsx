@@ -87,7 +87,7 @@ export default function DomainDetailPage() {
   }
 
   if (!domain) {
-    return <p className="text-center text-muted">Domain not found.</p>;
+    return <p className="text-center text-[#9ca3af]">Domain not found.</p>;
   }
 
   return (
@@ -96,10 +96,10 @@ export default function DomainDetailPage() {
       <Card>
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#111827]">
               {domain.name}
             </h1>
-            <p className="mt-1 text-sm text-muted">{domain.description}</p>
+            <p className="mt-1 text-[13px] text-[#9ca3af]">{domain.description}</p>
           </div>
           <div className="flex items-center gap-2">
             <Badge>{domain.slug}</Badge>
@@ -120,12 +120,12 @@ export default function DomainDetailPage() {
         </CardHeader>
 
         {!members || members.length === 0 ? (
-          <p className="text-sm text-muted">No members yet.</p>
+          <p className="text-[13px] text-[#9ca3af]">No members yet.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-border text-start text-xs font-medium uppercase text-muted">
+                <tr className="border-b border-[#f3f4f6] text-start text-[11px] font-semibold uppercase tracking-[0.05em] text-[#9ca3af]">
                   <th key="header-user" className="px-3 py-2">User</th>
                   <th key="header-role" className="px-3 py-2">Role</th>
                   <th key="header-joined" className="px-3 py-2">Joined</th>
@@ -136,16 +136,16 @@ export default function DomainDetailPage() {
                 {members.map((member, index) => (
                   <tr
                     key={`member-${member.user_id ?? index}`}
-                    className="border-b border-border"
+                    className="border-b border-[#f3f4f6]"
                   >
                     <td className="px-3 py-3">
                       <div className="flex items-center gap-2">
                         <Avatar name={member.user?.name ?? "?"} size="sm" />
                         <div>
-                          <p className="text-sm font-medium">
+                          <p className="text-[13px] font-semibold">
                             {member.user?.name}
                           </p>
-                          <p className="text-xs text-muted">
+                          <p className="text-[11px] text-[#9ca3af]">
                             {member.user?.email}
                           </p>
                         </div>
@@ -168,7 +168,7 @@ export default function DomainDetailPage() {
                         </Badge>
                       )}
                     </td>
-                    <td className="px-3 py-3 text-sm text-muted">
+                    <td className="px-3 py-3 text-[13px] text-[#9ca3af]">
                       {member.joined_at}
                     </td>
                     {canManage ? (

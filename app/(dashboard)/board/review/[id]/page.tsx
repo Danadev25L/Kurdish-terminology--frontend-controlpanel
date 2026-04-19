@@ -68,7 +68,7 @@ export default function BoardExaminationPage() {
   }
 
   if (!concept) {
-    return <p className="text-center text-muted">Concept not found.</p>;
+    return <p className="text-center text-[#9ca3af]">Concept not found.</p>;
   }
 
   const activeCandidates = (candidates ?? []).filter((c) => !c.withdrawn_at);
@@ -107,27 +107,27 @@ export default function BoardExaminationPage() {
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-bold text-gray-900">
+                <h1 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#111827]">
                   {concept.english_term?.word ?? "Untitled"}
                 </h1>
                 <ConceptStatusBadge status={concept.status} />
               </div>
-              <p className="mt-1 text-sm text-muted">
+              <p className="mt-1 text-[13px] text-[#9ca3af]">
                 {concept.domain?.name} &middot; {formatDate(concept.created_at)}
               </p>
             </div>
           </div>
-          <p className="mt-4 text-gray-700">{concept.definition}</p>
+          <p className="mt-4 text-[#374151]">{concept.definition}</p>
 
           {/* Leading candidate */}
           {leading && (
             <div className="mt-4 rounded-lg border border-success bg-success-light p-4">
               <p className="text-xs font-medium text-success">Leading Candidate</p>
-              <p className="mt-1 text-lg font-semibold text-gray-900" dir="rtl">
+              <p className="mt-1 text-lg font-semibold text-[#111827]" dir="rtl">
                 {leading.kurdish_term?.word}
               </p>
               {leading.metrics && (
-                <div className="mt-2 flex gap-4 text-sm">
+                <div className="mt-2 flex gap-4 text-[13px]">
                   <span>
                     Cs: <strong>{formatNumber(leading.metrics.consensus_score)}</strong>
                   </span>
@@ -148,7 +148,7 @@ export default function BoardExaminationPage() {
 
         {/* Consensus chart */}
         <Card>
-          <h3 className="mb-4 text-lg font-semibold text-gray-900">
+          <h3 className="mb-4 text-[14px] font-bold text-[#111827]">
             Consensus Scores
           </h3>
           <ConsensusChart
@@ -160,7 +160,7 @@ export default function BoardExaminationPage() {
         {/* Runner-up comparison */}
         {runnerUp && (
           <Card>
-            <h3 className="mb-3 text-lg font-semibold text-gray-900">
+            <h3 className="mb-3 text-[14px] font-bold text-[#111827]">
               Runner-up Comparison
             </h3>
             <div className="grid grid-cols-2 gap-4">
@@ -180,7 +180,7 @@ export default function BoardExaminationPage() {
 
         {/* Discussions (read-only context) */}
         <Card>
-          <h3 className="mb-4 text-lg font-semibold text-gray-900">
+          <h3 className="mb-4 text-[14px] font-bold text-[#111827]">
             Discussion History
           </h3>
           <DiscussionThread conceptId={conceptId} />
@@ -262,12 +262,12 @@ function ComparisonBlock({
 }) {
   return (
     <div className="rounded-lg border border-border p-3">
-      <p className="text-xs font-medium text-muted">{label}</p>
-      <p className="mt-1 text-lg font-semibold" dir="rtl">
+      <p className="text-xs font-medium text-[#9ca3af]">{label}</p>
+      <p className="mt-1 text-[14px] font-bold" dir="rtl">
         {name}
       </p>
       {metrics && (
-        <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
+        <div className="mt-2 grid grid-cols-2 gap-2 text-[13px]">
           <p>Cs: {formatNumber(metrics.consensus_score)}</p>
           <p>Mean: {formatNumber(metrics.mean)}</p>
           <p>Std Dev: {formatNumber(metrics.std_dev)}</p>

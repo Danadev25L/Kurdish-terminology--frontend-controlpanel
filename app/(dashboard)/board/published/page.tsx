@@ -52,7 +52,7 @@ export default function BoardPublishedPage() {
   return (
     <RoleGate roles={["main_board", "admin"]}>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#111827]">
           Published Terms
         </h1>
 
@@ -78,18 +78,18 @@ export default function BoardPublishedPage() {
                   <div className="flex items-center justify-between p-4">
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className="font-medium text-gray-900">
+                        <h3 className="font-semibold text-[#111827]">
                           {concept.english_term?.word ?? "Untitled"}
                         </h3>
                         {concept.winner_candidate && (
-                          <span className="text-sm" dir="rtl">
+                          <span className="text-[13px]" dir="rtl">
                             — {concept.winner_candidate.kurdish_term?.word}
                           </span>
                         )}
                       </div>
                       <div className="mt-1 flex items-center gap-2">
                         <Badge>{concept.domain?.name ?? "—"}</Badge>
-                        <span className="text-xs text-muted">
+                        <span className="text-xs text-[#9ca3af]">
                           {timeAgo(concept.updated_at)}
                         </span>
                       </div>
@@ -115,7 +115,7 @@ export default function BoardPublishedPage() {
             />
           </>
         ) : (
-          <p className="py-8 text-center text-sm text-muted">
+          <p className="py-8 text-center text-[13px] text-[#9ca3af]">
             No published terms found.
           </p>
         )}

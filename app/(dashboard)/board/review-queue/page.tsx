@@ -64,7 +64,7 @@ export default function BoardReviewQueuePage() {
   return (
     <RoleGate roles={["main_board", "admin"]}>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#111827]">
           Board Review Queue
         </h1>
 
@@ -86,7 +86,7 @@ export default function BoardReviewQueuePage() {
               /* date filter */
             }}
           />
-          <label className="flex items-center gap-2 text-sm">
+          <label className="flex items-center gap-2 text-[13px]">
             <input
               type="checkbox"
               checked={closeCall}
@@ -94,7 +94,7 @@ export default function BoardReviewQueuePage() {
                 setCloseCall(e.target.checked);
                 setPage(1);
               }}
-              className="rounded border-border text-primary focus:ring-primary"
+              className="rounded border-[#e5e7eb] text-primary focus:ring-primary"
             />
             Close calls only
           </label>
@@ -121,10 +121,10 @@ export default function BoardReviewQueuePage() {
           </div>
         ) : data?.data && data.data.length > 0 ? (
           <>
-            <div className="overflow-x-auto rounded-lg border border-border bg-white">
+            <div className="overflow-x-auto rounded-lg border border-[#e5e7eb] bg-white">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-border bg-surface text-start text-xs font-medium uppercase text-muted">
+                  <tr className="border-b border-[#f3f4f6] bg-surface text-start text-[11px] font-semibold uppercase tracking-[0.05em] text-[#9ca3af]">
                     <th className="px-4 py-3 w-10" />
                     <th className="px-4 py-3">English Term</th>
                     <th className="px-4 py-3">Domain</th>
@@ -157,7 +157,7 @@ export default function BoardReviewQueuePage() {
             />
           </>
         ) : (
-          <p className="py-8 text-center text-sm text-muted">
+          <p className="py-8 text-center text-[13px] text-[#9ca3af]">
             No items in the review queue.
           </p>
         )}
