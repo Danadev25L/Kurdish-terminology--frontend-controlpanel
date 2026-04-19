@@ -78,10 +78,10 @@ export function DiscussionThread({ conceptId }: DiscussionThreadProps) {
   );
 
   // Clear error when user starts typing
-  const handleInputChange = useCallback((value: string) => {
+  const handleInputChange = (value: string) => {
     setNewBody(value);
-    if (error) setError(null);
-  }, [error]);
+    setError(null); // Always clear error on any input
+  };
 
   const handleReply = useCallback(
     async (discussionId: number, body: string, parentId?: number) => {
