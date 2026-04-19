@@ -2,11 +2,11 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
 import { useRole } from "@/lib/hooks/use-role";
 import { useAuth } from "@/lib/hooks/use-auth";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Tooltip } from "@/components/ui/tooltip";
 
 interface NavItem {
@@ -139,8 +139,15 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const pathname = usePathname();
   const { hasAnyRole } = useRole();
   const { user } = useAuth();
+  const { logout } = useAuth();
+  const router = useRouter();
   const [hovered, setHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  const handleLogout = useCallback(async () => {
+    await logout();
+    router.replace("/login");
+  }, [logout, router]);
 
   const visibleItems = navItems.filter((item) => hasAnyRole(item.roles));
   const isExpanded = isMobile ? !collapsed : (!collapsed || hovered);
@@ -251,15 +258,32 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               <div className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-lg bg-foreground text-[11px] font-semibold text-white">
                 {userInitial}
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <div className="truncate text-[12px] font-semibold text-foreground">{user?.name ?? "User"}</div>
                 <div className="truncate text-[10px] text-text-muted">{user?.email ?? ""}</div>
               </div>
+              <button
+                onClick={handleLogout}
+                aria-label="Sign out"
+                className="rounded-lg p-1.5 text-text-muted hover:bg-surface hover:text-danger"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                </svg>
+              </button>
             </div>
           ) : (
-            <div className="mx-auto flex h-[30px] w-[30px] items-center justify-center rounded-lg bg-foreground text-[11px] font-semibold text-white" aria-label="Profile">
-              {userInitial}
-            </div>
+            <Tooltip content="Sign out">
+              <button
+                onClick={handleLogout}
+                aria-label="Sign out"
+                className="mx-auto flex h-[30px] w-[30px] items-center justify-center rounded-lg text-text-muted hover:bg-surface hover:text-danger"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+                </svg>
+              </button>
+            </Tooltip>
           )}
         </div>
       </aside>
