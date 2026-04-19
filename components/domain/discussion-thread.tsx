@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useApi } from "@/lib/hooks/use-api";
 import { useRole } from "@/lib/hooks/use-role";
 import { useAuth } from "@/lib/hooks/use-auth";
@@ -35,6 +35,7 @@ export function DiscussionThread({ conceptId }: DiscussionThreadProps) {
   const [newBody, setNewBody] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { data: discussionsData, isLoading, refetch } = useApi<PaginatedDiscussions>(
     `/api/v1/concepts/${conceptId}/discussions`,
@@ -47,10 +48,7 @@ export function DiscussionThread({ conceptId }: DiscussionThreadProps) {
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      // Read directly from form to get current value
-      const form = e.currentTarget;
-      const textarea = form.querySelector('textarea') as HTMLTextAreaElement;
-      const trimmed = textarea?.value.trim() ?? '';
+      const trimmed = textareaRef.current?.value.trim() ?? '';
 
       // Client-side validation (must match API: min 5 characters)
       if (!trimmed) {
@@ -122,6 +120,7 @@ export function DiscussionThread({ conceptId }: DiscussionThreadProps) {
       {/* New discussion form */}
       <form onSubmit={handleSubmit} className="space-y-3">
         <Textarea
+          ref={textareaRef}
           value={newBody}
           onChange={(e) => handleInputChange(e.target.value)}
           placeholder="Start a new discussion..."

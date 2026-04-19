@@ -35,7 +35,7 @@ function RecallsContent() {
   const [approveOpen, setApproveOpen] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
   const [notes, setNotes] = useState("");
-  const [processing, setProcessing] = useState(false);
+  const [processingId, setProcessingId] = useState<number | null>(null);
 
   const { data: recalls, isLoading, refetch } = useApi<{
     data: Recall[];
@@ -64,7 +64,7 @@ function RecallsContent() {
       e.preventDefault();
       if (!selectedRecall) return;
 
-      setProcessing(true);
+      setProcessingId(selectedRecall.id);
       try {
         await approveRecall(selectedRecall.id, notes);
         setApproveOpen(false);
@@ -72,7 +72,7 @@ function RecallsContent() {
         setSelectedRecall(null);
         refetch();
       } finally {
-        setProcessing(false);
+        setProcessingId(null);
       }
     },
     [selectedRecall, notes, refetch]
@@ -91,7 +91,7 @@ function RecallsContent() {
       e.preventDefault();
       if (!selectedRecall) return;
 
-      setProcessing(true);
+      setProcessingId(selectedRecall.id);
       try {
         await rejectRecall(selectedRecall.id, notes);
         setRejectOpen(false);
@@ -99,7 +99,7 @@ function RecallsContent() {
         setSelectedRecall(null);
         refetch();
       } finally {
-        setProcessing(false);
+        setProcessingId(null);
       }
     },
     [selectedRecall, notes, refetch]
@@ -208,7 +208,7 @@ function RecallsContent() {
                           size="sm"
                           variant="primary"
                           onClick={() => handleApprove(recall)}
-                          loading={processing}
+                          loading={processingId === recall.id}
                         >
                           Approve Recall
                         </Button>
@@ -216,7 +216,7 @@ function RecallsContent() {
                           size="sm"
                           variant="danger"
                           onClick={() => handleReject(recall)}
-                          loading={processing}
+                          loading={processingId === recall.id}
                         >
                           Reject
                         </Button>
@@ -256,7 +256,7 @@ function RecallsContent() {
             <Button type="button" variant="secondary" onClick={() => setApproveOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" loading={processing}>
+            <Button type="submit" loading={processingId !== null}>
               Approve Recall
             </Button>
           </div>
@@ -281,7 +281,7 @@ function RecallsContent() {
             <Button type="button" variant="secondary" onClick={() => setRejectOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" variant="danger" loading={processing}>
+            <Button type="submit" variant="danger" loading={processingId !== null}>
               Reject Recall
             </Button>
           </div>

@@ -70,8 +70,9 @@ export default function DomainDetailPage() {
       try {
         await updateDomainMember(Number(domainId), member.user_id, { role: newRole });
         refetch();
-      } catch (err) {
-        console.error("Failed to update role:", err);
+      } catch {
+        // Revert the select to the original value on failure
+        e.target.value = member.role;
       }
     },
     [domainId, refetch]

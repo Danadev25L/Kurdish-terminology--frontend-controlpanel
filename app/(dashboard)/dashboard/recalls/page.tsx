@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { useApi } from "@/lib/hooks/use-api";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { Card } from "@/components/ui/card";
@@ -17,7 +16,6 @@ import {
   submitRecall,
   voteOnRecall,
 } from "@/lib/api/recalls";
-import { getConcepts } from "@/lib/api/concepts";
 import type { Recall, Concept } from "@/lib/api/types";
 
 const statusVariant: Record<string, "default" | "success" | "warning" | "danger"> = {
@@ -28,7 +26,6 @@ const statusVariant: Record<string, "default" | "success" | "warning" | "danger"
 };
 
 export default function RecallsPage() {
-  const router = useRouter();
   const { user } = useAuth();
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string>("");
@@ -37,8 +34,10 @@ export default function RecallsPage() {
   const [reason, setReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [voting, setVoting] = useState<number | null>(null);
+  const [votedIds, setVotedIds] = useState<Set<number>>(new Set());
 
-  const { data: concepts } = useApi<Concept[]>("/api/v1/concepts?status=published");
+  const { data: conceptsData } = useApi<{ data: Concept[] }>("/api/v1/concepts?status=published");
+  const concepts = Array.isArray(conceptsData) ? conceptsData : conceptsData?.data;
 
   const { data: recalls, isLoading, refetch } = useApi<{
     data: Recall[];
@@ -74,7 +73,10 @@ export default function RecallsPage() {
       setVoting(recallId);
       try {
         await voteOnRecall(recallId, vote);
+        setVotedIds((prev) => new Set(prev).add(recallId));
         refetch();
+      } catch {
+        // Error is silently ignored — UI stays responsive
       } finally {
         setVoting(null);
       }
@@ -134,7 +136,7 @@ export default function RecallsPage() {
         <>
           <div className="space-y-3">
             {recallList.map((recall) => {
-              const hasVoted = false; // Would need to check user's votes from API
+              const hasVoted = votedIds.has(recall.id);
               const netVotes = recall.support_count - recall.oppose_count;
               const isExpired = new Date(recall.expires_at) < new Date();
               const canVote = recall.status === "pending" && !isExpired;
@@ -180,7 +182,7 @@ export default function RecallsPage() {
                       </p>
                     </div>
 
-                    {canVote && (
+                    {canVote && !hasVoted && (
                       <div className="flex gap-2">
                         <Button
                           size="sm"
@@ -199,6 +201,9 @@ export default function RecallsPage() {
                           Oppose
                         </Button>
                       </div>
+                    )}
+                    {canVote && hasVoted && (
+                      <span className="text-sm text-muted">Voted</span>
                     )}
                   </div>
                 </Card>

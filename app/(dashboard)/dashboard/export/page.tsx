@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { useApi } from "@/lib/hooks/use-api";
 import { useRole } from "@/lib/hooks/use-role";
 import { Card } from "@/components/ui/card";
@@ -10,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
 import { Spinner } from "@/components/ui/spinner";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Badge } from "@/components/ui/badge";
 import {
   exportConceptsCSV,
   exportConceptsJSON,
@@ -25,7 +23,6 @@ import type { Domain, ImportResult } from "@/lib/api/types";
 import { RoleGate } from "@/components/auth/role-gate";
 
 export default function ExportImportPage() {
-  const router = useRouter();
   const { isDomainHead, isAdmin } = useRole();
   const [importOpen, setImportOpen] = useState(false);
   const [importing, setImporting] = useState(false);
@@ -44,7 +41,7 @@ export default function ExportImportPage() {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${exportType}-${new Date().toISOString().split("T")[0]}.${exportType === "exportJSON" ? "json" : "csv"}`;
+        a.download = `${exportType}-${new Date().toISOString().split("T")[0]}.${exportType.includes("json") ? "json" : "csv"}`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);

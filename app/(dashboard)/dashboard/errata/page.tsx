@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from "react";
 import { useApi } from "@/lib/hooks/use-api";
-import { useRole } from "@/lib/hooks/use-role";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,9 +9,8 @@ import { Modal } from "@/components/ui/modal";
 import { Spinner } from "@/components/ui/spinner";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
-import { getErrataList, resolveErrata, rejectErrata, updateErrata } from "@/lib/api/errata";
+import { resolveErrata, rejectErrata, updateErrata } from "@/lib/api/errata";
 import type { Errata } from "@/lib/api/types";
 import { RoleGate } from "@/components/auth/role-gate";
 
@@ -32,14 +30,13 @@ const issueTypeLabels: Record<string, string> = {
 };
 
 export default function ErrataPage() {
-  const { isAdmin } = useRole();
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [selectedErrata, setSelectedErrata] = useState<Errata | null>(null);
   const [resolveOpen, setResolveOpen] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
   const [notes, setNotes] = useState("");
-  const [processing, setProcessing] = useState(false);
+  const [processingId, setProcessingId] = useState<number | null>(null);
 
   const { data, isLoading, refetch } = useApi<{ data: Errata[]; current_page: number; last_page: number; total: number }>(
     `/api/v1/errata?page=${page}${statusFilter ? `&status=${statusFilter}` : ""}`
@@ -58,7 +55,7 @@ export default function ErrataPage() {
       e.preventDefault();
       if (!selectedErrata) return;
 
-      setProcessing(true);
+      setProcessingId(selectedErrata.id);
       try {
         await resolveErrata(selectedErrata.id, notes);
         setResolveOpen(false);
@@ -66,7 +63,7 @@ export default function ErrataPage() {
         setSelectedErrata(null);
         refetch();
       } finally {
-        setProcessing(false);
+        setProcessingId(null);
       }
     },
     [selectedErrata, notes, refetch]
@@ -85,7 +82,7 @@ export default function ErrataPage() {
       e.preventDefault();
       if (!selectedErrata) return;
 
-      setProcessing(true);
+      setProcessingId(selectedErrata.id);
       try {
         await rejectErrata(selectedErrata.id, notes);
         setRejectOpen(false);
@@ -93,7 +90,7 @@ export default function ErrataPage() {
         setSelectedErrata(null);
         refetch();
       } finally {
-        setProcessing(false);
+        setProcessingId(null);
       }
     },
     [selectedErrata, notes, refetch]
@@ -101,12 +98,12 @@ export default function ErrataPage() {
 
   const handleUpdateStatus = useCallback(
     async (errata: Errata, status: string) => {
-      setProcessing(true);
+      setProcessingId(errata.id);
       try {
         await updateErrata(errata.id, { status });
         refetch();
       } finally {
-        setProcessing(false);
+        setProcessingId(null);
       }
     },
     [refetch]
@@ -207,7 +204,7 @@ export default function ErrataPage() {
                           size="sm"
                           variant="secondary"
                           onClick={() => handleUpdateStatus(errata, "under_review")}
-                          loading={processing}
+                          loading={processingId === errata.id}
                         >
                           Mark Reviewing
                         </Button>
@@ -217,7 +214,7 @@ export default function ErrataPage() {
                           <Button
                             size="sm"
                             onClick={() => handleResolve(errata)}
-                            loading={processing}
+                            loading={processingId === errata.id}
                           >
                             Resolve
                           </Button>
@@ -225,7 +222,7 @@ export default function ErrataPage() {
                             size="sm"
                             variant="danger"
                             onClick={() => handleReject(errata)}
-                            loading={processing}
+                            loading={processingId === errata.id}
                           >
                             Reject
                           </Button>
@@ -265,7 +262,7 @@ export default function ErrataPage() {
             <Button type="button" variant="secondary" onClick={() => setResolveOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" loading={processing}>
+            <Button type="submit" loading={processingId !== null}>
               Resolve
             </Button>
           </div>
@@ -290,7 +287,7 @@ export default function ErrataPage() {
             <Button type="button" variant="secondary" onClick={() => setRejectOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" variant="danger" loading={processing}>
+            <Button type="submit" variant="danger" loading={processingId !== null}>
               Reject
             </Button>
           </div>
