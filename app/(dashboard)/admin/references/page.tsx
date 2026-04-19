@@ -11,6 +11,14 @@ import { Spinner } from "@/components/ui/spinner";
 import { createReferenceSource, importReferenceEntries } from "@/lib/api/references";
 import type { ReferenceSource, ReferenceSourceType } from "@/lib/api/types";
 
+interface PaginatedSources {
+  data: ReferenceSource[];
+  current_page?: number;
+  last_page?: number;
+  per_page?: number;
+  total?: number;
+}
+
 const sourceTypes: { value: ReferenceSourceType; label: string }[] = [
   { value: "academic", label: "Academic" },
   { value: "dictionary", label: "Dictionary" },
@@ -21,9 +29,12 @@ const sourceTypes: { value: ReferenceSourceType; label: string }[] = [
 ];
 
 export default function AdminReferencesPage() {
-  const { data: sources, isLoading, refetch } = useApi<ReferenceSource[]>(
+  const { data: sourcesData, isLoading, refetch } = useApi<PaginatedSources>(
     "/api/v1/reference-sources"
   );
+
+  // Extract sources array from paginated response
+  const sources = sourcesData?.data ?? [];
   const [createOpen, setCreateOpen] = useState(false);
   const [name, setName] = useState("");
   const [type, setType] = useState<ReferenceSourceType>("dictionary");
@@ -117,7 +128,7 @@ export default function AdminReferencesPage() {
         ))}
       </div>
 
-      {(!sources || sources.length === 0) && (
+      {sources.length === 0 && (
         <p className="py-8 text-center text-sm text-muted">
           No reference sources yet.
         </p>

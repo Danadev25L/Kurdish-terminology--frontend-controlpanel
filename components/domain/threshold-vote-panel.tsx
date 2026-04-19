@@ -15,7 +15,7 @@ interface ThresholdVotePanelProps {
 
 export function ThresholdVotePanel({ conceptId }: ThresholdVotePanelProps) {
   const { user } = useAuth();
-  const { isExpert, isDomainHead, isAdmin, isMainBoard } = useRole();
+  const { isExpert, isAdmin, isMainBoard } = useRole();
   const [submitting, setSubmitting] = useState(false);
   const [voted, setVoted] = useState(false);
 
@@ -40,8 +40,8 @@ export function ThresholdVotePanel({ conceptId }: ThresholdVotePanelProps) {
   if (isLoading) return null;
 
   const hasVoted = result?.user_voted ?? voted;
-  // Per SRS 3.2.2: Threshold voting is for domain experts only
-  const canVote = isExpert || isDomainHead || isAdmin;
+  // Per SRS 3.2.2: Threshold voting is for experts only (not domain heads)
+  const canVote = isExpert || isAdmin;
 
   return (
     <Card>
@@ -67,8 +67,14 @@ export function ThresholdVotePanel({ conceptId }: ThresholdVotePanelProps) {
 
       {!canVote && isMainBoard && (
         <p className="text-sm text-muted">
-          Threshold voting is limited to domain experts per SRS 3.2.2.
+          Threshold voting is for experts only per SRS 3.2.2.
           Main Board can use "escalate to Stage 3" to override.
+        </p>
+      )}
+
+      {!canVote && !isMainBoard && !isAdmin && (
+        <p className="text-sm text-muted">
+          Only domain experts can vote in threshold stage.
         </p>
       )}
 

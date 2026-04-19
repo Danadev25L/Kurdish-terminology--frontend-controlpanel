@@ -21,9 +21,9 @@ export function VoteMatrix({
   votingClosed = false,
   onVoted,
 }: VoteMatrixProps) {
-  const { isExpert, isDomainHead, isAdmin, isMainBoard } = useRole();
-  // Per SRS 3.3.2: Consensus voting is for domain experts only
-  const canVote = isExpert || isDomainHead || isAdmin;
+  const { isExpert, isAdmin, isMainBoard } = useRole();
+  // Per SRS 3.3.1: Consensus voting is for experts only (not domain heads)
+  const canVote = isExpert || isAdmin;
 
   const [votes, setVotes] = useState<Record<number, number | null>>(() => {
     const initial: Record<number, number | null> = {};
