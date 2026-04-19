@@ -203,4 +203,30 @@ export const api = {
       headers: {} as Record<string, string>, // remove Content-Type for FormData
       body: formData,
     }),
+
+  download: async (url: string): Promise<Blob> => {
+    const authStore = useAuthStore.getState();
+    const token = authStore.token;
+
+    const headers: HeadersInit = {
+      Accept: "*/*",
+    };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const fullUrl = url.startsWith("http") ? url : `${API_URL}${url}`;
+    const res = await fetch(fullUrl, { method: "GET", headers });
+
+    if (!res.ok) {
+      let message = "Download failed";
+      try {
+        const body = await res.json();
+        message = body.message ?? message;
+      } catch { /* non-JSON error body */ }
+      throw new ApiError(res.status, message);
+    }
+
+    return res.blob();
+  },
 };

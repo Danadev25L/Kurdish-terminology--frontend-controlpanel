@@ -3,20 +3,20 @@ import type { ExportOptions, ImportResult, ImportTemplate } from "./types";
 
 export function exportConceptsCSV(domainId?: number) {
   const params = domainId ? `?domain_id=${domainId}` : "";
-  return api.get<Blob>(`/api/v1/exports/concepts/csv${params}`);
+  return api.download(`/api/v1/exports/concepts/csv${params}`);
 }
 
 export function exportConceptsJSON(domainId?: number) {
   const params = domainId ? `?domain_id=${domainId}` : "";
-  return api.get<Blob>(`/api/v1/exports/concepts/json${params}`);
+  return api.download(`/api/v1/exports/concepts/json${params}`);
 }
 
 export function exportDomainCSV(domainId: number) {
-  return api.get<Blob>(`/api/v1/exports/domains/${domainId}/csv`);
+  return api.download(`/api/v1/exports/domains/${domainId}/csv`);
 }
 
 export function exportPublicTermsCSV() {
-  return api.get<Blob>("/api/v1/exports/public-terms/csv");
+  return api.download("/api/v1/exports/public-terms/csv");
 }
 
 export function importConceptsCSV(file: File, domainId?: number): Promise<ImportResult> {
