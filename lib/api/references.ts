@@ -7,6 +7,7 @@ export function getReferenceSources() {
 
 export function createReferenceSource(data: {
   name: string;
+  type: "academic" | "dictionary" | "government" | "encyclopedia" | "journal" | "other";
   description?: string;
 }) {
   return api.post<ReferenceSource>("/api/v1/domains/reference-sources", data);

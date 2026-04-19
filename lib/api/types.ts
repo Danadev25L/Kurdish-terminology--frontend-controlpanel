@@ -208,10 +208,15 @@ export interface PublicTerm {
 }
 
 // ── References ──
+export type ReferenceSourceType = "academic" | "dictionary" | "government" | "encyclopedia" | "journal" | "other";
+
 export interface ReferenceSource {
   id: number;
   name: string;
+  type: ReferenceSourceType;
   description?: string;
+  url?: string;
+  is_verified?: boolean;
   entry_count?: number;
   created_at: string;
 }

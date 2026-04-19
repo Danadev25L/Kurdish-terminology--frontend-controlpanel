@@ -5,17 +5,28 @@ import { useApi } from "@/lib/hooks/use-api";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { Modal } from "@/components/ui/modal";
 import { Spinner } from "@/components/ui/spinner";
 import { createReferenceSource, importReferenceEntries } from "@/lib/api/references";
-import type { ReferenceSource } from "@/lib/api/types";
+import type { ReferenceSource, ReferenceSourceType } from "@/lib/api/types";
+
+const sourceTypes: { value: ReferenceSourceType; label: string }[] = [
+  { value: "academic", label: "Academic" },
+  { value: "dictionary", label: "Dictionary" },
+  { value: "government", label: "Government" },
+  { value: "encyclopedia", label: "Encyclopedia" },
+  { value: "journal", label: "Journal" },
+  { value: "other", label: "Other" },
+];
 
 export default function AdminReferencesPage() {
   const { data: sources, isLoading, refetch } = useApi<ReferenceSource[]>(
-    "/api/reference-sources"
+    "/api/v1/reference-sources"
   );
   const [createOpen, setCreateOpen] = useState(false);
   const [name, setName] = useState("");
+  const [type, setType] = useState<ReferenceSourceType>("dictionary");
   const [desc, setDesc] = useState("");
   const [creating, setCreating] = useState(false);
   const [uploadingId, setUploadingId] = useState<number | null>(null);
@@ -26,16 +37,17 @@ export default function AdminReferencesPage() {
       e.preventDefault();
       setCreating(true);
       try {
-        await createReferenceSource({ name, description: desc || undefined });
+        await createReferenceSource({ name, type, description: desc || undefined });
         setCreateOpen(false);
         setName("");
+        setType("dictionary");
         setDesc("");
         refetch();
       } finally {
         setCreating(false);
       }
     },
-    [name, desc, refetch]
+    [name, type, desc, refetch]
   );
 
   const handleFileUpload = useCallback(
@@ -122,6 +134,13 @@ export default function AdminReferencesPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g., Hazhar Dictionary"
+            required
+          />
+          <Select
+            label="Type"
+            options={sourceTypes}
+            value={type}
+            onChange={(e) => setType(e.target.value as ReferenceSourceType)}
             required
           />
           <Input

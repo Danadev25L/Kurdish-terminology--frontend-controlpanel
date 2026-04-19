@@ -99,7 +99,29 @@ async function apiClient<T>(
     return undefined as T;
   }
 
-  const data = await res.json();
+  // Check content type first - if HTML, it's an error page
+  const contentType = res.headers.get('content-type') || '';
+  if (contentType.includes('text/html')) {
+    // HTML response means auth error - redirect to login
+    authStore.logout();
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    }
+    throw new ApiError(res.status, "Authentication required");
+  }
+
+  // Try to parse JSON, handle errors
+  let data;
+  try {
+    data = await res.json();
+  } catch (e) {
+    // Response is not JSON - likely an error page
+    authStore.logout();
+    if (typeof window !== "undefined") {
+      window.location.href = "/login";
+    }
+    throw new ApiError(res.status, "Invalid response from server");
+  }
 
   if (!res.ok) {
     // Handle 401 Unauthorized - attempt token refresh
