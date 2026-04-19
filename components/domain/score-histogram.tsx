@@ -22,7 +22,7 @@ export function ScoreHistogram({ data, candidateName }: ScoreHistogramProps) {
   return (
     <div>
       {candidateName && (
-        <h4 className="mb-2 text-sm font-medium text-gray-700" dir="rtl">
+        <h4 className="mb-2 text-[13px] font-semibold text-[#374151]" dir="rtl">
           {candidateName}
         </h4>
       )}

@@ -34,7 +34,7 @@ export function CandidateCard({
       <div className="space-y-3">
         {/* Term info */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-900" dir="rtl">
+          <h3 className="text-lg font-semibold text-[#111827]" dir="rtl">
             {term?.word ?? "—"}
           </h3>
           <div className="mt-1 flex flex-wrap gap-1.5">
@@ -44,13 +44,13 @@ export function CandidateCard({
         </div>
 
         {candidate.usage_example && (
-          <p className="text-sm text-muted" dir="rtl">
+          <p className="text-[13px] text-[#9ca3af]" dir="rtl">
             {candidate.usage_example}
           </p>
         )}
 
         {candidate.morphology_notes && (
-          <p className="text-sm text-muted">{candidate.morphology_notes}</p>
+          <p className="text-[13px] text-[#9ca3af]">{candidate.morphology_notes}</p>
         )}
 
         {/* Metrics */}
@@ -83,8 +83,8 @@ export function CandidateCard({
 function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div className="text-center">
-      <p className="text-xs text-muted">{label}</p>
-      <p className="text-sm font-semibold text-gray-900">{value}</p>
+      <p className="text-[11px] text-[#9ca3af]">{label}</p>
+      <p className="text-sm font-semibold text-[#111827]">{value}</p>
     </div>
   );
 }

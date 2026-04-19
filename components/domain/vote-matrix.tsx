@@ -63,15 +63,15 @@ export function VoteMatrix({
 
   return (
     <Card>
-      <h3 className="mb-4 text-lg font-semibold text-gray-900">
+      <h3 className="mb-4 text-lg font-semibold text-[#111827]">
         Consensus Voting
       </h3>
-      <p className="mb-4 text-sm text-muted">
+      <p className="mb-4 text-[13px] text-[#9ca3af]">
         Rate each candidate 1-10. Leave blank to skip a candidate.
       </p>
 
       {!canVote && isMainBoard && (
-        <p className="mb-4 text-sm text-muted">
+        <p className="mb-4 text-[13px] text-[#9ca3af]">
           Consensus voting is limited to domain experts per SRS 3.3.2.
           Main Board can observe but not participate.
         </p>
@@ -88,7 +88,7 @@ export function VoteMatrix({
                   className="flex items-center gap-4 rounded-lg border border-border p-3"
                 >
                   <div className="w-32 shrink-0">
-                    <p className="font-medium text-gray-900" dir="rtl">
+                    <p className="font-semibold text-[#111827]" dir="rtl">
                       {candidate.kurdish_term?.word ?? "—"}
                     </p>
                   </div>
@@ -101,8 +101,8 @@ export function VoteMatrix({
                         className={cn(
                           "flex h-8 w-8 items-center justify-center rounded-md text-sm font-medium transition-colors",
                           votes[candidate.id] === score
-                            ? "bg-primary text-white"
-                            : "bg-gray-100 text-gray-600 hover:bg-gray-200",
+                            ? "bg-[#6366f1] text-white"
+                            : "bg-gray-100 text-[#6b7280] hover:bg-gray-50",
                           isDisabled && "opacity-50 cursor-not-allowed"
                         )}
                       >
@@ -115,8 +115,8 @@ export function VoteMatrix({
                       className={cn(
                         "ms-2 flex h-8 items-center justify-center rounded-md px-2 text-xs font-medium transition-colors",
                         votes[candidate.id] === null
-                          ? "bg-gray-300 text-gray-700"
-                          : "bg-gray-100 text-muted hover:bg-gray-200",
+                          ? "bg-gray-300 text-[#374151]"
+                          : "bg-gray-100 text-[#9ca3af] hover:bg-gray-50",
                         isDisabled && "opacity-50 cursor-not-allowed"
                       )}
                     >
@@ -136,7 +136,7 @@ export function VoteMatrix({
           )}
 
           {submitted && (
-            <p className="mt-3 text-sm font-medium text-success">
+            <p className="mt-3 text-[13px] font-semibold text-success">
               Votes submitted successfully.
             </p>
           )}
@@ -144,7 +144,7 @@ export function VoteMatrix({
       )}
 
       {!canVote && !isMainBoard && (
-        <p className="text-sm text-muted">
+        <p className="text-[13px] text-[#9ca3af]">
           Only domain experts and domain heads can vote in consensus stage.
         </p>
       )}

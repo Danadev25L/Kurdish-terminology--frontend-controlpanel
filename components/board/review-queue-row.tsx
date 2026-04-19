@@ -34,7 +34,7 @@ export function ReviewQueueRow({
         className="cursor-pointer px-4 py-3"
         onClick={() => onClick(item.id)}
       >
-        <p className="font-medium text-gray-900">
+        <p className="font-semibold text-[#111827]">
           {item.concept.english_term?.word ?? "Untitled"}
         </p>
       </td>
@@ -49,11 +49,11 @@ export function ReviewQueueRow({
       <td className="px-4 py-3 text-sm font-medium">
         {item.consensus_score ? formatNumber(item.consensus_score) : "—"}
       </td>
-      <td className="px-4 py-3 text-sm text-muted">{item.vote_count}</td>
+      <td className="px-4 py-3 text-[13px] text-[#9ca3af]">{item.vote_count}</td>
       <td className="px-4 py-3">
         {item.close_call && <Badge variant="warning">Close Call</Badge>}
       </td>
-      <td className="px-4 py-3 text-xs text-muted">
+      <td className="px-4 py-3 text-[11px] text-[#9ca3af]">
         {timeAgo(item.updated_at)}
       </td>
     </tr>

@@ -123,14 +123,14 @@ export default function ErrataPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Errata Management</h1>
-          <p className="mt-1 text-sm text-muted">
+          <h1 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#111827]">Errata Management</h1>
+          <p className="mt-1 text-[13px] text-[#9ca3af]">
             Review and resolve reported errors in published terms
           </p>
         </div>
         <div className="flex items-center gap-2">
           <select
-            className="rounded-lg border border-border bg-white px-3 py-2 text-sm"
+            className="rounded-lg border border-[#e5e7eb] bg-white px-3 py-2 text-[13px]"
             value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);
@@ -163,7 +163,7 @@ export default function ErrataPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
-                      <h3 className="font-medium text-gray-900">
+                      <h3 className="font-semibold text-[#111827]">
                         Report #{errata.id}
                       </h3>
                       <Badge variant={statusVariant[errata.status] ?? "default"}>
@@ -173,26 +173,26 @@ export default function ErrataPage() {
                         {issueTypeLabels[errata.issue_type] ?? errata.issue_type}
                       </Badge>
                     </div>
-                    <p className="mt-2 text-sm text-gray-900">{errata.description}</p>
+                    <p className="mt-2 text-[13px] text-[#111827]">{errata.description}</p>
                     {errata.suggested_correction && (
                       <div className="mt-2">
-                        <p className="text-xs font-medium text-muted">Suggested Correction:</p>
-                        <p className="text-sm text-gray-700">{errata.suggested_correction}</p>
+                        <p className="text-xs font-semibold text-[#9ca3af]">Suggested Correction:</p>
+                        <p className="text-[13px] text-[#374151]">{errata.suggested_correction}</p>
                       </div>
                     )}
                     {errata.reporter_name && (
-                      <p className="mt-2 text-xs text-muted">
+                      <p className="mt-2 text-[11px] text-[#9ca3af]">
                         Reported by: {errata.reporter_name}
                         {errata.reporter_email && ` (${errata.reporter_email})`}
                       </p>
                     )}
                     {errata.admin_notes && (
-                      <div className="mt-2 rounded-md bg-surface p-2">
-                        <p className="text-xs font-medium text-muted">Admin Notes:</p>
-                        <p className="text-sm text-gray-700">{errata.admin_notes}</p>
+                      <div className="mt-2 rounded-md bg-[#f9fafb] p-2">
+                        <p className="text-xs font-semibold text-[#9ca3af]">Admin Notes:</p>
+                        <p className="text-[13px] text-[#374151]">{errata.admin_notes}</p>
                       </div>
                     )}
-                    <p className="mt-2 text-xs text-muted">
+                    <p className="mt-2 text-[11px] text-[#9ca3af]">
                       Reported {new Date(errata.created_at).toLocaleDateString()}
                     </p>
                   </div>
@@ -248,7 +248,7 @@ export default function ErrataPage() {
       {/* Resolve Modal */}
       <Modal open={resolveOpen} onClose={() => setResolveOpen(false)} title="Resolve Errata">
         <form onSubmit={confirmResolve} className="space-y-4">
-          <p className="text-sm text-muted">
+          <p className="text-[13px] text-[#9ca3af]">
             Are you sure you want to resolve this errata report? This will mark it as resolved.
           </p>
           <Textarea
@@ -272,7 +272,7 @@ export default function ErrataPage() {
       {/* Reject Modal */}
       <Modal open={rejectOpen} onClose={() => setRejectOpen(false)} title="Reject Errata">
         <form onSubmit={confirmReject} className="space-y-4">
-          <p className="text-sm text-muted">
+          <p className="text-[13px] text-[#9ca3af]">
             Are you sure you want to reject this errata report? Please provide a reason.
           </p>
           <Textarea
