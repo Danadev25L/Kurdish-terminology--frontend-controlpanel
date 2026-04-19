@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useApi } from "@/lib/hooks/use-api";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,19 +10,25 @@ import { updateSetting } from "@/lib/api/settings";
 import type { Setting } from "@/lib/api/types";
 
 export default function AdminSettingsPage() {
-  const { data: settings, isLoading, refetch } = useApi<Setting[]>("/api/v1/admin/settings");
+  const { data: rawSettings, isLoading, refetch } = useApi<Record<string, Setting[]>>("/api/v1/admin/settings");
   const [edited, setEdited] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
+  // Flatten grouped settings into a single array (memoized to stabilize effect deps)
+  const settings = useMemo(
+    () => rawSettings ? Object.values(rawSettings).flat() : null,
+    [rawSettings]
+  );
+
   useEffect(() => {
-    if (settings) {
+    if (rawSettings) {
       const map: Record<string, string> = {};
-      settings.forEach((s) => {
+      Object.values(rawSettings).flat().forEach((s) => {
         map[s.key] = s.value;
       });
       setEdited(map);
     }
-  }, [settings]);
+  }, [rawSettings]);
 
   const handleSave = async (key: string) => {
     setSaving(true);

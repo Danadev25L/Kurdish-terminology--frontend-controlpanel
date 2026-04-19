@@ -19,11 +19,26 @@ import { withdrawCandidate } from "@/lib/api/candidates";
 import { motionToVote } from "@/lib/api/concepts";
 import {
   getConceptHistory,
-  getConceptMetrics,
   getConceptActivity,
   deleteConcept,
 } from "@/lib/api/concepts";
-import type { Concept, Candidate, ConceptHistoryEntry, ConceptMetrics as ConceptMetricsType, ConceptActivityEntry } from "@/lib/api/types";
+import type { Concept, Candidate, ConceptHistoryEntry, ConceptActivityEntry } from "@/lib/api/types";
+
+interface BackendConceptMetrics {
+  threshold_votes: {
+    total: number;
+    yes: number;
+    no: number;
+    turnout: number;
+  };
+  candidates: Array<{
+    id: number;
+    word: string;
+    consensus_score: number | null;
+    vote_count: number;
+  }>;
+  stage: string;
+}
 import { formatDate } from "@/lib/utils/format";
 
 export default function ConceptDetailPage() {
@@ -313,7 +328,7 @@ function HistoryTab({ conceptId }: { conceptId: string }) {
 }
 
 function MetricsTab({ conceptId }: { conceptId: string }) {
-  const { data: metrics, isLoading } = useApi<ConceptMetricsType>(
+  const { data: metrics, isLoading } = useApi<BackendConceptMetrics>(
     `/api/v1/concepts/${conceptId}/metrics`
   );
 
@@ -333,42 +348,43 @@ function MetricsTab({ conceptId }: { conceptId: string }) {
     );
   }
 
+  const avgConsensus =
+    metrics.candidates.length > 0
+      ? metrics.candidates.reduce((sum, c) => sum + (c.consensus_score ?? 0), 0) / metrics.candidates.length
+      : 0;
+
+  const totalVotes = metrics.candidates.reduce((sum, c) => sum + c.vote_count, 0);
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <Card padding>
         <p className="text-sm text-[#9ca3af]">Total Candidates</p>
-        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">{metrics.total_candidates}</p>
-        <p className="text-xs text-[#9ca3af]">{metrics.active_candidates} active</p>
+        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">{metrics.candidates.length}</p>
       </Card>
       <Card padding>
         <p className="text-sm text-[#9ca3af]">Total Votes</p>
-        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">{metrics.total_votes}</p>
-      </Card>
-      <Card padding>
-        <p className="text-sm text-[#9ca3af]">Discussions</p>
-        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">{metrics.total_discussions}</p>
+        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">{totalVotes}</p>
       </Card>
       <Card padding>
         <p className="text-sm text-[#9ca3af]">Avg Consensus</p>
         <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">
-          {metrics.avg_consensus_score.toFixed(2)}
+          {avgConsensus.toFixed(2)}
         </p>
       </Card>
       <Card padding>
-        <p className="text-sm text-[#9ca3af]">Controversy Score</p>
+        <p className="text-sm text-[#9ca3af]">Threshold Turnout</p>
         <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">
-          {metrics.controversy_score.toFixed(2)}
+          {metrics.threshold_votes.turnout.toFixed(0)}%
+        </p>
+        <p className="text-xs text-[#9ca3af]">
+          {metrics.threshold_votes.yes} yes / {metrics.threshold_votes.no} no
         </p>
       </Card>
       <Card padding>
-        <p className="text-sm text-[#9ca3af]">Participation</p>
-        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">
-          {(metrics.participation_rate * 100).toFixed(0)}%
+        <p className="text-sm text-[#9ca3af]">Stage</p>
+        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827] capitalize">
+          {metrics.stage}
         </p>
-      </Card>
-      <Card padding>
-        <p className="text-sm text-[#9ca3af]">Days in Stage</p>
-        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">{metrics.days_in_stage}</p>
       </Card>
     </div>
   );
