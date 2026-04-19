@@ -45,9 +45,12 @@ export function DiscussionThread({ conceptId }: DiscussionThreadProps) {
   const discussions = discussionsData?.data ?? [];
 
   const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
+    async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      const trimmed = newBody.trim();
+      // Read directly from form to get current value
+      const form = e.currentTarget;
+      const textarea = form.querySelector('textarea') as HTMLTextAreaElement;
+      const trimmed = textarea?.value.trim() ?? '';
 
       // Client-side validation (must match API: min 5 characters)
       if (!trimmed) {
