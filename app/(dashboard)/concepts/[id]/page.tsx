@@ -9,12 +9,15 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
 import { Spinner } from "@/components/ui/spinner";
+import { Skeleton, SkeletonCard } from "@/components/ui/skeleton";
 import { ConceptStatusBadge } from "@/components/domain/concept-status-badge";
 import { CandidateCard } from "@/components/domain/candidate-card";
 import { DiscussionThread } from "@/components/domain/discussion-thread";
 import { ThresholdVotePanel } from "@/components/domain/threshold-vote-panel";
 import { VoteMatrix } from "@/components/domain/vote-matrix";
 import { ConsensusChart } from "@/components/domain/consensus-chart";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { useToastStore } from "@/stores/toast-store";
 import { withdrawCandidate } from "@/lib/api/candidates";
 import { motionToVote } from "@/lib/api/concepts";
 import {
@@ -46,6 +49,7 @@ export default function ConceptDetailPage() {
   const conceptId = params.id as string;
   const { isDomainHead, isAdmin, isMainBoard } = useRole();
   const { user } = useAuth();
+  const addToast = useToastStore((s) => s.addToast);
   const [activeTab, setActiveTab] = useState("overview");
 
   // Concept endpoint already includes candidates - no need for separate call
@@ -60,21 +64,35 @@ export default function ConceptDetailPage() {
 
   const handleWithdraw = useCallback(
     async (id: number) => {
-      await withdrawCandidate(id);
-      refetch();
+      try {
+        await withdrawCandidate(id);
+        refetch();
+        addToast({ type: "success", message: "Candidate withdrawn" });
+      } catch {
+        addToast({ type: "error", message: "Failed to withdraw" });
+      }
     },
-    [refetch]
+    [refetch, addToast]
   );
 
   const handleMotionToVote = useCallback(async () => {
-    await motionToVote(Number(conceptId));
-    refetch();
-  }, [conceptId, refetch]);
+    try {
+      await motionToVote(Number(conceptId));
+      refetch();
+      addToast({ type: "success", message: "Motion to vote submitted" });
+    } catch {
+      addToast({ type: "error", message: "Failed to submit motion" });
+    }
+  }, [conceptId, refetch, addToast]);
 
   if (isLoading) {
     return (
-      <div className="flex justify-center py-12">
-        <Spinner size="lg" />
+      <div className="space-y-6">
+        <div className="flex items-start justify-between">
+          <Skeleton className="h-7 w-48" />
+        </div>
+        <SkeletonCard />
+        <SkeletonCard />
       </div>
     );
   }
@@ -102,6 +120,7 @@ export default function ConceptDetailPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb items={[{ label: "Concepts", href: "/concepts" }, { label: concept.english_term?.word ?? "Concept" }]} />
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
@@ -199,28 +218,28 @@ function OverviewTab({ concept }: { concept: Concept }) {
         </Card>
 
         <Card>
-          <h3 className="mb-3 text-sm font-medium text-[#9ca3af]">Details</h3>
+          <h3 className="mb-3 text-sm font-medium text-text-muted">Details</h3>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <p className="text-xs text-[#9ca3af]">English Term</p>
+              <p className="text-xs text-text-muted">English Term</p>
               <p className="text-sm font-medium">
                 {concept.english_term?.word ?? "—"}
               </p>
             </div>
             <div>
-              <p className="text-xs text-[#9ca3af]">Domain</p>
+              <p className="text-xs text-text-muted">Domain</p>
               <p className="text-sm font-medium">
                 {concept.domain?.name ?? "—"}
               </p>
             </div>
             <div>
-              <p className="text-xs text-[#9ca3af]">Stage Entered</p>
+              <p className="text-xs text-text-muted">Stage Entered</p>
               <p className="text-sm font-medium">
                 {formatDate(concept.stage_entered_at)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-[#9ca3af]">Priority</p>
+              <p className="text-xs text-text-muted">Priority</p>
               <p className="text-sm font-medium capitalize">
                 {concept.priority}
               </p>
@@ -232,10 +251,10 @@ function OverviewTab({ concept }: { concept: Concept }) {
       {/* Reference sidebar placeholder */}
       <div>
         <Card>
-          <h3 className="mb-3 text-sm font-medium text-[#9ca3af]">
+          <h3 className="mb-3 text-sm font-medium text-text-muted">
             Reference Context
           </h3>
-          <p className="text-sm text-[#9ca3af]">
+          <p className="text-sm text-text-muted">
             Dictionary definitions will appear here.
           </p>
         </Card>
@@ -258,7 +277,7 @@ function CandidatesTab({
   if (candidates.length === 0) {
     return (
       <Card>
-        <p className="text-center text-sm text-[#9ca3af]">
+        <p className="text-center text-sm text-text-muted">
           No candidates proposed yet.
         </p>
       </Card>
@@ -298,25 +317,25 @@ function HistoryTab({ conceptId }: { conceptId: string }) {
   if (!history || history.length === 0) {
     return (
       <Card>
-        <p className="text-center text-sm text-[#9ca3af]">No history recorded yet.</p>
+        <p className="text-center text-sm text-text-muted">No history recorded yet.</p>
       </Card>
     );
   }
 
   return (
     <Card>
-      <h3 className="mb-4 text-[14px] font-bold text-[#111827]">Concept History</h3>
+      <h3 className="mb-4 text-[14px] font-bold text-foreground">Concept History</h3>
       <div className="space-y-3">
         {history.map((entry) => (
-          <div key={entry.id} className="flex items-start gap-3 border-b border-[#f3f4f6] pb-3 last:border-0">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f0f0ff]">
-              <svg className="h-4 w-4 text-[#6366f1]" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+          <div key={entry.id} className="flex items-start gap-3 border-b border-border-light pb-3 last:border-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-light">
+              <svg className="h-4 w-4 text-primary-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-[#111827]">{entry.description}</p>
-              <p className="text-xs text-[#9ca3af]">
+              <p className="text-sm font-medium text-foreground">{entry.description}</p>
+              <p className="text-xs text-text-muted">
                 {entry.user?.name ?? "Unknown"} · {formatDate(entry.created_at)}
               </p>
             </div>
@@ -343,7 +362,7 @@ function MetricsTab({ conceptId }: { conceptId: string }) {
   if (!metrics) {
     return (
       <Card>
-        <p className="text-center text-sm text-[#9ca3af]">No metrics available yet.</p>
+        <p className="text-center text-sm text-text-muted">No metrics available yet.</p>
       </Card>
     );
   }
@@ -358,31 +377,31 @@ function MetricsTab({ conceptId }: { conceptId: string }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <Card padding>
-        <p className="text-sm text-[#9ca3af]">Total Candidates</p>
-        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">{metrics.candidates.length}</p>
+        <p className="text-sm text-text-muted">Total Candidates</p>
+        <p className="text-2xl font-extrabold tracking-[-0.02em] text-foreground">{metrics.candidates.length}</p>
       </Card>
       <Card padding>
-        <p className="text-sm text-[#9ca3af]">Total Votes</p>
-        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">{totalVotes}</p>
+        <p className="text-sm text-text-muted">Total Votes</p>
+        <p className="text-2xl font-extrabold tracking-[-0.02em] text-foreground">{totalVotes}</p>
       </Card>
       <Card padding>
-        <p className="text-sm text-[#9ca3af]">Avg Consensus</p>
-        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">
+        <p className="text-sm text-text-muted">Avg Consensus</p>
+        <p className="text-2xl font-extrabold tracking-[-0.02em] text-foreground">
           {avgConsensus.toFixed(2)}
         </p>
       </Card>
       <Card padding>
-        <p className="text-sm text-[#9ca3af]">Threshold Turnout</p>
-        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827]">
+        <p className="text-sm text-text-muted">Threshold Turnout</p>
+        <p className="text-2xl font-extrabold tracking-[-0.02em] text-foreground">
           {metrics.threshold_votes.turnout.toFixed(0)}%
         </p>
-        <p className="text-xs text-[#9ca3af]">
+        <p className="text-xs text-text-muted">
           {metrics.threshold_votes.yes} yes / {metrics.threshold_votes.no} no
         </p>
       </Card>
       <Card padding>
-        <p className="text-sm text-[#9ca3af]">Stage</p>
-        <p className="text-2xl font-extrabold tracking-[-0.02em] text-[#111827] capitalize">
+        <p className="text-sm text-text-muted">Stage</p>
+        <p className="text-2xl font-extrabold tracking-[-0.02em] text-foreground capitalize">
           {metrics.stage}
         </p>
       </Card>
@@ -406,26 +425,26 @@ function ActivityTab({ conceptId }: { conceptId: string }) {
   if (!activities || activities.length === 0) {
     return (
       <Card>
-        <p className="text-center text-sm text-[#9ca3af]">No recent activity.</p>
+        <p className="text-center text-sm text-text-muted">No recent activity.</p>
       </Card>
     );
   }
 
   return (
     <Card>
-      <h3 className="mb-4 text-[14px] font-bold text-[#111827]">Recent Activity</h3>
+      <h3 className="mb-4 text-[14px] font-bold text-foreground">Recent Activity</h3>
       <div className="space-y-3">
         {activities.map((activity) => (
-          <div key={activity.id} className="flex items-start gap-3 border-b border-[#f3f4f6] pb-3 last:border-0">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f9fafb]">
-              <svg className="h-4 w-4 text-[#9ca3af]" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+          <div key={activity.id} className="flex items-start gap-3 border-b border-border-light pb-3 last:border-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface">
+              <svg className="h-4 w-4 text-text-muted" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z" />
               </svg>
             </div>
             <div className="flex-1">
-              <p className="text-sm text-[#111827]">{activity.description}</p>
-              <p className="text-xs text-[#9ca3af]">
+              <p className="text-sm text-foreground">{activity.description}</p>
+              <p className="text-xs text-text-muted">
                 {activity.user?.name ?? "Unknown"} · {formatDate(activity.created_at)}
               </p>
             </div>

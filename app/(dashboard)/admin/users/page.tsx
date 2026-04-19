@@ -8,16 +8,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
-import { Spinner } from "@/components/ui/spinner";
+import { SkeletonTable } from "@/components/ui/skeleton";
 import { Pagination } from "@/components/ui/pagination";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { createUser, assignRoles, deleteUser as deleteUserApi } from "@/lib/api/users";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { useToastStore } from "@/stores/toast-store";
 import type { User, PaginatedResponse } from "@/lib/api/types";
 
 const allRoles = ["admin", "main_board", "domain-head", "expert"];
 
 export default function AdminUsersPage() {
   const { user: currentUser } = useAuth();
+  const addToast = useToastStore((s) => s.addToast);
   const [page, setPage] = useState(1);
   const [createOpen, setCreateOpen] = useState(false);
   const [createForm, setCreateForm] = useState({
@@ -47,11 +50,14 @@ export default function AdminUsersPage() {
         setCreateForm({ name: "", email: "", password: "" });
         setSelectedRoles([]);
         refetch();
+        addToast({ type: "success", message: "User created" });
+      } catch {
+        addToast({ type: "error", message: "Failed to create user" });
       } finally {
         setCreating(false);
       }
     },
-    [createForm, selectedRoles, refetch]
+    [createForm, selectedRoles, refetch, addToast]
   );
 
   const handleDelete = useCallback(
@@ -69,11 +75,14 @@ export default function AdminUsersPage() {
         await deleteUserApi(deleteUser.id);
         setDeleteUser(null);
         refetch();
+        addToast({ type: "success", message: "User deleted" });
+      } catch {
+        addToast({ type: "error", message: "Failed to delete user" });
       } finally {
         setDeleting(false);
       }
     },
-    [deleteUser, refetch]
+    [deleteUser, refetch, addToast]
   );
 
   const toggleRole = (role: string) => {
@@ -84,15 +93,14 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb items={[{ label: "Admin", href: "/admin" }, { label: "Users" }]} />
       <div className="flex items-center justify-between">
         <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">User Management</h1>
         <Button onClick={() => setCreateOpen(true)}>Create User</Button>
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <Spinner size="lg" />
-        </div>
+        <SkeletonTable rows={6} />
       ) : data?.data && data.data.length > 0 ? (
         <>
           <div className="overflow-x-auto rounded-lg border border-border bg-surface-raised">

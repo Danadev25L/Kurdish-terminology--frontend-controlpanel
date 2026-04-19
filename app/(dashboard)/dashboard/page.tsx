@@ -143,7 +143,7 @@ export default function DashboardPage() {
             <button
               key={item.id}
               onClick={() => router.push(`/concepts/${item.id}`)}
-              className="w-full text-start"
+              className="w-full text-start cursor-pointer"
             >
               <Card className="transition-shadow hover:shadow-sm" padding={false}>
                 <div className="flex items-center justify-between p-4">

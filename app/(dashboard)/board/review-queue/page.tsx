@@ -7,10 +7,11 @@ import { RoleGate } from "@/components/auth/role-gate";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Pagination } from "@/components/ui/pagination";
-import { Spinner } from "@/components/ui/spinner";
+import { SkeletonTable } from "@/components/ui/skeleton";
 import { ReviewQueueRow } from "@/components/board/review-queue-row";
 import { BatchActionBar } from "@/components/board/batch-action-bar";
 import { batchApprove } from "@/lib/api/board";
+import { useToastStore } from "@/stores/toast-store";
 import type { PaginatedResponse, ReviewQueueItem } from "@/lib/api/types";
 
 const sortOptions = [
@@ -23,6 +24,7 @@ const sortOptions = [
 
 export default function BoardReviewQueuePage() {
   const router = useRouter();
+  const addToast = useToastStore((s) => s.addToast);
   const [page, setPage] = useState(1);
   const [domainId, setDomainId] = useState("");
   const [closeCall, setCloseCall] = useState(false);
@@ -54,12 +56,16 @@ export default function BoardReviewQueuePage() {
     setBatchLoading(true);
     try {
       await batchApprove(Array.from(selected));
+      const count = selected.size;
       setSelected(new Set());
       refetch();
+      addToast({ type: "success", message: `${count} concepts approved` });
+    } catch {
+      addToast({ type: "error", message: "Batch approval failed" });
     } finally {
       setBatchLoading(false);
     }
-  }, [selected, refetch]);
+  }, [selected, refetch, addToast]);
 
   return (
     <RoleGate roles={["main_board", "admin"]}>
@@ -116,9 +122,7 @@ export default function BoardReviewQueuePage() {
 
         {/* Table */}
         {isLoading ? (
-          <div className="flex justify-center py-12">
-            <Spinner size="lg" />
-          </div>
+          <SkeletonTable rows={8} />
         ) : data?.data && data.data.length > 0 ? (
           <>
             <div className="overflow-x-auto rounded-lg border border-border bg-surface-raised">

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
@@ -139,26 +140,47 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const { hasAnyRole } = useRole();
   const { user } = useAuth();
   const [hovered, setHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const visibleItems = navItems.filter((item) => hasAnyRole(item.roles));
-  const isExpanded = !collapsed || hovered;
+  const isExpanded = isMobile ? !collapsed : (!collapsed || hovered);
   const userInitial = user?.name?.charAt(0)?.toUpperCase() ?? "U";
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    setIsMobile(!mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(!e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  // Auto-close on mobile when navigating
+  useEffect(() => {
+    if (isMobile && !collapsed) {
+      onToggle();
+    }
+  }, [pathname]);
 
   return (
     <>
-      {collapsed && hovered && (
+      {(isMobile ? !collapsed : (collapsed && hovered)) && (
         <div
-          className="fixed inset-0 z-30 bg-black/5"
-          onClick={() => setHovered(false)}
+          className="fixed inset-0 z-30 bg-black/20"
+          onClick={() => {
+            setHovered(false);
+            if (isMobile && !collapsed) onToggle();
+          }}
         />
       )}
 
       <aside
-        onMouseEnter={() => collapsed && setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+        onMouseEnter={() => !isMobile && collapsed && setHovered(true)}
+        onMouseLeave={() => !isMobile && setHovered(false)}
         className={cn(
           "relative z-40 flex h-screen flex-col border-e border-border bg-surface-raised transition-all duration-200",
-          collapsed && !hovered ? "w-[60px]" : "w-[220px]"
+          isMobile && !collapsed && "fixed inset-y-0 start-0 z-50 shadow-xl",
+          collapsed && !hovered && !(isMobile && !collapsed) ? "w-[60px]" : "w-[220px]",
+          isMobile && collapsed && "hidden md:flex"
         )}
       >
         {/* Logo */}

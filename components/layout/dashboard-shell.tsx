@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Sidebar } from "./sidebar";
 import { DashboardHeader } from "./dashboard-header";
@@ -10,12 +10,19 @@ import { useUIStore } from "@/stores/ui-store";
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const sidebarCollapsed = useUIStore((s) => s.sidebarCollapsed);
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
+  const setSidebarCollapsed = useUIStore((s) => s.setSidebarCollapsed);
   const mainRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
 
   useEffect(() => {
     mainRef.current?.focus();
   }, [pathname]);
+
+  // Auto-collapse sidebar on mobile
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    if (!mq.matches) setSidebarCollapsed(true);
+  }, [setSidebarCollapsed]);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {

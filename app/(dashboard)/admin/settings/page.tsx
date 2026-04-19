@@ -7,10 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { updateSetting } from "@/lib/api/settings";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { useToastStore } from "@/stores/toast-store";
 import type { Setting } from "@/lib/api/types";
 
 export default function AdminSettingsPage() {
   const { data: rawSettings, isLoading, refetch } = useApi<Record<string, Setting[]>>("/api/v1/admin/settings");
+  const addToast = useToastStore((s) => s.addToast);
   const [edited, setEdited] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
@@ -35,6 +38,9 @@ export default function AdminSettingsPage() {
     try {
       await updateSetting({ key, value: edited[key] });
       refetch();
+      addToast({ type: "success", message: "Setting saved" });
+    } catch {
+      addToast({ type: "error", message: "Failed to save setting" });
     } finally {
       setSaving(false);
     }
@@ -50,6 +56,7 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb items={[{ label: "Admin", href: "/admin" }, { label: "Settings" }]} />
       <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">System Settings</h1>
 
       <Card>
@@ -57,7 +64,7 @@ export default function AdminSettingsPage() {
           {settings?.map((setting) => (
             <div
               key={setting.key}
-              className="flex items-end gap-4 border-b border-border-light pb-4 last:border-0"
+              className="flex items-end gap-4 border-b border-border-light pb-4 last:border-0 hover:bg-surface transition-colors rounded-lg px-2 -mx-2"
             >
               <div className="flex-1">
                 <Input

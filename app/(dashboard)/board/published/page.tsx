@@ -13,10 +13,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { ConceptStatusBadge } from "@/components/domain/concept-status-badge";
 import { api } from "@/lib/api/client";
+import { useToastStore } from "@/stores/toast-store";
 import { timeAgo } from "@/lib/utils/format";
 import type { Concept, PaginatedResponse } from "@/lib/api/types";
 
 export default function BoardPublishedPage() {
+  const addToast = useToastStore((s) => s.addToast);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [recallOpen, setRecallOpen] = useState(false);

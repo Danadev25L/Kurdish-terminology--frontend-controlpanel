@@ -13,6 +13,8 @@ import { Avatar } from "@/components/ui/avatar";
 import { RoleGate } from "@/components/auth/role-gate";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { deleteDomain, removeDomainMember, updateDomainMember } from "@/lib/api/domains";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { useToastStore } from "@/stores/toast-store";
 import type { Domain, DomainMember } from "@/lib/api/types";
 
 export default function DomainDetailPage() {
@@ -20,6 +22,7 @@ export default function DomainDetailPage() {
   const router = useRouter();
   const domainId = params.id as string;
   const { isAdmin, isDomainHead } = useRole();
+  const addToast = useToastStore((s) => s.addToast);
   const canManage = isAdmin || isDomainHead;
 
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -36,11 +39,14 @@ export default function DomainDetailPage() {
     setDeleting(true);
     try {
       await deleteDomain(domainId);
+      addToast({ type: "success", message: "Domain deleted" });
       router.push("/domains");
+    } catch {
+      addToast({ type: "error", message: "Failed to delete domain" });
     } finally {
       setDeleting(false);
     }
-  }, [domainId, router]);
+  }, [domainId, router, addToast]);
 
   const handleRemoveMember = useCallback(
     async (member: DomainMember) => {
@@ -57,11 +63,14 @@ export default function DomainDetailPage() {
         await removeDomainMember(domainId, removeMember.user_id);
         setRemoveMember(null);
         refetch();
+        addToast({ type: "success", message: "Member removed" });
+      } catch {
+        addToast({ type: "error", message: "Failed to remove member" });
       } finally {
         setRemoving(false);
       }
     },
-    [domainId, removeMember, refetch]
+    [domainId, removeMember, refetch, addToast]
   );
 
   const handleRoleChange = useCallback(
@@ -70,12 +79,14 @@ export default function DomainDetailPage() {
       try {
         await updateDomainMember(Number(domainId), member.user_id, { role: newRole });
         refetch();
+        addToast({ type: "success", message: "Role updated" });
       } catch {
+        addToast({ type: "error", message: "Failed to update role" });
         // Revert the select to the original value on failure
         e.target.value = member.role;
       }
     },
-    [domainId, refetch]
+    [domainId, refetch, addToast]
   );
 
   if (isLoading) {
@@ -87,19 +98,20 @@ export default function DomainDetailPage() {
   }
 
   if (!domain) {
-    return <p className="text-center text-[#9ca3af]">Domain not found.</p>;
+    return <p className="text-center text-text-muted">Domain not found.</p>;
   }
 
   return (
     <div className="space-y-6">
+      <Breadcrumb items={[{ label: "Domains", href: "/domains" }, { label: domain?.name ?? "Domain" }]} />
       {/* Domain info */}
       <Card>
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#111827]">
+            <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">
               {domain.name}
             </h1>
-            <p className="mt-1 text-[13px] text-[#9ca3af]">{domain.description}</p>
+            <p className="mt-1 text-[13px] text-text-muted">{domain.description}</p>
           </div>
           <div className="flex items-center gap-2">
             <Badge>{domain.slug}</Badge>
@@ -120,12 +132,12 @@ export default function DomainDetailPage() {
         </CardHeader>
 
         {!members || members.length === 0 ? (
-          <p className="text-[13px] text-[#9ca3af]">No members yet.</p>
+          <p className="text-[13px] text-text-muted">No members yet.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-[#f3f4f6] text-start text-[11px] font-semibold uppercase tracking-[0.05em] text-[#9ca3af]">
+                <tr className="border-b border-border-light text-start text-[11px] font-semibold uppercase tracking-[0.05em] text-text-muted">
                   <th key="header-user" className="px-3 py-2">User</th>
                   <th key="header-role" className="px-3 py-2">Role</th>
                   <th key="header-joined" className="px-3 py-2">Joined</th>
@@ -136,7 +148,7 @@ export default function DomainDetailPage() {
                 {members.map((member, index) => (
                   <tr
                     key={`member-${member.user_id ?? index}`}
-                    className="border-b border-[#f3f4f6]"
+                    className="border-b border-border-light"
                   >
                     <td className="px-3 py-3">
                       <div className="flex items-center gap-2">
@@ -145,7 +157,7 @@ export default function DomainDetailPage() {
                           <p className="text-[13px] font-semibold">
                             {member.user?.name}
                           </p>
-                          <p className="text-[11px] text-[#9ca3af]">
+                          <p className="text-[11px] text-text-muted">
                             {member.user?.email}
                           </p>
                         </div>
@@ -168,7 +180,7 @@ export default function DomainDetailPage() {
                         </Badge>
                       )}
                     </td>
-                    <td className="px-3 py-3 text-[13px] text-[#9ca3af]">
+                    <td className="px-3 py-3 text-[13px] text-text-muted">
                       {member.joined_at}
                     </td>
                     {canManage ? (

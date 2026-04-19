@@ -5,7 +5,7 @@ import { useApi } from "@/lib/hooks/use-api";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/ui/pagination";
-import { Spinner } from "@/components/ui/spinner";
+import { SkeletonTable } from "@/components/ui/skeleton";
 import { formatDateTime } from "@/lib/utils/format";
 import type { AuditEvent, PaginatedResponse } from "@/lib/api/types";
 
@@ -21,9 +21,7 @@ export default function AdminAuditPage() {
       <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">Audit Log</h1>
 
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <Spinner size="lg" />
-        </div>
+        <SkeletonTable rows={10} />
       ) : data?.data && data.data.length > 0 ? (
         <>
           <div className="overflow-x-auto rounded-lg border border-border bg-surface-raised">

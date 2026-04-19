@@ -10,7 +10,7 @@ import { Select } from "@/components/ui/select";
 import { SearchInput } from "@/components/ui/search-input";
 import { Pagination } from "@/components/ui/pagination";
 import { ConceptStatusBadge } from "@/components/domain/concept-status-badge";
-import { Spinner } from "@/components/ui/spinner";
+import { SkeletonCard } from "@/components/ui/skeleton";
 import type { PaginatedResponse, Concept } from "@/lib/api/types";
 import { timeAgo } from "@/lib/utils/format";
 
@@ -81,8 +81,8 @@ export default function ConceptsPage() {
 
       {/* List */}
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <Spinner size="lg" />
+        <div className="space-y-3">
+          {Array.from({ length: 5 }).map((_, i) => <SkeletonCard key={i} />)}
         </div>
       ) : data?.data && data.data.length > 0 ? (
         <div className="space-y-3">
@@ -92,7 +92,7 @@ export default function ConceptsPage() {
               onClick={() => router.push(`/concepts/${concept.id}`)}
               className="w-full text-start"
             >
-              <Card className="transition-shadow hover:shadow-md" padding={false}>
+              <Card className="hover:shadow-md transition-shadow cursor-pointer" padding={false}>
                 <div className="flex items-center justify-between p-4">
                   <div className="flex items-center gap-4">
                     <div>

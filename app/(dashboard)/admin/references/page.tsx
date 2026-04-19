@@ -10,6 +10,8 @@ import { Modal } from "@/components/ui/modal";
 import { Pagination } from "@/components/ui/pagination";
 import { Spinner } from "@/components/ui/spinner";
 import { createReferenceSource, importReferenceEntries } from "@/lib/api/references";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { useToastStore } from "@/stores/toast-store";
 import type { ReferenceSource, ReferenceSourceType } from "@/lib/api/types";
 
 interface PaginatedSources {
@@ -30,6 +32,7 @@ const sourceTypes: { value: ReferenceSourceType; label: string }[] = [
 ];
 
 export default function AdminReferencesPage() {
+  const addToast = useToastStore((s) => s.addToast);
   const [page, setPage] = useState(1);
   const { data: sourcesData, isLoading, refetch } = useApi<PaginatedSources>(
     `/api/v1/reference-sources?page=${page}`
@@ -58,11 +61,14 @@ export default function AdminReferencesPage() {
         setType("dictionary");
         setDesc("");
         refetch();
+        addToast({ type: "success", message: "Source created" });
+      } catch {
+        addToast({ type: "error", message: "Failed to create source" });
       } finally {
         setCreating(false);
       }
     },
-    [name, type, desc, refetch]
+    [name, type, desc, refetch, addToast]
   );
 
   const handlePageChange = useCallback((p: number) => {
@@ -75,11 +81,14 @@ export default function AdminReferencesPage() {
       try {
         await importReferenceEntries(sourceId, file);
         refetch();
+        addToast({ type: "success", message: "CSV imported" });
+      } catch {
+        addToast({ type: "error", message: "Import failed" });
       } finally {
         setUploadingId(null);
       }
     },
-    [refetch]
+    [refetch, addToast]
   );
 
   if (isLoading) {
@@ -92,6 +101,7 @@ export default function AdminReferencesPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb items={[{ label: "Admin", href: "/admin" }, { label: "References" }]} />
       <div className="flex items-center justify-between">
         <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">Reference Library</h1>
         <Button onClick={() => setCreateOpen(true)}>Add Source</Button>
