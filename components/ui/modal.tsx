@@ -19,7 +19,7 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
       <div className="fixed inset-0 flex items-center justify-center p-4">
         <DialogPanel
           className={cn(
-            "w-full max-w-md rounded-xl bg-white p-6 shadow-xl",
+            "w-full max-w-md rounded-[12px] bg-white p-6 shadow-xl",
             className
           )}
         >

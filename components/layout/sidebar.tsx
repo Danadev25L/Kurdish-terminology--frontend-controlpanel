@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
 import { useRole } from "@/lib/hooks/use-role";
+import { useAuth } from "@/lib/hooks/use-auth";
+import { useState } from "react";
 
 interface NavItem {
   label: string;
@@ -134,69 +136,108 @@ interface SidebarProps {
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const pathname = usePathname();
   const { hasAnyRole } = useRole();
+  const { user } = useAuth();
+  const [hovered, setHovered] = useState(false);
 
-  const visibleItems = navItems.filter((item) =>
-    hasAnyRole(item.roles)
-  );
+  const visibleItems = navItems.filter((item) => hasAnyRole(item.roles));
+  const isExpanded = !collapsed || hovered;
+  const userInitial = user?.name?.charAt(0)?.toUpperCase() ?? "U";
 
   return (
-    <aside
-      className={cn(
-        "flex h-screen flex-col border-e border-border bg-surface transition-all duration-200",
-        collapsed ? "w-16" : "w-64"
+    <>
+      {collapsed && hovered && (
+        <div
+          className="fixed inset-0 z-30 bg-black/5"
+          onClick={() => setHovered(false)}
+        />
       )}
-    >
-      {/* Logo */}
-      <div className="flex h-16 items-center justify-between border-b border-border px-4">
-        {!collapsed && (
-          <Link href="/dashboard" className="text-lg font-bold text-primary">
-            KTP
-          </Link>
-        )}
-        <button
-          onClick={onToggle}
-          className="rounded-lg p-1.5 text-muted hover:bg-gray-100 hover:text-gray-700"
-        >
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-            />
-          </svg>
-        </button>
-      </div>
 
-      {/* Nav */}
-      <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-        {visibleItems.map((item) => {
-          const isActive =
-            pathname === item.href ||
-            (item.href !== "/dashboard" && pathname.startsWith(item.href));
-          return (
+      <aside
+        onMouseEnter={() => collapsed && setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className={cn(
+          "relative z-40 flex h-screen flex-col border-e border-[#e5e7eb] bg-white transition-all duration-200",
+          collapsed && !hovered ? "w-[60px]" : "w-[220px]"
+        )}
+      >
+        {/* Logo */}
+        <div className="flex h-[52px] items-center border-b border-[#e5e7eb] px-4">
+          {isExpanded ? (
             <Link
-              key={item.href}
-              href={item.href}
-              title={collapsed ? item.label : undefined}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-primary-light text-primary"
-                  : "text-muted hover:bg-gray-100 hover:text-gray-900"
-              )}
+              href="/dashboard"
+              className="text-[15px] font-extrabold tracking-[-0.02em] text-[#111827]"
             >
-              {item.icon}
-              {!collapsed && <span>{item.label}</span>}
+              KTP<span className="ml-0.5 text-[10px] font-semibold text-[#6366f1] align-super">CP</span>
             </Link>
-          );
-        })}
-      </nav>
-    </aside>
+          ) : (
+            <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-[#111827] text-xs font-bold text-white">
+              K
+            </div>
+          )}
+        </div>
+
+        {/* Nav */}
+        <nav className="flex-1 space-y-0.5 overflow-y-auto p-3">
+          {visibleItems.map((item) => {
+            const isActive =
+              pathname === item.href ||
+              (item.href !== "/dashboard" && pathname.startsWith(item.href));
+
+            if (!isExpanded) {
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  title={item.label}
+                  className={cn(
+                    "flex h-9 w-9 items-center justify-center rounded-lg mx-auto transition-colors",
+                    isActive
+                      ? "bg-[#f0f0ff] text-[#6366f1]"
+                      : "text-[#9ca3af] hover:bg-gray-100 hover:text-gray-600"
+                  )}
+                >
+                  {item.icon}
+                </Link>
+              );
+            }
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-r-lg transition-colors mr-3",
+                  isActive
+                    ? "bg-[#f0f0ff] text-[#6366f1] font-semibold"
+                    : "text-[#6b7280] pl-7 hover:text-gray-900"
+                )}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* User section */}
+        <div className="border-t border-[#f3f4f6] p-3">
+          {isExpanded ? (
+            <div className="flex items-center gap-2.5 px-1">
+              <div className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-lg bg-[#111827] text-[11px] font-semibold text-white">
+                {userInitial}
+              </div>
+              <div className="min-w-0">
+                <div className="truncate text-[12px] font-semibold text-[#111827]">{user?.name ?? "User"}</div>
+                <div className="truncate text-[10px] text-[#9ca3af]">{user?.email ?? ""}</div>
+              </div>
+            </div>
+          ) : (
+            <div className="mx-auto flex h-[30px] w-[30px] items-center justify-center rounded-lg bg-[#111827] text-[11px] font-semibold text-white">
+              {userInitial}
+            </div>
+          )}
+        </div>
+      </aside>
+    </>
   );
 }
