@@ -17,7 +17,13 @@ import { VoteMatrix } from "@/components/domain/vote-matrix";
 import { ConsensusChart } from "@/components/domain/consensus-chart";
 import { withdrawCandidate } from "@/lib/api/candidates";
 import { motionToVote } from "@/lib/api/concepts";
-import type { Concept, Candidate } from "@/lib/api/types";
+import {
+  getConceptHistory,
+  getConceptMetrics,
+  getConceptActivity,
+  deleteConcept,
+} from "@/lib/api/concepts";
+import type { Concept, Candidate, ConceptHistoryEntry, ConceptMetrics as ConceptMetricsType, ConceptActivityEntry } from "@/lib/api/types";
 import { formatDate } from "@/lib/utils/format";
 
 export default function ConceptDetailPage() {
@@ -71,6 +77,9 @@ export default function ConceptDetailPage() {
     { id: "overview", label: "Overview" },
     { id: "candidates", label: "Candidates", count: candidateCount },
     { id: "discussions", label: "Discussions" },
+    { id: "history", label: "History" },
+    { id: "metrics", label: "Metrics" },
+    { id: "activity", label: "Activity" },
     ...(isThreshold || isVoting
       ? [{ id: "voting", label: "Voting" }]
       : []),
@@ -126,6 +135,15 @@ export default function ConceptDetailPage() {
         )}
         {activeTab === "discussions" && (
           <DiscussionThread conceptId={conceptId} />
+        )}
+        {activeTab === "history" && (
+          <HistoryTab conceptId={conceptId} />
+        )}
+        {activeTab === "metrics" && (
+          <MetricsTab conceptId={conceptId} />
+        )}
+        {activeTab === "activity" && (
+          <ActivityTab conceptId={conceptId} />
         )}
         {activeTab === "voting" && (
           <div className="space-y-6">
@@ -246,5 +264,158 @@ function CandidatesTab({
         />
       ))}
     </div>
+  );
+}
+
+function HistoryTab({ conceptId }: { conceptId: string }) {
+  const { data: history, isLoading } = useApi<ConceptHistoryEntry[]>(
+    `/api/v1/concepts/${conceptId}/history`
+  );
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-12">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  if (!history || history.length === 0) {
+    return (
+      <Card>
+        <p className="text-center text-sm text-muted">No history recorded yet.</p>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <h3 className="mb-4 text-lg font-semibold text-gray-900">Concept History</h3>
+      <div className="space-y-3">
+        {history.map((entry) => (
+          <div key={entry.id} className="flex items-start gap-3 border-b border-border pb-3 last:border-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-light">
+              <svg className="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-gray-900">{entry.description}</p>
+              <p className="text-xs text-muted">
+                {entry.user?.name ?? "Unknown"} · {formatDate(entry.created_at)}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+function MetricsTab({ conceptId }: { conceptId: string }) {
+  const { data: metrics, isLoading } = useApi<ConceptMetricsType>(
+    `/api/v1/concepts/${conceptId}/metrics`
+  );
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-12">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  if (!metrics) {
+    return (
+      <Card>
+        <p className="text-center text-sm text-muted">No metrics available yet.</p>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <Card padding>
+        <p className="text-sm text-muted">Total Candidates</p>
+        <p className="text-2xl font-bold text-gray-900">{metrics.total_candidates}</p>
+        <p className="text-xs text-muted">{metrics.active_candidates} active</p>
+      </Card>
+      <Card padding>
+        <p className="text-sm text-muted">Total Votes</p>
+        <p className="text-2xl font-bold text-gray-900">{metrics.total_votes}</p>
+      </Card>
+      <Card padding>
+        <p className="text-sm text-muted">Discussions</p>
+        <p className="text-2xl font-bold text-gray-900">{metrics.total_discussions}</p>
+      </Card>
+      <Card padding>
+        <p className="text-sm text-muted">Avg Consensus</p>
+        <p className="text-2xl font-bold text-gray-900">
+          {metrics.avg_consensus_score.toFixed(2)}
+        </p>
+      </Card>
+      <Card padding>
+        <p className="text-sm text-muted">Controversy Score</p>
+        <p className="text-2xl font-bold text-gray-900">
+          {metrics.controversy_score.toFixed(2)}
+        </p>
+      </Card>
+      <Card padding>
+        <p className="text-sm text-muted">Participation</p>
+        <p className="text-2xl font-bold text-gray-900">
+          {(metrics.participation_rate * 100).toFixed(0)}%
+        </p>
+      </Card>
+      <Card padding>
+        <p className="text-sm text-muted">Days in Stage</p>
+        <p className="text-2xl font-bold text-gray-900">{metrics.days_in_stage}</p>
+      </Card>
+    </div>
+  );
+}
+
+function ActivityTab({ conceptId }: { conceptId: string }) {
+  const { data: activities, isLoading } = useApi<ConceptActivityEntry[]>(
+    `/api/v1/concepts/${conceptId}/activity-feed`
+  );
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-12">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  if (!activities || activities.length === 0) {
+    return (
+      <Card>
+        <p className="text-center text-sm text-muted">No recent activity.</p>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <h3 className="mb-4 text-lg font-semibold text-gray-900">Recent Activity</h3>
+      <div className="space-y-3">
+        {activities.map((activity) => (
+          <div key={activity.id} className="flex items-start gap-3 border-b border-border pb-3 last:border-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface">
+              <svg className="h-4 w-4 text-muted" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-sm text-gray-900">{activity.description}</p>
+              <p className="text-xs text-muted">
+                {activity.user?.name ?? "Unknown"} · {formatDate(activity.created_at)}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Card>
   );
 }

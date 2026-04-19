@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useApi } from "@/lib/hooks/use-api";
+import { useAuth } from "@/lib/hooks/use-auth";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,12 +10,14 @@ import { Badge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
 import { Spinner } from "@/components/ui/spinner";
 import { Pagination } from "@/components/ui/pagination";
-import { createUser, assignRoles, getUsers } from "@/lib/api/users";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { createUser, assignRoles, deleteUser as deleteUserApi } from "@/lib/api/users";
 import type { User, PaginatedResponse } from "@/lib/api/types";
 
 const allRoles = ["admin", "main_board", "domain-head", "expert"];
 
 export default function AdminUsersPage() {
+  const { user: currentUser } = useAuth();
   const [page, setPage] = useState(1);
   const [createOpen, setCreateOpen] = useState(false);
   const [createForm, setCreateForm] = useState({
@@ -24,6 +27,8 @@ export default function AdminUsersPage() {
   });
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [creating, setCreating] = useState(false);
+  const [deleteUser, setDeleteUser] = useState<User | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const { data, isLoading, refetch } = useApi<PaginatedResponse<User>>(
     `/api/v1/admin/users?page=${page}`
@@ -47,6 +52,28 @@ export default function AdminUsersPage() {
       }
     },
     [createForm, selectedRoles, refetch]
+  );
+
+  const handleDelete = useCallback(
+    async (user: User) => {
+      setDeleteUser(user);
+    },
+    []
+  );
+
+  const confirmDelete = useCallback(
+    async () => {
+      if (!deleteUser) return;
+      setDeleting(true);
+      try {
+        await deleteUserApi(deleteUser.id);
+        setDeleteUser(null);
+        refetch();
+      } finally {
+        setDeleting(false);
+      }
+    },
+    [deleteUser, refetch]
   );
 
   const toggleRole = (role: string) => {
@@ -76,6 +103,7 @@ export default function AdminUsersPage() {
                   <th className="px-4 py-3">Email</th>
                   <th className="px-4 py-3">Roles</th>
                   <th className="px-4 py-3">Created</th>
+                  <th className="px-4 py-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -96,6 +124,17 @@ export default function AdminUsersPage() {
                     </td>
                     <td className="px-4 py-3 text-sm text-muted">
                       {user.created_at}
+                    </td>
+                    <td className="px-4 py-3">
+                      {user.id !== currentUser?.id && (
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          onClick={() => handleDelete(user)}
+                        >
+                          Delete
+                        </Button>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -165,6 +204,18 @@ export default function AdminUsersPage() {
           </Button>
         </form>
       </Modal>
+
+      {/* Delete confirmation dialog */}
+      <ConfirmationDialog
+        open={!!deleteUser}
+        onClose={() => setDeleteUser(null)}
+        onConfirm={confirmDelete}
+        title="Delete User"
+        message={`Are you sure you want to delete user "${deleteUser?.name}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        variant="danger"
+        loading={deleting}
+      />
     </div>
   );
 }

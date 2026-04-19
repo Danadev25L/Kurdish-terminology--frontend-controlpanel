@@ -1,5 +1,12 @@
 import { api } from "./client";
-import type { Concept, PaginatedResponse } from "./types";
+import type {
+  Concept,
+  PaginatedResponse,
+  ConceptHistoryEntry,
+  ConceptMetrics,
+  ConceptActivityEntry,
+  VotesSummary,
+} from "./types";
 
 interface ConceptFilters {
   domain_id?: number;
@@ -36,6 +43,10 @@ export function updateConcept(
   return api.patch<Concept>(`/api/v1/concepts/${id}`, data);
 }
 
+export function deleteConcept(id: number | string) {
+  return api.del(`/api/v1/concepts/${id}`);
+}
+
 export function motionToVote(id: number) {
   return api.post<Concept>(`/api/v1/concepts/${id}/motion-to-vote`);
 }
@@ -46,4 +57,24 @@ export function closeVoting(id: number) {
 
 export function reopenConcept(id: number) {
   return api.post<Concept>(`/api/v1/concepts/${id}/reopen`);
+}
+
+export function requestInfo(id: number, reason: string) {
+  return api.post(`/api/v1/concepts/${id}/request-info`, { reason });
+}
+
+export function getConceptHistory(id: number | string) {
+  return api.get<ConceptHistoryEntry[]>(`/api/v1/concepts/${id}/history`);
+}
+
+export function getConceptMetrics(id: number | string) {
+  return api.get<ConceptMetrics>(`/api/v1/concepts/${id}/metrics`);
+}
+
+export function getConceptActivity(id: number | string) {
+  return api.get<ConceptActivityEntry[]>(`/api/v1/concepts/${id}/activity-feed`);
+}
+
+export function getVotesSummary(id: number | string) {
+  return api.get<VotesSummary>(`/api/v1/concepts/${id}/votes/summary`);
 }

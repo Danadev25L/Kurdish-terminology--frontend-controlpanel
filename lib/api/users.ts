@@ -26,6 +26,10 @@ export function updateUser(
   return api.patch<User>(`/api/v1/admin/users/${id}`, data);
 }
 
+export function deleteUser(id: number) {
+  return api.del(`/api/v1/admin/users/${id}`);
+}
+
 export function assignRoles(userId: number, roles: string[]) {
   return api.post(`/api/v1/admin/users/${userId}/roles`, { roles });
 }

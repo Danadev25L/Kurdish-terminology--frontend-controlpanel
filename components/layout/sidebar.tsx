@@ -74,6 +74,47 @@ const navItems: NavItem[] = [
     ),
   },
   {
+    label: "Export/Import",
+    href: "/dashboard/export",
+    roles: ["admin", "domain-head"],
+    icon: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+      </svg>
+    ),
+  },
+  {
+    label: "Errata",
+    href: "/dashboard/errata",
+    roles: ["admin", "main_board", "domain-head"],
+    icon: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Recalls",
+    href: "/dashboard/recalls",
+    roles: ["admin", "main_board", "domain-head", "expert"],
+    icon: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12l-3-3m0 0l-3 3m3-3v7.5" />
+      </svg>
+    ),
+  },
+  {
+    label: "Board Recalls",
+    href: "/board/recalls",
+    roles: ["main_board", "admin"],
+    icon: (
+      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l3.75 3.75m0 0l3.75-3.75M12.75 3l7.5 7.5-7.5 7.5" />
+      </svg>
+    ),
+  },
+  {
     label: "Admin",
     href: "/admin",
     roles: ["admin"],

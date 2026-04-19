@@ -279,3 +279,154 @@ export interface DomainHealthData {
   finalized_percentage: number;
   avg_controversy: number;
 }
+
+// ── Concept History & Metrics ──
+export interface ConceptHistoryEntry {
+  id: number;
+  concept_id: number;
+  event_type: "created" | "updated" | "status_changed" | "candidate_added" | "candidate_withdrawn" | "voting_started" | "voting_closed" | "approved" | "vetoed" | "recalled" | "reopened";
+  description: string;
+  user_id: number;
+  user?: User;
+  metadata?: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface ConceptMetrics {
+  concept_id: number;
+  total_candidates: number;
+  active_candidates: number;
+  total_votes: number;
+  total_discussions: number;
+  avg_consensus_score: number;
+  controversy_score: number;
+  days_in_stage: number;
+  participation_rate: number;
+}
+
+export interface ConceptActivityEntry {
+  id: number;
+  concept_id: number;
+  activity_type: string;
+  description: string;
+  user_id: number;
+  user?: User;
+  created_at: string;
+}
+
+export interface VotesSummary {
+  concept_id: number;
+  threshold_result?: {
+    yes_count: number;
+    no_count: number;
+    total_eligible: number;
+    yes_ratio: number;
+    passed: boolean;
+  };
+  consensus_results?: {
+    candidate_id: number;
+    kurdish_term: string;
+    mean_score: number;
+    std_dev: number;
+    consensus_score: number;
+    vote_count: number;
+  }[];
+}
+
+// ── Errata ──
+export type ErrataStatus = "pending" | "under_review" | "resolved" | "rejected";
+
+export interface Errata {
+  id: number;
+  public_term_id: number;
+  reporter_name?: string;
+  reporter_email?: string;
+  issue_type: "incorrect_translation" | "missing_definition" | "typo" | "offensive_term" | "other";
+  description: string;
+  suggested_correction?: string;
+  status: ErrataStatus;
+  admin_notes?: string;
+  resolved_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PublicErrataSubmission {
+  public_term_id: number;
+  reporter_name?: string;
+  reporter_email?: string;
+  issue_type: Errata["issue_type"];
+  description: string;
+  suggested_correction?: string;
+}
+
+// ── Recalls ──
+export type RecallStatus = "pending" | "approved" | "rejected" | "expired";
+export type RecallVoteType = "support" | "oppose";
+
+export interface Recall {
+  id: number;
+  concept_id: number;
+  concept?: {
+    id: number;
+    english_term: string;
+    kurdish_term: string;
+  };
+  requester_id: number;
+  requester?: User;
+  reason: string;
+  status: RecallStatus;
+  support_count: number;
+  oppose_count: number;
+  net_votes: number;
+  expires_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RecallSubmission {
+  concept_id: number;
+  reason: string;
+}
+
+export interface RecallVote {
+  recall_id: number;
+  vote: RecallVoteType;
+}
+
+// ── Export/Import ──
+export type ExportFormat = "csv" | "json";
+export type ExportScope = "concepts" | "domain" | "public_terms";
+
+export interface ExportOptions {
+  format: ExportFormat;
+  scope: ExportScope;
+  domain_id?: number;
+  include_candidates?: boolean;
+  include_metadata?: boolean;
+}
+
+export interface ImportResult {
+  success: boolean;
+  imported: number;
+  failed: number;
+  errors?: Array<{ row: number; error: string }>;
+}
+
+export interface ImportTemplate {
+  format: ExportFormat;
+  template_url: string;
+  example_data: Record<string, unknown>[];
+}
+
+// ── Domain Experts ──
+export interface DomainExpert {
+  user_id: number;
+  user: User;
+  domains: Array<{
+    domain_id: number;
+    domain_name: string;
+    role: string;
+  }>;
+  expertise_count: number;
+}

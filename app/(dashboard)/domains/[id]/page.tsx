@@ -1,6 +1,7 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useState, useCallback } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { useApi } from "@/lib/hooks/use-api";
 import { useRole } from "@/lib/hooks/use-role";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,17 +11,70 @@ import { Select } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { Avatar } from "@/components/ui/avatar";
 import { RoleGate } from "@/components/auth/role-gate";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { deleteDomain, removeDomainMember, updateDomainMember } from "@/lib/api/domains";
 import type { Domain, DomainMember } from "@/lib/api/types";
 
 export default function DomainDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const domainId = params.id as string;
   const { isAdmin, isDomainHead } = useRole();
   const canManage = isAdmin || isDomainHead;
 
-  const { data: domain, isLoading } = useApi<Domain>(`/api/v1/domains/${domainId}`);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [removeMember, setRemoveMember] = useState<DomainMember | null>(null);
+  const [removing, setRemoving] = useState(false);
+
+  const { data: domain, isLoading, refetch } = useApi<Domain>(`/api/v1/domains/${domainId}`);
   const { data: members } = useApi<DomainMember[]>(
     `/api/v1/domains/${domainId}/members`
+  );
+
+  const handleDelete = useCallback(async () => {
+    setDeleting(true);
+    try {
+      await deleteDomain(domainId);
+      router.push("/domains");
+    } finally {
+      setDeleting(false);
+    }
+  }, [domainId, router]);
+
+  const handleRemoveMember = useCallback(
+    async (member: DomainMember) => {
+      setRemoveMember(member);
+    },
+    []
+  );
+
+  const confirmRemoveMember = useCallback(
+    async () => {
+      if (!removeMember) return;
+      setRemoving(true);
+      try {
+        await removeDomainMember(domainId, removeMember.user_id);
+        setRemoveMember(null);
+        refetch();
+      } finally {
+        setRemoving(false);
+      }
+    },
+    [domainId, removeMember, refetch]
+  );
+
+  const handleRoleChange = useCallback(
+    async (member: DomainMember, e: React.ChangeEvent<HTMLSelectElement>) => {
+      const newRole = e.target.value as "expert" | "observer";
+      try {
+        await updateDomainMember(Number(domainId), member.user_id, { role: newRole });
+        refetch();
+      } catch (err) {
+        console.error("Failed to update role:", err);
+      }
+    },
+    [domainId, refetch]
   );
 
   if (isLoading) {
@@ -46,7 +100,14 @@ export default function DomainDetailPage() {
             </h1>
             <p className="mt-1 text-sm text-muted">{domain.description}</p>
           </div>
-          <Badge>{domain.slug}</Badge>
+          <div className="flex items-center gap-2">
+            <Badge>{domain.slug}</Badge>
+            <RoleGate roles={["admin"]}>
+              <Button variant="danger" size="sm" onClick={() => setDeleteOpen(true)}>
+                Delete Domain
+              </Button>
+            </RoleGate>
+          </div>
         </div>
       </Card>
 
@@ -97,7 +158,7 @@ export default function DomainDetailPage() {
                             { value: "observer", label: "Observer" },
                           ]}
                           value={member.role}
-                          onChange={() => {}}
+                          onChange={(e) => handleRoleChange(member, e)}
                           className="w-28"
                         />
                       ) : (
@@ -111,7 +172,11 @@ export default function DomainDetailPage() {
                     </td>
                     {canManage ? (
                       <td className="px-3 py-3">
-                        <Button variant="ghost" size="sm">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveMember(member)}
+                        >
                           Remove
                         </Button>
                       </td>
@@ -123,6 +188,30 @@ export default function DomainDetailPage() {
           </div>
         )}
       </Card>
+
+      {/* Delete domain confirmation */}
+      <ConfirmationDialog
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        onConfirm={handleDelete}
+        title="Delete Domain"
+        message={`Are you sure you want to delete "${domain.name}"? This will also delete all concepts and candidates associated with this domain. This action cannot be undone.`}
+        confirmLabel="Delete"
+        variant="danger"
+        loading={deleting}
+      />
+
+      {/* Remove member confirmation */}
+      <ConfirmationDialog
+        open={!!removeMember}
+        onClose={() => setRemoveMember(null)}
+        onConfirm={confirmRemoveMember}
+        title="Remove Member"
+        message={`Are you sure you want to remove ${removeMember?.user?.name} from this domain?`}
+        confirmLabel="Remove"
+        variant="danger"
+        loading={removing}
+      />
     </div>
   );
 }
