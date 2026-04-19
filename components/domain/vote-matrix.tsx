@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils/cn";
 import { castConsensusVotes } from "@/lib/api/voting";
 import { useRole } from "@/lib/hooks/use-role";
+import { useToastStore } from "@/stores/toast-store";
 import type { Candidate, ConsensusVote } from "@/lib/api/types";
 
 interface VoteMatrixProps {
@@ -21,9 +22,10 @@ export function VoteMatrix({
   votingClosed = false,
   onVoted,
 }: VoteMatrixProps) {
-  const { isExpert, isAdmin, isMainBoard } = useRole();
-  // Per SRS 3.3.1: Consensus voting is for experts only (not domain heads)
-  const canVote = isExpert || isAdmin;
+  const { isExpert, isDomainHead, isAdmin, isMainBoard } = useRole();
+  // Backend only checks "expert" role (single-role middleware)
+  const canVote = isExpert;
+  const addToast = useToastStore((s) => s.addToast);
 
   const [votes, setVotes] = useState<Record<number, number | null>>(() => {
     const initial: Record<number, number | null> = {};
@@ -54,6 +56,9 @@ export function VoteMatrix({
       await castConsensusVotes(conceptId, { votes: voteList });
       setSubmitted(true);
       onVoted?.();
+      addToast({ type: "success", message: "Votes submitted" });
+    } catch {
+      addToast({ type: "error", message: "Failed to submit votes" });
     } finally {
       setSubmitting(false);
     }
@@ -70,10 +75,9 @@ export function VoteMatrix({
         Rate each candidate 1-10. Leave blank to skip a candidate.
       </p>
 
-      {!canVote && isMainBoard && (
+      {!canVote && (isMainBoard || isAdmin || isDomainHead) && (
         <p className="mb-4 text-[13px] text-text-muted">
-          Consensus voting is limited to domain experts per SRS 3.3.2.
-          Main Board can observe but not participate.
+          Consensus voting is restricted to domain experts.
         </p>
       )}
 
@@ -143,9 +147,9 @@ export function VoteMatrix({
         </>
       )}
 
-      {!canVote && !isMainBoard && (
+      {!canVote && !isMainBoard && !isAdmin && !isDomainHead && (
         <p className="text-[13px] text-text-muted">
-          Only domain experts and domain heads can vote in consensus stage.
+          Only domain experts can vote in consensus stage.
         </p>
       )}
     </Card>

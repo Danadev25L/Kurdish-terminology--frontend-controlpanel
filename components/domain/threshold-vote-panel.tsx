@@ -7,6 +7,7 @@ import { castThresholdVote, getThresholdResult } from "@/lib/api/voting";
 import { useApi } from "@/lib/hooks/use-api";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useRole } from "@/lib/hooks/use-role";
+import { useToastStore } from "@/stores/toast-store";
 import type { ThresholdResult } from "@/lib/api/types";
 
 interface ThresholdVotePanelProps {
@@ -15,9 +16,10 @@ interface ThresholdVotePanelProps {
 
 export function ThresholdVotePanel({ conceptId }: ThresholdVotePanelProps) {
   const { user } = useAuth();
-  const { isExpert, isAdmin, isMainBoard } = useRole();
+  const { isExpert, isDomainHead, isAdmin, isMainBoard } = useRole();
   const [submitting, setSubmitting] = useState(false);
   const [voted, setVoted] = useState(false);
+  const addToast = useToastStore((s) => s.addToast);
 
   const { data: result, isLoading, refetch } = useApi<ThresholdResult>(
     `/api/v1/concepts/${conceptId}/threshold-votes`
@@ -30,18 +32,21 @@ export function ThresholdVotePanel({ conceptId }: ThresholdVotePanelProps) {
         await castThresholdVote(conceptId, vote);
         setVoted(true);
         refetch();
+        addToast({ type: "success", message: "Vote recorded" });
+      } catch {
+        addToast({ type: "error", message: "Failed to submit vote" });
       } finally {
         setSubmitting(false);
       }
     },
-    [conceptId, refetch]
+    [conceptId, refetch, addToast]
   );
 
   if (isLoading) return null;
 
   const hasVoted = result?.user_voted ?? voted;
-  // Per SRS 3.2.2: Threshold voting is for experts only (not domain heads)
-  const canVote = isExpert || isAdmin;
+  // Backend only checks "expert" role (single-role middleware)
+  const canVote = isExpert;
 
   return (
     <Card>
@@ -65,14 +70,13 @@ export function ThresholdVotePanel({ conceptId }: ThresholdVotePanelProps) {
         </div>
       )}
 
-      {!canVote && isMainBoard && (
+      {!canVote && (isMainBoard || isAdmin || isDomainHead) && (
         <p className="text-[13px] text-text-muted">
-          Threshold voting is for experts only per SRS 3.2.2.
-          Main Board can use "escalate to Stage 3" to override.
+          Threshold voting is restricted to domain experts.
         </p>
       )}
 
-      {!canVote && !isMainBoard && !isAdmin && (
+      {!canVote && !isMainBoard && !isAdmin && !isDomainHead && (
         <p className="text-[13px] text-text-muted">
           Only domain experts can vote in threshold stage.
         </p>

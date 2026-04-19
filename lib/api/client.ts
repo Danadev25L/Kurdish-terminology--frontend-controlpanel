@@ -219,10 +219,10 @@ export const api = {
     const res = await fetch(fullUrl, { method: "GET", headers });
 
     if (!res.ok) {
-      let message = "Download failed";
+      let message = `Download failed (${res.status})`;
       try {
         const body = await res.json();
-        message = body.message ?? message;
+        message = body.message ?? body.error ?? message;
       } catch { /* non-JSON error body */ }
       throw new ApiError(res.status, message);
     }
