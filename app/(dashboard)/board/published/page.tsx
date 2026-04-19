@@ -46,10 +46,13 @@ export default function BoardPublishedPage() {
       setRecallOpen(false);
       setRecallReason("");
       refetch();
+      addToast({ type: "success", message: "Term recalled" });
+    } catch {
+      addToast({ type: "error", message: "Failed to recall term" });
     } finally {
       setRecallLoading(false);
     }
-  }, [recallId, recallReason, refetch]);
+  }, [recallId, recallReason, refetch, addToast]);
 
   return (
     <RoleGate roles={["main_board", "admin"]}>

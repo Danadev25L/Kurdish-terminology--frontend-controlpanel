@@ -19,6 +19,7 @@ import {
 } from "@/lib/api/recalls";
 import type { Recall } from "@/lib/api/types";
 import { RequireAuth } from "@/components/auth/require-auth";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 const statusVariant: Record<string, "default" | "success" | "warning" | "danger"> = {
   pending: "warning",
@@ -117,6 +118,7 @@ function RecallsContent() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb items={[{ label: "Board", href: "/board/review-queue" }, { label: "Recalls" }]} />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Board Recall Review</h1>

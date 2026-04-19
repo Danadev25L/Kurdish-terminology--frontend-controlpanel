@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/ui/pagination";
 import { SkeletonTable } from "@/components/ui/skeleton";
 import { formatDateTime } from "@/lib/utils/format";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 import type { AuditEvent, PaginatedResponse } from "@/lib/api/types";
 
 export default function AdminAuditPage() {
@@ -18,6 +19,7 @@ export default function AdminAuditPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb items={[{ label: "Admin", href: "/admin" }, { label: "Audit Log" }]} />
       <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">Audit Log</h1>
 
       {isLoading ? (

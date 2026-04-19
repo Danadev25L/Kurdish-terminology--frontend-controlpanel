@@ -17,6 +17,7 @@ import {
   voteOnRecall,
 } from "@/lib/api/recalls";
 import type { Recall, Concept } from "@/lib/api/types";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 const statusVariant: Record<string, "default" | "success" | "warning" | "danger"> = {
   pending: "warning",
@@ -96,6 +97,7 @@ export default function RecallsPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: "Recalls" }]} />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Term Recalls</h1>

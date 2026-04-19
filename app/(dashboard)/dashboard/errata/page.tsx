@@ -11,6 +11,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Textarea } from "@/components/ui/textarea";
 import { Pagination } from "@/components/ui/pagination";
 import { resolveErrata, rejectErrata, updateErrata } from "@/lib/api/errata";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { useToastStore } from "@/stores/toast-store";
 import type { Errata } from "@/lib/api/types";
 import { RoleGate } from "@/components/auth/role-gate";
 
@@ -30,6 +32,7 @@ const issueTypeLabels: Record<string, string> = {
 };
 
 export default function ErrataPage() {
+  const addToast = useToastStore((s) => s.addToast);
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [selectedErrata, setSelectedErrata] = useState<Errata | null>(null);
@@ -62,11 +65,14 @@ export default function ErrataPage() {
         setNotes("");
         setSelectedErrata(null);
         refetch();
+        addToast({ type: "success", message: "Errata resolved" });
+      } catch {
+        addToast({ type: "error", message: "Failed to resolve" });
       } finally {
         setProcessingId(null);
       }
     },
-    [selectedErrata, notes, refetch]
+    [selectedErrata, notes, refetch, addToast]
   );
 
   const handleReject = useCallback(
@@ -89,11 +95,14 @@ export default function ErrataPage() {
         setNotes("");
         setSelectedErrata(null);
         refetch();
+        addToast({ type: "success", message: "Errata rejected" });
+      } catch {
+        addToast({ type: "error", message: "Failed to reject" });
       } finally {
         setProcessingId(null);
       }
     },
-    [selectedErrata, notes, refetch]
+    [selectedErrata, notes, refetch, addToast]
   );
 
   const handleUpdateStatus = useCallback(
@@ -102,11 +111,14 @@ export default function ErrataPage() {
       try {
         await updateErrata(errata.id, { status });
         refetch();
+        addToast({ type: "success", message: "Status updated" });
+      } catch {
+        addToast({ type: "error", message: "Failed to update status" });
       } finally {
         setProcessingId(null);
       }
     },
-    [refetch]
+    [refetch, addToast]
   );
 
   if (isLoading) {
@@ -121,6 +133,7 @@ export default function ErrataPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: "Errata" }]} />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">Errata Management</h1>

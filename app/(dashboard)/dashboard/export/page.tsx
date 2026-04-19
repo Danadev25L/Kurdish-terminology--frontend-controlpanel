@@ -21,6 +21,7 @@ import {
 import { getDomains } from "@/lib/api/domains";
 import type { Domain, ImportResult } from "@/lib/api/types";
 import { RoleGate } from "@/components/auth/role-gate";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
 
 export default function ExportImportPage() {
   const { isDomainHead, isAdmin } = useRole();
@@ -149,6 +150,7 @@ export default function ExportImportPage() {
 
   return (
     <div className="space-y-6">
+      <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: "Export/Import" }]} />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Export & Import</h1>

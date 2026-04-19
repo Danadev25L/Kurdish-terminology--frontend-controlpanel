@@ -15,6 +15,8 @@ import { ConceptStatusBadge } from "@/components/domain/concept-status-badge";
 import { ConsensusChart } from "@/components/domain/consensus-chart";
 import { DiscussionThread } from "@/components/domain/discussion-thread";
 import { approveConcept, vetoConcept } from "@/lib/api/board";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { useToastStore } from "@/stores/toast-store";
 import { formatNumber, formatDate } from "@/lib/utils/format";
 import type { Concept, Candidate } from "@/lib/api/types";
 
@@ -29,6 +31,8 @@ export default function BoardExaminationPage() {
   const [approvalNote, setApprovalNote] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const addToast = useToastStore((s) => s.addToast);
+
   const { data: concept, isLoading } = useApi<Concept>(
     `/api/v1/concepts/${conceptId}`,
     { pollingInterval: 120000 }
@@ -42,22 +46,28 @@ export default function BoardExaminationPage() {
     setLoading(true);
     try {
       await approveConcept(Number(conceptId), approvalNote || undefined);
+      addToast({ type: "success", message: "Term approved and published" });
       router.push("/board/review-queue");
+    } catch {
+      addToast({ type: "error", message: "Failed to approve" });
     } finally {
       setLoading(false);
     }
-  }, [conceptId, approvalNote, router]);
+  }, [conceptId, approvalNote, router, addToast]);
 
   const handleVeto = useCallback(async () => {
     if (!vetoReason.trim()) return;
     setLoading(true);
     try {
       await vetoConcept(Number(conceptId), vetoReason);
+      addToast({ type: "success", message: "Term vetoed" });
       router.push("/board/review-queue");
+    } catch {
+      addToast({ type: "error", message: "Failed to veto" });
     } finally {
       setLoading(false);
     }
-  }, [conceptId, vetoReason, router]);
+  }, [conceptId, vetoReason, router, addToast]);
 
   if (isLoading) {
     return (
@@ -90,6 +100,7 @@ export default function BoardExaminationPage() {
   return (
     <RoleGate roles={["main_board", "admin"]}>
       <div className="space-y-6">
+        <Breadcrumb items={[{ label: "Board Review", href: "/board/review-queue" }, { label: concept.english_term?.word ?? "Review" }]} />
         {/* Back button */}
         <Button
           variant="ghost"
