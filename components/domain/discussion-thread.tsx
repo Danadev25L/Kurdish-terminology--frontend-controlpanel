@@ -17,6 +17,14 @@ import {
 import type { Discussion } from "@/lib/api/types";
 import { timeAgo } from "@/lib/utils/format";
 
+interface PaginatedDiscussions {
+  data: Discussion[];
+  current_page?: number;
+  last_page?: number;
+  per_page?: number;
+  total?: number;
+}
+
 interface DiscussionThreadProps {
   conceptId: string;
 }
@@ -26,27 +34,54 @@ export function DiscussionThread({ conceptId }: DiscussionThreadProps) {
   const { user } = useAuth();
   const [newBody, setNewBody] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const { data: discussions, isLoading, refetch } = useApi<Discussion[]>(
+  const { data: discussionsData, isLoading, refetch } = useApi<PaginatedDiscussions>(
     `/api/v1/concepts/${conceptId}/discussions`,
     { pollingInterval: 120000 }
   );
 
+  // Extract discussions array from paginated response
+  const discussions = discussionsData?.data ?? [];
+
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      if (!newBody.trim()) return;
+      const trimmed = newBody.trim();
+
+      // Client-side validation (must match API: min 5 characters)
+      if (!trimmed) {
+        setError("Discussion body cannot be empty.");
+        return;
+      }
+      if (trimmed.length < 5) {
+        setError("Discussion must be at least 5 characters.");
+        return;
+      }
+
       setSubmitting(true);
+      setError(null);
       try {
-        await createDiscussion(Number(conceptId), { body: newBody.trim() });
+        await createDiscussion(Number(conceptId), { body: trimmed });
         setNewBody("");
-        refetch();
+        // Refetch after a small delay to ensure server processed it
+        await refetch();
+      } catch (err: unknown) {
+        // Show error message from API or generic error
+        const message = err instanceof Error ? err.message : "Failed to post discussion.";
+        setError(message);
       } finally {
         setSubmitting(false);
       }
     },
-    [conceptId, newBody, refetch]
+    [conceptId, refetch]
   );
+
+  // Clear error when user starts typing
+  const handleInputChange = useCallback((value: string) => {
+    setNewBody(value);
+    if (error) setError(null);
+  }, [error]);
 
   const handleReply = useCallback(
     async (discussionId: number, body: string, parentId?: number) => {
@@ -77,7 +112,7 @@ export function DiscussionThread({ conceptId }: DiscussionThreadProps) {
 
   if (isLoading) return <Spinner />;
 
-  const topLevel = (discussions ?? []).filter((d) => !d.parent_id && !d.deleted_at);
+  const topLevel = discussions.filter((d) => !d.parent_id && !d.deleted_at);
 
   return (
     <div className="space-y-4">
@@ -85,13 +120,23 @@ export function DiscussionThread({ conceptId }: DiscussionThreadProps) {
       <form onSubmit={handleSubmit} className="space-y-3">
         <Textarea
           value={newBody}
-          onChange={(e) => setNewBody(e.target.value)}
+          onChange={(e) => handleInputChange(e.target.value)}
           placeholder="Start a new discussion..."
           rows={3}
         />
-        <Button type="submit" size="sm" loading={submitting}>
-          Post
-        </Button>
+        {error && (
+          <p className="text-sm text-danger">{error}</p>
+        )}
+        <div className="flex items-center gap-3">
+          <Button type="submit" size="sm" loading={submitting} disabled={newBody.trim().length < 5}>
+            Post
+          </Button>
+          <span className="text-xs text-muted">
+            {newBody.trim().length < 5
+              ? `${5 - newBody.trim().length} more characters required`
+              : `${newBody.trim().length} characters`}
+          </span>
+        </div>
       </form>
 
       {/* Thread list */}
@@ -110,7 +155,7 @@ export function DiscussionThread({ conceptId }: DiscussionThreadProps) {
               onReply={handleReply}
               onReact={handleReact}
               onDelete={handleDelete}
-              replies={(discussions ?? []).filter(
+              replies={discussions.filter(
                 (d) => d.parent_id === discussion.id && !d.deleted_at
               )}
             />

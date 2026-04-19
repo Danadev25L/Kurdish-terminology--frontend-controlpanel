@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { castThresholdVote, getThresholdResult } from "@/lib/api/voting";
 import { useApi } from "@/lib/hooks/use-api";
 import { useAuth } from "@/lib/hooks/use-auth";
+import { useRole } from "@/lib/hooks/use-role";
 import type { ThresholdResult } from "@/lib/api/types";
 
 interface ThresholdVotePanelProps {
@@ -14,6 +15,7 @@ interface ThresholdVotePanelProps {
 
 export function ThresholdVotePanel({ conceptId }: ThresholdVotePanelProps) {
   const { user } = useAuth();
+  const { isExpert, isDomainHead, isAdmin, isMainBoard } = useRole();
   const [submitting, setSubmitting] = useState(false);
   const [voted, setVoted] = useState(false);
 
@@ -38,6 +40,8 @@ export function ThresholdVotePanel({ conceptId }: ThresholdVotePanelProps) {
   if (isLoading) return null;
 
   const hasVoted = result?.user_voted ?? voted;
+  // Per SRS 3.2.2: Threshold voting is for domain experts only
+  const canVote = isExpert || isDomainHead || isAdmin;
 
   return (
     <Card>
@@ -48,25 +52,27 @@ export function ThresholdVotePanel({ conceptId }: ThresholdVotePanelProps) {
         Should this concept advance to consensus voting?
       </p>
 
-      {hasVoted ? (
-        <div className="space-y-3">
-          <p className="text-sm text-success font-medium">
-            You have voted: {result?.user_vote ? "Yes" : "No"}
+      {result && (
+        <div className="space-y-1 text-sm mb-4">
+          <p>
+            Yes: {result.yes_count} / {result.total_eligible} (
+            {(result.yes_ratio * 100).toFixed(1)}%)
           </p>
-          {result && (
-            <div className="space-y-1 text-sm">
-              <p>
-                Yes: {result.yes_count} / {result.total_eligible} (
-                {(result.yes_ratio * 100).toFixed(1)}%)
-              </p>
-              <p>No: {result.no_count}</p>
-              <p className="font-medium">
-                Status: {result.passed ? "PASSED" : "Pending"}
-              </p>
-            </div>
-          )}
+          <p>No: {result.no_count}</p>
+          <p className="font-medium">
+            Status: {result.passed ? "PASSED" : "Pending"}
+          </p>
         </div>
-      ) : (
+      )}
+
+      {!canVote && isMainBoard && (
+        <p className="text-sm text-muted">
+          Threshold voting is limited to domain experts per SRS 3.2.2.
+          Main Board can use "escalate to Stage 3" to override.
+        </p>
+      )}
+
+      {canVote && !hasVoted && (
         <div className="flex gap-3">
           <Button
             onClick={() => handleVote(true)}
@@ -83,6 +89,12 @@ export function ThresholdVotePanel({ conceptId }: ThresholdVotePanelProps) {
             No
           </Button>
         </div>
+      )}
+
+      {hasVoted && (
+        <p className="text-sm text-success font-medium">
+          You have voted: {result?.user_vote ? "Yes" : "No"}
+        </p>
       )}
     </Card>
   );

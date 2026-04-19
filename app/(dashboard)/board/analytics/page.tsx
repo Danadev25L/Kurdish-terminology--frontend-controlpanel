@@ -15,12 +15,12 @@ import type {
 
 export default function BoardAnalyticsPage() {
   const { data: dialectData, isLoading: dLoading } = useApi<DialectEquityData[]>(
-    "/api/analytics/dialect-equity"
+    "/api/v1/analytics/dialect-equity"
   );
   const { data: versatilityData, isLoading: vLoading } =
-    useApi<WordVersatilityData[]>("/api/analytics/word-versatility");
+    useApi<WordVersatilityData[]>("/api/v1/analytics/word-versatility");
   const { data: healthData, isLoading: hLoading } = useApi<DomainHealthData[]>(
-    "/api/analytics/domain-health"
+    "/api/v1/board/analytics"
   );
 
   return (

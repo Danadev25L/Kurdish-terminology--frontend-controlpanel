@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils/cn";
 import { castConsensusVotes } from "@/lib/api/voting";
+import { useRole } from "@/lib/hooks/use-role";
 import type { Candidate, ConsensusVote } from "@/lib/api/types";
 
 interface VoteMatrixProps {
@@ -20,6 +21,10 @@ export function VoteMatrix({
   votingClosed = false,
   onVoted,
 }: VoteMatrixProps) {
+  const { isExpert, isDomainHead, isAdmin, isMainBoard } = useRole();
+  // Per SRS 3.3.2: Consensus voting is for domain experts only
+  const canVote = isExpert || isDomainHead || isAdmin;
+
   const [votes, setVotes] = useState<Record<number, number | null>>(() => {
     const initial: Record<number, number | null> = {};
     candidates.forEach((c) => {
@@ -65,65 +70,82 @@ export function VoteMatrix({
         Rate each candidate 1-10. Leave blank to skip a candidate.
       </p>
 
-      <div className="space-y-4">
-        {candidates
-          .filter((c) => !c.withdrawn_at)
-          .map((candidate) => (
-            <div
-              key={candidate.id}
-              className="flex items-center gap-4 rounded-lg border border-border p-3"
-            >
-              <div className="w-32 shrink-0">
-                <p className="font-medium text-gray-900" dir="rtl">
-                  {candidate.kurdish_term?.word ?? "—"}
-                </p>
-              </div>
-              <div className="flex gap-1">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((score) => (
-                  <button
-                    key={score}
-                    disabled={isDisabled}
-                    onClick={() => setScore(candidate.id, score)}
-                    className={cn(
-                      "flex h-8 w-8 items-center justify-center rounded-md text-sm font-medium transition-colors",
-                      votes[candidate.id] === score
-                        ? "bg-primary text-white"
-                        : "bg-gray-100 text-gray-600 hover:bg-gray-200",
-                      isDisabled && "opacity-50 cursor-not-allowed"
-                    )}
-                  >
-                    {score}
-                  </button>
-                ))}
-                <button
-                  disabled={isDisabled}
-                  onClick={() => setScore(candidate.id, null)}
-                  className={cn(
-                    "ms-2 flex h-8 items-center justify-center rounded-md px-2 text-xs font-medium transition-colors",
-                    votes[candidate.id] === null
-                      ? "bg-gray-300 text-gray-700"
-                      : "bg-gray-100 text-muted hover:bg-gray-200",
-                    isDisabled && "opacity-50 cursor-not-allowed"
-                  )}
-                >
-                  Skip
-                </button>
-              </div>
-            </div>
-          ))}
-      </div>
-
-      {!isDisabled && (
-        <div className="mt-4">
-          <Button onClick={handleSubmit} loading={submitting}>
-            Submit Votes
-          </Button>
-        </div>
+      {!canVote && isMainBoard && (
+        <p className="mb-4 text-sm text-muted">
+          Consensus voting is limited to domain experts per SRS 3.3.2.
+          Main Board can observe but not participate.
+        </p>
       )}
 
-      {submitted && (
-        <p className="mt-3 text-sm font-medium text-success">
-          Votes submitted successfully.
+      {canVote && (
+        <>
+          <div className="space-y-4">
+            {candidates
+              .filter((c) => !c.withdrawn_at)
+              .map((candidate) => (
+                <div
+                  key={candidate.id}
+                  className="flex items-center gap-4 rounded-lg border border-border p-3"
+                >
+                  <div className="w-32 shrink-0">
+                    <p className="font-medium text-gray-900" dir="rtl">
+                      {candidate.kurdish_term?.word ?? "—"}
+                    </p>
+                  </div>
+                  <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((score) => (
+                      <button
+                        key={score}
+                        disabled={isDisabled}
+                        onClick={() => setScore(candidate.id, score)}
+                        className={cn(
+                          "flex h-8 w-8 items-center justify-center rounded-md text-sm font-medium transition-colors",
+                          votes[candidate.id] === score
+                            ? "bg-primary text-white"
+                            : "bg-gray-100 text-gray-600 hover:bg-gray-200",
+                          isDisabled && "opacity-50 cursor-not-allowed"
+                        )}
+                      >
+                        {score}
+                      </button>
+                    ))}
+                    <button
+                      disabled={isDisabled}
+                      onClick={() => setScore(candidate.id, null)}
+                      className={cn(
+                        "ms-2 flex h-8 items-center justify-center rounded-md px-2 text-xs font-medium transition-colors",
+                        votes[candidate.id] === null
+                          ? "bg-gray-300 text-gray-700"
+                          : "bg-gray-100 text-muted hover:bg-gray-200",
+                        isDisabled && "opacity-50 cursor-not-allowed"
+                      )}
+                    >
+                      Skip
+                    </button>
+                  </div>
+                </div>
+              ))}
+          </div>
+
+          {!isDisabled && (
+            <div className="mt-4">
+              <Button onClick={handleSubmit} loading={submitting}>
+                Submit Votes
+              </Button>
+            </div>
+          )}
+
+          {submitted && (
+            <p className="mt-3 text-sm font-medium text-success">
+              Votes submitted successfully.
+            </p>
+          )}
+        </>
+      )}
+
+      {!canVote && !isMainBoard && (
+        <p className="text-sm text-muted">
+          Only domain experts and domain heads can vote in consensus stage.
         </p>
       )}
     </Card>

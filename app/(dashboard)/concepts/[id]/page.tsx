@@ -27,14 +27,15 @@ export default function ConceptDetailPage() {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
 
+  // Concept endpoint already includes candidates - no need for separate call
+  // Only poll during active voting phases (threshold, voting, review)
   const { data: concept, isLoading, refetch } = useApi<Concept>(
     `/api/v1/concepts/${conceptId}`,
-    { pollingInterval: 120000 }
+    { pollingInterval: 60000 } // Reduced to 1 minute, only for voting phases
   );
 
-  const { data: candidates } = useApi<Candidate[]>(
-    `/api/v1/concepts/${conceptId}/candidates`
-  );
+  // Candidates are already included in concept response
+  const candidates = concept?.candidates ?? [];
 
   const handleWithdraw = useCallback(
     async (id: number) => {

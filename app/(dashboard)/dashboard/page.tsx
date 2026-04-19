@@ -41,8 +41,9 @@ interface InboxItem {
 export default function DashboardPage() {
   const router = useRouter();
 
+  // Use optimized inbox endpoint instead of loading all concepts
   const { data: concepts, isLoading: cLoading } = useApi<PaginatedResponse<Concept>>(
-    "/api/v1/concepts",
+    "/api/v1/concepts/inbox",
     { pollingInterval: 120000 }
   );
 

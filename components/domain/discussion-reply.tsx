@@ -30,22 +30,42 @@ export function DiscussionReply({
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyBody, setReplyBody] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmitReply = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      if (!replyBody.trim()) return;
+      const trimmed = replyBody.trim();
+
+      if (!trimmed) {
+        setError("Reply cannot be empty.");
+        return;
+      }
+      if (trimmed.length < 5) {
+        setError("Reply must be at least 5 characters.");
+        return;
+      }
+
       setSubmitting(true);
+      setError(null);
       try {
-        await onReply(discussion.id, replyBody.trim(), discussion.id);
+        await onReply(discussion.id, trimmed, discussion.id);
         setReplyBody("");
         setShowReplyForm(false);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Failed to post reply.";
+        setError(message);
       } finally {
         setSubmitting(false);
       }
     },
     [discussion.id, onReply, replyBody]
   );
+
+  const handleInputChange = useCallback((value: string) => {
+    setReplyBody(value);
+    if (error) setError(null);
+  }, [error]);
 
   return (
     <div
@@ -101,22 +121,39 @@ export function DiscussionReply({
           <form onSubmit={handleSubmitReply} className="mt-3 space-y-2">
             <Textarea
               value={replyBody}
-              onChange={(e) => setReplyBody(e.target.value)}
+              onChange={(e) => handleInputChange(e.target.value)}
               placeholder="Write a reply..."
               rows={2}
             />
+            {error && (
+              <p className="text-xs text-danger">{error}</p>
+            )}
             <div className="flex gap-2">
-              <Button type="submit" size="sm" loading={submitting}>
+              <Button
+                type="submit"
+                size="sm"
+                loading={submitting}
+                disabled={replyBody.trim().length < 5}
+              >
                 Reply
               </Button>
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                onClick={() => setShowReplyForm(false)}
+                onClick={() => {
+                  setShowReplyForm(false);
+                  setReplyBody("");
+                  setError(null);
+                }}
               >
                 Cancel
               </Button>
+              <span className="ml-auto text-xs text-muted">
+                {replyBody.trim().length < 5
+                  ? `${5 - replyBody.trim().length} more required`
+                  : `${replyBody.trim().length} chars`}
+              </span>
             </div>
           </form>
         )}
