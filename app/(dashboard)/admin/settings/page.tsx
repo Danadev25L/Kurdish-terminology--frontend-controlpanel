@@ -50,14 +50,14 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#111827]">System Settings</h1>
+      <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">System Settings</h1>
 
       <Card>
         <div className="space-y-4">
           {settings?.map((setting) => (
             <div
               key={setting.key}
-              className="flex items-end gap-4 border-b border-[#f3f4f6] pb-4 last:border-0"
+              className="flex items-end gap-4 border-b border-border-light pb-4 last:border-0"
             >
               <div className="flex-1">
                 <Input

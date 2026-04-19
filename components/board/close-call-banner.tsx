@@ -20,7 +20,7 @@ export function CloseCallBanner() {
         <p className="text-sm font-semibold text-warning">
           Close Call
         </p>
-        <p className="text-[11px] text-[#9ca3af]">
+        <p className="text-[11px] text-text-muted">
           The top candidates are within a 5% margin. Review carefully.
         </p>
       </div>

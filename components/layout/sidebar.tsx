@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils/cn";
 import { useRole } from "@/lib/hooks/use-role";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useState } from "react";
+import { Tooltip } from "@/components/ui/tooltip";
 
 interface NavItem {
   label: string;
@@ -156,21 +157,22 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         onMouseEnter={() => collapsed && setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         className={cn(
-          "relative z-40 flex h-screen flex-col border-e border-[#e5e7eb] bg-white transition-all duration-200",
+          "relative z-40 flex h-screen flex-col border-e border-border bg-surface-raised transition-all duration-200",
           collapsed && !hovered ? "w-[60px]" : "w-[220px]"
         )}
       >
         {/* Logo */}
-        <div className="flex h-[52px] items-center border-b border-[#e5e7eb] px-4">
+        <div className="flex h-[52px] items-center border-b border-border px-4">
           {isExpanded ? (
             <Link
               href="/dashboard"
-              className="text-[15px] font-extrabold tracking-[-0.02em] text-[#111827]"
+              aria-label="Dashboard"
+              className="text-[15px] font-extrabold tracking-[-0.02em] text-foreground"
             >
-              KTP<span className="ml-0.5 text-[10px] font-semibold text-[#6366f1] align-super">CP</span>
+              KTP<span className="ml-0.5 text-[10px] font-semibold text-primary-500 align-super">CP</span>
             </Link>
           ) : (
-            <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-[#111827] text-xs font-bold text-white">
+            <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-foreground text-xs font-bold text-white">
               K
             </div>
           )}
@@ -185,19 +187,20 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
             if (!isExpanded) {
               return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  title={item.label}
-                  className={cn(
-                    "flex h-9 w-9 items-center justify-center rounded-lg mx-auto transition-colors",
-                    isActive
-                      ? "bg-[#f0f0ff] text-[#6366f1]"
-                      : "text-[#9ca3af] hover:bg-gray-100 hover:text-gray-600"
-                  )}
-                >
-                  {item.icon}
-                </Link>
+                <Tooltip key={item.href} content={item.label}>
+                  <Link
+                    href={item.href}
+                    aria-label={item.label}
+                    className={cn(
+                      "flex h-9 w-9 items-center justify-center rounded-lg mx-auto transition-colors",
+                      isActive
+                        ? "bg-primary-light text-primary-500"
+                        : "text-text-muted hover:bg-surface hover:text-text-secondary"
+                    )}
+                  >
+                    {item.icon}
+                  </Link>
+                </Tooltip>
               );
             }
 
@@ -208,8 +211,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 text-[13px] font-medium rounded-r-lg transition-colors mr-3",
                   isActive
-                    ? "bg-[#f0f0ff] text-[#6366f1] font-semibold"
-                    : "text-[#6b7280] pl-7 hover:text-gray-900"
+                    ? "bg-primary-light text-primary-500 font-semibold"
+                    : "text-muted pl-7 hover:text-foreground"
                 )}
               >
                 {item.icon}
@@ -220,19 +223,19 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         </nav>
 
         {/* User section */}
-        <div className="border-t border-[#f3f4f6] p-3">
+        <div className="border-t border-border-light p-3">
           {isExpanded ? (
             <div className="flex items-center gap-2.5 px-1">
-              <div className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-lg bg-[#111827] text-[11px] font-semibold text-white">
+              <div className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-lg bg-foreground text-[11px] font-semibold text-white">
                 {userInitial}
               </div>
               <div className="min-w-0">
-                <div className="truncate text-[12px] font-semibold text-[#111827]">{user?.name ?? "User"}</div>
-                <div className="truncate text-[10px] text-[#9ca3af]">{user?.email ?? ""}</div>
+                <div className="truncate text-[12px] font-semibold text-foreground">{user?.name ?? "User"}</div>
+                <div className="truncate text-[10px] text-text-muted">{user?.email ?? ""}</div>
               </div>
             </div>
           ) : (
-            <div className="mx-auto flex h-[30px] w-[30px] items-center justify-center rounded-lg bg-[#111827] text-[11px] font-semibold text-white">
+            <div className="mx-auto flex h-[30px] w-[30px] items-center justify-center rounded-lg bg-foreground text-[11px] font-semibold text-white" aria-label="Profile">
               {userInitial}
             </div>
           )}

@@ -38,42 +38,42 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen">
       {/* Dark brand panel — hidden on mobile */}
-      <div className="hidden w-[45%] flex-col justify-center bg-[#111827] px-12 md:flex">
+      <div className="hidden w-[45%] flex-col justify-center bg-foreground px-12 md:flex">
         <h1 className="text-[32px] font-extrabold tracking-[-0.03em] text-white">
           KTP
         </h1>
-        <p className="mt-1 text-[12px] font-semibold uppercase tracking-[0.08em] text-[#6366f1]">
+        <p className="mt-1 text-[12px] font-semibold uppercase tracking-[0.08em] text-primary-500">
           Control Panel
         </p>
-        <p className="mt-6 text-[14px] leading-relaxed text-[#94a3b8]">
+        <p className="mt-6 text-[14px] leading-relaxed text-text-muted">
           Kurdish Terminology Portal<br />
           Admin &amp; Expert Workspace
         </p>
         <div className="mt-10 flex gap-2">
-          <div className="h-2 w-2 rounded-full bg-[#6366f1]" />
-          <div className="h-2 w-2 rounded-full bg-[#374151]" />
-          <div className="h-2 w-2 rounded-full bg-[#374151]" />
+          <div className="h-2 w-2 rounded-full bg-primary-500" />
+          <div className="h-2 w-2 rounded-full bg-text-secondary" />
+          <div className="h-2 w-2 rounded-full bg-text-secondary" />
         </div>
       </div>
 
       {/* Form panel */}
-      <div className="flex flex-1 items-center justify-center bg-[#fafafa] px-6 py-12">
+      <div className="flex flex-1 items-center justify-center bg-background px-6 py-12">
         <div className="w-full max-w-[320px]">
           {/* Mobile-only logo */}
           <div className="mb-8 md:hidden">
-            <h1 className="text-[24px] font-extrabold tracking-[-0.03em] text-[#111827]">
-              KTP<span className="ml-0.5 text-[12px] font-semibold text-[#6366f1] align-super">CP</span>
+            <h1 className="text-[24px] font-extrabold tracking-[-0.03em] text-foreground">
+              KTP<span className="ml-0.5 text-[12px] font-semibold text-primary-500 align-super">CP</span>
             </h1>
           </div>
 
-          <h2 className="text-[20px] font-bold text-[#111827]">Sign in</h2>
-          <p className="mt-1 text-[13px] text-[#9ca3af]">
+          <h2 className="text-[20px] font-bold text-foreground">Sign in</h2>
+          <p className="mt-1 text-[13px] text-text-muted">
             Enter your credentials to continue
           </p>
 
           <form onSubmit={handleSubmit} className="mt-6 space-y-4">
             <div>
-              <label className="mb-1.5 block text-[12px] font-semibold text-[#374151]">
+              <label className="mb-1.5 block text-[12px] font-semibold text-text-secondary">
                 Email
               </label>
               <input
@@ -83,11 +83,11 @@ export default function LoginPage() {
                 placeholder="you@example.com"
                 required
                 autoComplete="email"
-                className="w-full rounded-lg border border-[#e5e7eb] bg-white px-3 py-2.5 text-[13px] text-[#111827] placeholder:text-[#9ca3af] focus:border-[#6366f1] focus:outline-none focus:ring-1 focus:ring-[#6366f1]"
+                className="w-full rounded-lg border border-border bg-surface-raised px-3 py-2.5 text-[13px] text-foreground placeholder:text-text-muted focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-[12px] font-semibold text-[#374151]">
+              <label className="mb-1.5 block text-[12px] font-semibold text-text-secondary">
                 Password
               </label>
               <input
@@ -97,7 +97,7 @@ export default function LoginPage() {
                 placeholder="Enter your password"
                 required
                 autoComplete="current-password"
-                className="w-full rounded-lg border border-[#e5e7eb] bg-white px-3 py-2.5 text-[13px] text-[#111827] placeholder:text-[#9ca3af] focus:border-[#6366f1] focus:outline-none focus:ring-1 focus:ring-[#6366f1]"
+                className="w-full rounded-lg border border-border bg-surface-raised px-3 py-2.5 text-[13px] text-foreground placeholder:text-text-muted focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
               />
             </div>
 
@@ -110,13 +110,13 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg bg-[#111827] px-4 py-2.5 text-[13px] font-semibold text-white hover:bg-[#1e293b] disabled:pointer-events-none disabled:opacity-50"
+              className="w-full rounded-lg bg-foreground px-4 py-2.5 text-[13px] font-semibold text-white hover:bg-foreground/90 disabled:pointer-events-none disabled:opacity-50"
             >
               {loading ? "Signing in..." : "Sign in"}
             </button>
           </form>
 
-          <p className="mt-4 text-center text-[12px] text-[#9ca3af]">
+          <p className="mt-4 text-center text-[12px] text-text-muted">
             Forgot password?
           </p>
         </div>

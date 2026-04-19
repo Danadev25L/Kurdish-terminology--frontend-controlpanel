@@ -85,7 +85,7 @@ export default function AdminUsersPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#111827]">User Management</h1>
+        <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">User Management</h1>
         <Button onClick={() => setCreateOpen(true)}>Create User</Button>
       </div>
 
@@ -95,10 +95,10 @@ export default function AdminUsersPage() {
         </div>
       ) : data?.data && data.data.length > 0 ? (
         <>
-          <div className="overflow-x-auto rounded-lg border border-[#e5e7eb] bg-white">
+          <div className="overflow-x-auto rounded-lg border border-border bg-surface-raised">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-[#f3f4f6] bg-surface text-start text-[11px] font-semibold uppercase tracking-[0.05em] text-[#9ca3af]">
+                <tr className="border-b border-border-light bg-surface text-start text-[11px] font-semibold uppercase tracking-[0.05em] text-text-muted">
                   <th className="px-4 py-3">Name</th>
                   <th className="px-4 py-3">Email</th>
                   <th className="px-4 py-3">Roles</th>
@@ -108,9 +108,9 @@ export default function AdminUsersPage() {
               </thead>
               <tbody>
                 {data.data.map((user) => (
-                  <tr key={user.id} className="border-b border-[#f3f4f6]">
+                  <tr key={user.id} className="border-b border-border-light">
                     <td className="px-4 py-3 font-semibold">{user.name}</td>
-                    <td className="px-4 py-3 text-[13px] text-[#9ca3af]">
+                    <td className="px-4 py-3 text-[13px] text-text-muted">
                       {user.email}
                     </td>
                     <td className="px-4 py-3">
@@ -122,7 +122,7 @@ export default function AdminUsersPage() {
                         ))}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-[13px] text-[#9ca3af]">
+                    <td className="px-4 py-3 text-[13px] text-text-muted">
                       {user.created_at}
                     </td>
                     <td className="px-4 py-3">
@@ -148,7 +148,7 @@ export default function AdminUsersPage() {
           />
         </>
       ) : (
-        <p className="py-8 text-center text-[13px] text-[#9ca3af]">No users found.</p>
+        <p className="py-8 text-center text-[13px] text-text-muted">No users found.</p>
       )}
 
       {/* Create user modal */}
@@ -181,7 +181,7 @@ export default function AdminUsersPage() {
             required
           />
           <div>
-            <p className="mb-2 text-[14px] font-bold text-[#374151]">Roles</p>
+            <p className="mb-2 text-[14px] font-bold text-text-secondary">Roles</p>
             <div className="flex flex-wrap gap-2">
               {allRoles.map((role) => (
                 <button
@@ -191,7 +191,7 @@ export default function AdminUsersPage() {
                   className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                     selectedRoles.includes(role)
                       ? "bg-primary text-white"
-                      : "bg-gray-100 text-[#6b7280] hover:bg-gray-50"
+                      : "bg-gray-100 text-muted hover:bg-surface"
                   }`}
                 >
                   {role.replace("_", " ")}

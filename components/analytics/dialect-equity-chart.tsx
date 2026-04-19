@@ -43,7 +43,7 @@ export function DialectEquityChart({ data }: DialectEquityChartProps) {
               if (!active || !payload?.length) return null;
               const d = payload[0].payload as DialectEquityData;
               return (
-                <div className="rounded-lg border border-border bg-white p-3 shadow-sm text-sm">
+                <div className="rounded-lg border border-border bg-surface-raised p-3 shadow-sm text-sm">
                   <p className="font-medium">{d.dialect}</p>
                   <p>Count: {d.count}</p>
                   <p>Share: {(d.percentage * 100).toFixed(1)}%</p>

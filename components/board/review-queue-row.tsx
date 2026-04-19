@@ -18,7 +18,7 @@ export function ReviewQueueRow({
   onClick,
 }: ReviewQueueRowProps) {
   return (
-    <tr className="border-b border-border hover:bg-gray-50">
+    <tr className="border-b border-border hover:bg-surface">
       <td className="px-4 py-3">
         <input
           type="checkbox"
@@ -34,7 +34,7 @@ export function ReviewQueueRow({
         className="cursor-pointer px-4 py-3"
         onClick={() => onClick(item.id)}
       >
-        <p className="font-semibold text-[#111827]">
+        <p className="font-semibold text-foreground">
           {item.concept.english_term?.word ?? "Untitled"}
         </p>
       </td>
@@ -49,11 +49,11 @@ export function ReviewQueueRow({
       <td className="px-4 py-3 text-sm font-medium">
         {item.consensus_score ? formatNumber(item.consensus_score) : "—"}
       </td>
-      <td className="px-4 py-3 text-[13px] text-[#9ca3af]">{item.vote_count}</td>
+      <td className="px-4 py-3 text-[13px] text-text-muted">{item.vote_count}</td>
       <td className="px-4 py-3">
         {item.close_call && <Badge variant="warning">Close Call</Badge>}
       </td>
-      <td className="px-4 py-3 text-[11px] text-[#9ca3af]">
+      <td className="px-4 py-3 text-[11px] text-text-muted">
         {timeAgo(item.updated_at)}
       </td>
     </tr>

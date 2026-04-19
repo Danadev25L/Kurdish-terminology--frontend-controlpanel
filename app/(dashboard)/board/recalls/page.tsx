@@ -126,7 +126,7 @@ function RecallsContent() {
         </div>
         <div className="flex items-center gap-2">
           <select
-            className="rounded-lg border border-border bg-white px-3 py-2 text-sm"
+            className="rounded-lg border border-border bg-surface-raised px-3 py-2 text-sm"
             value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);

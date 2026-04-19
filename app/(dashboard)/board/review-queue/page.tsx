@@ -64,7 +64,7 @@ export default function BoardReviewQueuePage() {
   return (
     <RoleGate roles={["main_board", "admin"]}>
       <div className="space-y-6">
-        <h1 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#111827]">
+        <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">
           Board Review Queue
         </h1>
 
@@ -94,7 +94,7 @@ export default function BoardReviewQueuePage() {
                 setCloseCall(e.target.checked);
                 setPage(1);
               }}
-              className="rounded border-[#e5e7eb] text-primary focus:ring-primary"
+              className="rounded border-border text-primary focus:ring-primary"
             />
             Close calls only
           </label>
@@ -121,10 +121,10 @@ export default function BoardReviewQueuePage() {
           </div>
         ) : data?.data && data.data.length > 0 ? (
           <>
-            <div className="overflow-x-auto rounded-lg border border-[#e5e7eb] bg-white">
+            <div className="overflow-x-auto rounded-lg border border-border bg-surface-raised">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-[#f3f4f6] bg-surface text-start text-[11px] font-semibold uppercase tracking-[0.05em] text-[#9ca3af]">
+                  <tr className="border-b border-border-light bg-surface text-start text-[11px] font-semibold uppercase tracking-[0.05em] text-text-muted">
                     <th className="px-4 py-3 w-10" />
                     <th className="px-4 py-3">English Term</th>
                     <th className="px-4 py-3">Domain</th>
@@ -157,7 +157,7 @@ export default function BoardReviewQueuePage() {
             />
           </>
         ) : (
-          <p className="py-8 text-center text-[13px] text-[#9ca3af]">
+          <p className="py-8 text-center text-[13px] text-text-muted">
             No items in the review queue.
           </p>
         )}

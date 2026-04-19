@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Modal } from "@/components/ui/modal";
+import { Pagination } from "@/components/ui/pagination";
 import { Spinner } from "@/components/ui/spinner";
 import { createReferenceSource, importReferenceEntries } from "@/lib/api/references";
 import type { ReferenceSource, ReferenceSourceType } from "@/lib/api/types";
@@ -29,12 +30,15 @@ const sourceTypes: { value: ReferenceSourceType; label: string }[] = [
 ];
 
 export default function AdminReferencesPage() {
+  const [page, setPage] = useState(1);
   const { data: sourcesData, isLoading, refetch } = useApi<PaginatedSources>(
-    "/api/v1/reference-sources"
+    `/api/v1/reference-sources?page=${page}`
   );
 
   // Extract sources array from paginated response
   const sources = sourcesData?.data ?? [];
+  const currentPage = sourcesData?.current_page ?? 1;
+  const lastPage = sourcesData?.last_page ?? 1;
   const [createOpen, setCreateOpen] = useState(false);
   const [name, setName] = useState("");
   const [type, setType] = useState<ReferenceSourceType>("dictionary");
@@ -61,6 +65,10 @@ export default function AdminReferencesPage() {
     [name, type, desc, refetch]
   );
 
+  const handlePageChange = useCallback((p: number) => {
+    setPage(p);
+  }, []);
+
   const handleFileUpload = useCallback(
     async (sourceId: number, file: File) => {
       setUploadingId(sourceId);
@@ -85,7 +93,7 @@ export default function AdminReferencesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#111827]">Reference Library</h1>
+        <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">Reference Library</h1>
         <Button onClick={() => setCreateOpen(true)}>Add Source</Button>
       </div>
 
@@ -96,13 +104,13 @@ export default function AdminReferencesPage() {
               <div>
                 <CardTitle>{source.name}</CardTitle>
                 {source.description && (
-                  <p className="mt-1 text-[13px] text-[#9ca3af]">
+                  <p className="mt-1 text-[13px] text-text-muted">
                     {source.description}
                   </p>
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-[13px] text-[#9ca3af]">
+                <span className="text-[13px] text-text-muted">
                   {source.entry_count ?? 0} entries
                 </span>
                 <Button
@@ -129,9 +137,17 @@ export default function AdminReferencesPage() {
       </div>
 
       {sources.length === 0 && (
-        <p className="py-8 text-center text-[13px] text-[#9ca3af]">
+        <p className="py-8 text-center text-[13px] text-text-muted">
           No reference sources yet.
         </p>
+      )}
+
+      {lastPage > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          lastPage={lastPage}
+          onPageChange={handlePageChange}
+        />
       )}
 
       <Modal

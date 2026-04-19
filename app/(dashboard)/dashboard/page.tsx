@@ -83,22 +83,22 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#111827]">Priority Inbox</h1>
+      <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">Priority Inbox</h1>
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
         <Card padding>
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#f0f0ff]">
-              <svg className="h-5 w-5 text-[#6366f1]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-light">
+              <svg className="h-5 w-5 text-primary-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15a2.25 2.25 0 012.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z" />
               </svg>
             </div>
             <div>
-              <p className="text-[28px] font-extrabold tracking-[-0.02em] text-[#111827]">
+              <p className="text-[28px] font-extrabold tracking-[-0.02em] text-foreground">
                 {inboxItems.length}
               </p>
-              <p className="text-[11px] text-[#9ca3af] font-semibold uppercase tracking-[0.05em]">Active tasks</p>
+              <p className="text-[11px] text-text-muted font-semibold uppercase tracking-[0.05em]">Active tasks</p>
             </div>
           </div>
         </Card>
@@ -110,10 +110,10 @@ export default function DashboardPage() {
               </svg>
             </div>
             <div>
-              <p className="text-[28px] font-extrabold tracking-[-0.02em] text-[#111827]">
+              <p className="text-[28px] font-extrabold tracking-[-0.02em] text-foreground">
                 {inboxItems.filter((i) => i.priority === "critical").length}
               </p>
-              <p className="text-[11px] text-[#9ca3af] font-semibold uppercase tracking-[0.05em]">Critical</p>
+              <p className="text-[11px] text-text-muted font-semibold uppercase tracking-[0.05em]">Critical</p>
             </div>
           </div>
         </Card>
@@ -125,8 +125,8 @@ export default function DashboardPage() {
               </svg>
             </div>
             <div>
-              <p className="text-[28px] font-extrabold tracking-[-0.02em] text-[#111827]">{unreadCount}</p>
-              <p className="text-[11px] text-[#9ca3af] font-semibold uppercase tracking-[0.05em]">Unread notifications</p>
+              <p className="text-[28px] font-extrabold tracking-[-0.02em] text-foreground">{unreadCount}</p>
+              <p className="text-[11px] text-text-muted font-semibold uppercase tracking-[0.05em]">Unread notifications</p>
             </div>
           </div>
         </Card>
@@ -152,17 +152,17 @@ export default function DashboardPage() {
                       {item.priority}
                     </Badge>
                     <div>
-                      <p className="font-medium text-[#111827]">
+                      <p className="font-medium text-foreground">
                         {item.english_term}
                       </p>
-                      <p className="text-[13px] text-[#9ca3af]">
+                      <p className="text-[13px] text-text-muted">
                         {item.domain_name} &middot; {item.action}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <ConceptStatusBadge status={item.status} />
-                    <span className="text-xs text-[#9ca3af]">
+                    <span className="text-xs text-text-muted">
                       {timeAgo(item.updated_at)}
                     </span>
                   </div>

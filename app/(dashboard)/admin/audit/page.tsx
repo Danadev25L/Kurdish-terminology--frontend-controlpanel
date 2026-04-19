@@ -18,7 +18,7 @@ export default function AdminAuditPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#111827]">Audit Log</h1>
+      <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">Audit Log</h1>
 
       {isLoading ? (
         <div className="flex justify-center py-12">
@@ -26,10 +26,10 @@ export default function AdminAuditPage() {
         </div>
       ) : data?.data && data.data.length > 0 ? (
         <>
-          <div className="overflow-x-auto rounded-lg border border-[#e5e7eb] bg-white">
+          <div className="overflow-x-auto rounded-lg border border-border bg-surface-raised">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-[#f3f4f6] bg-surface text-start text-[11px] font-semibold uppercase tracking-[0.05em] text-[#9ca3af]">
+                <tr className="border-b border-border-light bg-surface text-start text-[11px] font-semibold uppercase tracking-[0.05em] text-text-muted">
                   <th className="px-4 py-3">Timestamp</th>
                   <th className="px-4 py-3">User</th>
                   <th className="px-4 py-3">Action</th>
@@ -39,8 +39,8 @@ export default function AdminAuditPage() {
               </thead>
               <tbody>
                 {data.data.map((event) => (
-                  <tr key={event.id} className="border-b border-[#f3f4f6]">
-                    <td className="px-4 py-3 text-[13px] text-[#9ca3af]">
+                  <tr key={event.id} className="border-b border-border-light">
+                    <td className="px-4 py-3 text-[13px] text-text-muted">
                       {formatDateTime(event.created_at)}
                     </td>
                     <td className="px-4 py-3 text-[13px]">
@@ -52,7 +52,7 @@ export default function AdminAuditPage() {
                     <td className="px-4 py-3 text-[13px]">
                       {event.entity_type} #{event.entity_id}
                     </td>
-                    <td className="px-4 py-3 text-[13px] text-[#9ca3af]">
+                    <td className="px-4 py-3 text-[13px] text-text-muted">
                       {event.details
                         ? JSON.stringify(event.details).slice(0, 80)
                         : "—"}
@@ -69,7 +69,7 @@ export default function AdminAuditPage() {
           />
         </>
       ) : (
-        <p className="py-8 text-center text-[13px] text-[#9ca3af]">
+        <p className="py-8 text-center text-[13px] text-text-muted">
           No audit events found.
         </p>
       )}

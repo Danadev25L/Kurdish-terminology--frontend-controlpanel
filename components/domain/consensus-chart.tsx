@@ -44,7 +44,7 @@ export function ConsensusChart({ candidates, winnerId }: ConsensusChartProps) {
               if (!active || !payload?.length) return null;
               const d = payload[0].payload as (typeof data)[0];
               return (
-                <div className="rounded-lg border border-border bg-white p-3 shadow-sm text-[13px]">
+                <div className="rounded-lg border border-border bg-surface-raised p-3 shadow-sm text-[13px]">
                   <p className="font-semibold">{d.name}</p>
                   <p>Cs: {d.cs.toFixed(2)}</p>
                   <p>Mean: {d.mean.toFixed(2)}</p>

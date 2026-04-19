@@ -51,7 +51,7 @@ export default function ConceptsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#111827]">Concepts</h1>
+        <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">Concepts</h1>
         {(isExpert || isAdmin) && (
           <Button onClick={() => router.push("/concepts/new")}>
             New Concept
@@ -96,17 +96,17 @@ export default function ConceptsPage() {
                 <div className="flex items-center justify-between p-4">
                   <div className="flex items-center gap-4">
                     <div>
-                      <h3 className="font-semibold text-[#111827]">
+                      <h3 className="font-semibold text-foreground">
                         {concept.english_term?.word ?? "Untitled"}
                       </h3>
-                      <p className="mt-0.5 text-sm text-[#9ca3af] line-clamp-1">
+                      <p className="mt-0.5 text-sm text-text-muted line-clamp-1">
                         {concept.definition}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <ConceptStatusBadge status={concept.status} />
-                    <span className="text-xs text-[#9ca3af]">
+                    <span className="text-xs text-text-muted">
                       {timeAgo(concept.updated_at)}
                     </span>
                   </div>
@@ -122,7 +122,7 @@ export default function ConceptsPage() {
         </div>
       ) : (
         <Card>
-          <p className="text-center text-sm text-[#9ca3af]">
+          <p className="text-center text-sm text-text-muted">
             No concepts found matching your filters.
           </p>
         </Card>

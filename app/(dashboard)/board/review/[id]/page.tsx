@@ -68,7 +68,7 @@ export default function BoardExaminationPage() {
   }
 
   if (!concept) {
-    return <p className="text-center text-[#9ca3af]">Concept not found.</p>;
+    return <p className="text-center text-text-muted">Concept not found.</p>;
   }
 
   const activeCandidates = (candidates ?? []).filter((c) => !c.withdrawn_at);
@@ -107,23 +107,23 @@ export default function BoardExaminationPage() {
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#111827]">
+                <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">
                   {concept.english_term?.word ?? "Untitled"}
                 </h1>
                 <ConceptStatusBadge status={concept.status} />
               </div>
-              <p className="mt-1 text-[13px] text-[#9ca3af]">
+              <p className="mt-1 text-[13px] text-text-muted">
                 {concept.domain?.name} &middot; {formatDate(concept.created_at)}
               </p>
             </div>
           </div>
-          <p className="mt-4 text-[#374151]">{concept.definition}</p>
+          <p className="mt-4 text-text-secondary">{concept.definition}</p>
 
           {/* Leading candidate */}
           {leading && (
             <div className="mt-4 rounded-lg border border-success bg-success-light p-4">
               <p className="text-xs font-medium text-success">Leading Candidate</p>
-              <p className="mt-1 text-lg font-semibold text-[#111827]" dir="rtl">
+              <p className="mt-1 text-lg font-semibold text-foreground" dir="rtl">
                 {leading.kurdish_term?.word}
               </p>
               {leading.metrics && (
@@ -148,7 +148,7 @@ export default function BoardExaminationPage() {
 
         {/* Consensus chart */}
         <Card>
-          <h3 className="mb-4 text-[14px] font-bold text-[#111827]">
+          <h3 className="mb-4 text-sm font-bold text-foreground">
             Consensus Scores
           </h3>
           <ConsensusChart
@@ -160,7 +160,7 @@ export default function BoardExaminationPage() {
         {/* Runner-up comparison */}
         {runnerUp && (
           <Card>
-            <h3 className="mb-3 text-[14px] font-bold text-[#111827]">
+            <h3 className="mb-3 text-sm font-bold text-foreground">
               Runner-up Comparison
             </h3>
             <div className="grid grid-cols-2 gap-4">
@@ -180,14 +180,14 @@ export default function BoardExaminationPage() {
 
         {/* Discussions (read-only context) */}
         <Card>
-          <h3 className="mb-4 text-[14px] font-bold text-[#111827]">
+          <h3 className="mb-4 text-sm font-bold text-foreground">
             Discussion History
           </h3>
           <DiscussionThread conceptId={conceptId} />
         </Card>
 
         {/* Action bar */}
-        <div className="sticky bottom-0 flex items-center gap-3 rounded-xl border border-border bg-white p-4 shadow-lg">
+        <div className="sticky bottom-0 flex items-center gap-3 rounded-xl border border-border bg-surface-raised p-4 shadow-lg">
           <Button onClick={() => setApproveOpen(true)} className="flex-1">
             Approve
           </Button>
@@ -262,8 +262,8 @@ function ComparisonBlock({
 }) {
   return (
     <div className="rounded-lg border border-border p-3">
-      <p className="text-xs font-medium text-[#9ca3af]">{label}</p>
-      <p className="mt-1 text-[14px] font-bold" dir="rtl">
+      <p className="text-xs font-medium text-text-muted">{label}</p>
+      <p className="mt-1 text-sm font-bold" dir="rtl">
         {name}
       </p>
       {metrics && (

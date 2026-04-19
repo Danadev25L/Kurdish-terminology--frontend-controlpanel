@@ -80,7 +80,7 @@ export default function ConceptDetailPage() {
   }
 
   if (!concept) {
-    return <p className="text-center text-[#9ca3af]">Concept not found.</p>;
+    return <p className="text-center text-text-muted">Concept not found.</p>;
   }
 
   const isDraft = concept.status === "draft";
@@ -106,12 +106,12 @@ export default function ConceptDetailPage() {
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-[22px] font-extrabold tracking-[-0.02em] text-[#111827]">
+            <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">
               {concept.english_term?.word ?? "Untitled Concept"}
             </h1>
             <ConceptStatusBadge status={concept.status} />
           </div>
-          <p className="mt-1 text-[13px] text-[#9ca3af]">
+          <p className="mt-1 text-[13px] text-text-muted">
             {concept.domain?.name} &middot; Created {formatDate(concept.created_at)}
           </p>
         </div>
@@ -172,7 +172,7 @@ export default function ConceptDetailPage() {
                   candidates={candidates ?? []}
                 />
                 <Card>
-                  <h3 className="mb-4 text-[14px] font-bold text-[#111827]">
+                  <h3 className="mb-4 text-[14px] font-bold text-foreground">
                     Consensus Scores
                   </h3>
                   <ConsensusChart
@@ -194,8 +194,8 @@ function OverviewTab({ concept }: { concept: Concept }) {
     <div className="grid gap-6 lg:grid-cols-3">
       <div className="lg:col-span-2 space-y-4">
         <Card>
-          <h3 className="mb-2 text-sm font-medium text-[#9ca3af]">Definition</h3>
-          <p className="text-[#111827]">{concept.definition}</p>
+          <h3 className="mb-2 text-sm font-medium text-text-muted">Definition</h3>
+          <p className="text-foreground">{concept.definition}</p>
         </Card>
 
         <Card>

@@ -30,7 +30,7 @@ export function DomainHealthChart({ data }: DomainHealthChartProps) {
               if (!active || !payload?.length) return null;
               const d = payload[0].payload as DomainHealthData;
               return (
-                <div className="rounded-lg border border-border bg-white p-3 shadow-sm text-sm">
+                <div className="rounded-lg border border-border bg-surface-raised p-3 shadow-sm text-sm">
                   <p className="font-medium">{d.domain_name}</p>
                   <p>Finalized: {d.finalized_percentage.toFixed(1)}%</p>
                   <p>

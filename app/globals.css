@@ -59,11 +59,18 @@
   --color-surface: var(--surface);
   --color-surface-raised: var(--surface-raised);
   --color-border: var(--border);
+  --color-border-light: var(--ink-border-light);
   --color-border-focus: var(--border-focus);
   --color-muted: var(--muted);
+  --color-text-secondary: var(--ink-text-2);
+  --color-text-muted: var(--ink-text-4);
+  --color-primary-500: var(--primary-500);
 
   --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains-mono);
+
+  --font-size-heading: 1.375rem;
+  --font-size-caption: 0.6875rem;
 }
 
 body {
@@ -81,4 +88,20 @@ body {
 ::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }

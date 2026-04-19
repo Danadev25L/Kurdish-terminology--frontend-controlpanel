@@ -18,8 +18,8 @@ export function BatchActionBar({
   if (selectedCount === 0) return null;
 
   return (
-    <div className="flex items-center gap-3 rounded-lg bg-[#f0f0ff] px-4 py-3">
-      <span className="text-sm font-medium text-[#6366f1]">
+    <div className="flex items-center gap-3 rounded-lg bg-primary-light px-4 py-3">
+      <span className="text-sm font-medium text-primary-500">
         {selectedCount} selected
       </span>
       <Button size="sm" onClick={onApprove} loading={loading}>

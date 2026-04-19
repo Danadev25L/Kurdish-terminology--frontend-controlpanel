@@ -133,7 +133,7 @@ export function DiscussionThread({ conceptId }: DiscussionThreadProps) {
           <Button type="submit" size="sm" loading={submitting} disabled={newBody.trim().length < 5}>
             Post
           </Button>
-          <span className="text-[11px] text-[#9ca3af]">
+          <span className="text-[11px] text-text-muted">
             {newBody.trim().length < 5
               ? `${5 - newBody.trim().length} more characters required`
               : `${newBody.trim().length} characters`}
@@ -143,7 +143,7 @@ export function DiscussionThread({ conceptId }: DiscussionThreadProps) {
 
       {/* Thread list */}
       {topLevel.length === 0 ? (
-        <p className="py-4 text-center text-[13px] text-[#9ca3af]">
+        <p className="py-4 text-center text-[13px] text-text-muted">
           No discussions yet. Start one above.
         </p>
       ) : (

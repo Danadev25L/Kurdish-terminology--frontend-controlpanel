@@ -29,11 +29,11 @@ export function Pagination({
   }
 
   return (
-    <nav className="flex items-center justify-center gap-1">
+    <nav className="flex items-center justify-center gap-1" aria-label="Pagination">
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage <= 1}
-        className="rounded-lg px-3 py-1.5 text-sm text-muted hover:bg-gray-100 disabled:opacity-40 disabled:hover:bg-transparent"
+        className="rounded-lg px-3 py-1.5 text-sm text-muted hover:bg-surface disabled:opacity-40 disabled:hover:bg-transparent"
       >
         Prev
       </button>
@@ -50,8 +50,9 @@ export function Pagination({
               "rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
               page === currentPage
                 ? "bg-primary text-white"
-                : "text-gray-600 hover:bg-gray-100"
+                : "text-text-secondary hover:bg-surface"
             )}
+            aria-current={page === currentPage ? "page" : undefined}
           >
             {page}
           </button>
@@ -60,7 +61,7 @@ export function Pagination({
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage >= lastPage}
-        className="rounded-lg px-3 py-1.5 text-sm text-muted hover:bg-gray-100 disabled:opacity-40 disabled:hover:bg-transparent"
+        className="rounded-lg px-3 py-1.5 text-sm text-muted hover:bg-surface disabled:opacity-40 disabled:hover:bg-transparent"
       >
         Next
       </button>

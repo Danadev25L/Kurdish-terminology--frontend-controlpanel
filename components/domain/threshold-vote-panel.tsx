@@ -45,10 +45,10 @@ export function ThresholdVotePanel({ conceptId }: ThresholdVotePanelProps) {
 
   return (
     <Card>
-      <h3 className="mb-4 text-lg font-semibold text-[#111827]">
+      <h3 className="mb-4 text-lg font-semibold text-foreground">
         Threshold Vote
       </h3>
-      <p className="mb-4 text-[13px] text-[#9ca3af]">
+      <p className="mb-4 text-[13px] text-text-muted">
         Should this concept advance to consensus voting?
       </p>
 
@@ -66,14 +66,14 @@ export function ThresholdVotePanel({ conceptId }: ThresholdVotePanelProps) {
       )}
 
       {!canVote && isMainBoard && (
-        <p className="text-[13px] text-[#9ca3af]">
+        <p className="text-[13px] text-text-muted">
           Threshold voting is for experts only per SRS 3.2.2.
           Main Board can use "escalate to Stage 3" to override.
         </p>
       )}
 
       {!canVote && !isMainBoard && !isAdmin && (
-        <p className="text-[13px] text-[#9ca3af]">
+        <p className="text-[13px] text-text-muted">
           Only domain experts can vote in threshold stage.
         </p>
       )}

@@ -108,7 +108,7 @@ export default function RecallsPage() {
 
       <div className="flex items-center gap-2">
         <select
-          className="rounded-lg border border-border bg-white px-3 py-2 text-sm"
+          className="rounded-lg border border-border bg-surface-raised px-3 py-2 text-sm"
           value={statusFilter}
           onChange={(e) => {
             setStatusFilter(e.target.value);
@@ -229,7 +229,7 @@ export default function RecallsPage() {
               Select Term to Recall
             </label>
             <select
-              className="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-border bg-surface-raised px-3 py-2 text-sm"
               value={selectedConcept ?? ""}
               onChange={(e) => setSelectedConcept(e.target.value ? Number(e.target.value) : null)}
               required

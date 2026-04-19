@@ -280,7 +280,7 @@ export default function ExportImportPage() {
                 Target Domain (Optional)
               </label>
               <select
-                className="w-full rounded-lg border border-border bg-white px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-border bg-surface-raised px-3 py-2 text-sm"
                 value={selectedDomain ?? ""}
                 onChange={(e) => setSelectedDomain(e.target.value ? Number(e.target.value) : null)}
               >
