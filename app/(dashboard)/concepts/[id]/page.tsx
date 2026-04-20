@@ -16,10 +16,11 @@ import { DiscussionThread } from "@/components/domain/discussion-thread";
 import { ThresholdVotePanel } from "@/components/domain/threshold-vote-panel";
 import { VoteMatrix } from "@/components/domain/vote-matrix";
 import { ConsensusChart } from "@/components/domain/consensus-chart";
+import { ReferenceSidebar } from "@/components/domain/reference-sidebar";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { useToastStore } from "@/stores/toast-store";
 import { withdrawCandidate } from "@/lib/api/candidates";
-import { motionToVote } from "@/lib/api/concepts";
+import { motionToVote, reopenConcept } from "@/lib/api/concepts";
 import {
   getConceptHistory,
   getConceptActivity,
@@ -53,10 +54,8 @@ export default function ConceptDetailPage() {
   const [activeTab, setActiveTab] = useState("overview");
 
   // Concept endpoint already includes candidates - no need for separate call
-  // Only poll during active voting phases (threshold, voting, review)
   const { data: concept, isLoading, refetch } = useApi<Concept>(
-    `/api/v1/concepts/${conceptId}`,
-    { pollingInterval: 60000 } // Reduced to 1 minute, only for voting phases
+    `/api/v1/concepts/${conceptId}`
   );
 
   // Candidates are already included in concept response
@@ -82,6 +81,16 @@ export default function ConceptDetailPage() {
       addToast({ type: "success", message: "Motion to vote submitted" });
     } catch {
       addToast({ type: "error", message: "Failed to submit motion" });
+    }
+  }, [conceptId, refetch, addToast]);
+
+  const handleReopen = useCallback(async () => {
+    try {
+      await reopenConcept(Number(conceptId));
+      refetch();
+      addToast({ type: "success", message: "Concept reopened" });
+    } catch {
+      addToast({ type: "error", message: "Failed to reopen concept" });
     }
   }, [conceptId, refetch, addToast]);
 
@@ -141,9 +150,7 @@ export default function ConceptDetailPage() {
           {(isMainBoard || isAdmin) && (
             <Button
               variant="secondary"
-              onClick={() =>
-                /* reopen - Phase 6 */ undefined
-              }
+              onClick={handleReopen}
             >
               Reopen
             </Button>
@@ -157,7 +164,7 @@ export default function ConceptDetailPage() {
       {/* Tab content */}
       <div className="mt-6">
         {activeTab === "overview" && (
-          <OverviewTab concept={concept} />
+          <OverviewTab concept={concept} conceptId={conceptId} />
         )}
         {activeTab === "candidates" && (
           <CandidatesTab
@@ -208,7 +215,7 @@ export default function ConceptDetailPage() {
   );
 }
 
-function OverviewTab({ concept }: { concept: Concept }) {
+function OverviewTab({ concept, conceptId }: { concept: Concept; conceptId: string }) {
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       <div className="lg:col-span-2 space-y-4">
@@ -248,16 +255,9 @@ function OverviewTab({ concept }: { concept: Concept }) {
         </Card>
       </div>
 
-      {/* Reference sidebar placeholder */}
+      {/* Reference sidebar */}
       <div>
-        <Card>
-          <h3 className="mb-3 text-sm font-medium text-text-muted">
-            Reference Context
-          </h3>
-          <p className="text-sm text-text-muted">
-            Dictionary definitions will appear here.
-          </p>
-        </Card>
+        <ReferenceSidebar conceptId={conceptId} />
       </div>
     </div>
   );
@@ -414,6 +414,9 @@ function ActivityTab({ conceptId }: { conceptId: string }) {
     `/api/v1/concepts/${conceptId}/activity-feed`
   );
 
+  // Ensure activities is always an array
+  const activitiesList = Array.isArray(activities) ? activities : [];
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-12">
@@ -422,7 +425,7 @@ function ActivityTab({ conceptId }: { conceptId: string }) {
     );
   }
 
-  if (!activities || activities.length === 0) {
+  if (activitiesList.length === 0) {
     return (
       <Card>
         <p className="text-center text-sm text-text-muted">No recent activity.</p>
@@ -434,7 +437,7 @@ function ActivityTab({ conceptId }: { conceptId: string }) {
     <Card>
       <h3 className="mb-4 text-[14px] font-bold text-foreground">Recent Activity</h3>
       <div className="space-y-3">
-        {activities.map((activity) => (
+        {activitiesList.map((activity) => (
           <div key={activity.id} className="flex items-start gap-3 border-b border-border-light pb-3 last:border-0">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface">
               <svg className="h-4 w-4 text-text-muted" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">

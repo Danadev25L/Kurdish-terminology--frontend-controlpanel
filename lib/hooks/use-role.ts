@@ -13,6 +13,7 @@ export function useRole() {
   const isMainBoard = hasRole("main_board");
   const isDomainHead = hasRole("domain-head");
   const isExpert = hasRole("expert");
+  const isObserver = hasRole("observer");
 
-  return { roles, hasRole, hasAnyRole, isAdmin, isMainBoard, isDomainHead, isExpert };
+  return { roles, hasRole, hasAnyRole, isAdmin, isMainBoard, isDomainHead, isExpert, isObserver };
 }

@@ -6,6 +6,7 @@ import type {
   ConceptMetrics,
   ConceptActivityEntry,
   VotesSummary,
+  CandidatesHistoryResponse,
 } from "./types";
 
 interface ConceptFilters {
@@ -77,4 +78,15 @@ export function getConceptActivity(id: number | string) {
 
 export function getVotesSummary(id: number | string) {
   return api.get<VotesSummary>(`/api/v1/concepts/${id}/votes/summary`);
+}
+
+/**
+ * GET /api/v1/concepts/{id}/candidates/history
+ * Get historical (deactivated) candidates for a concept
+ * Requires authentication
+ */
+export function getCandidatesHistory(conceptId: number | string) {
+  return api.get<CandidatesHistoryResponse>(
+    `/api/v1/concepts/${conceptId}/candidates/history`
+  );
 }

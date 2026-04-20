@@ -34,8 +34,7 @@ export default function BoardExaminationPage() {
   const addToast = useToastStore((s) => s.addToast);
 
   const { data: concept, isLoading } = useApi<Concept>(
-    `/api/v1/concepts/${conceptId}`,
-    { pollingInterval: 120000 }
+    `/api/v1/concepts/${conceptId}`
   );
 
   const { data: candidates } = useApi<Candidate[]>(

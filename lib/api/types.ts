@@ -110,8 +110,36 @@ export interface Candidate {
   author_id: number;
   author?: User;
   withdrawn_at?: string;
+  is_winner?: boolean;
+  is_active?: boolean;
   metrics?: CandidateMetrics;
   created_at: string;
+}
+
+export interface DeactivatedCandidate {
+  id: number;
+  kurdish_word: string;
+  proposer_name: string;
+  consensus_score: number;
+  mean_score: number;
+  std_deviation: number;
+  vote_count: number;
+  is_winner: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DeactivatedPublicTerm {
+  id: number;
+  kurdish_word: string;
+  approved_at: string;
+  deactivated_at: string;
+  deactivated_by_name: string;
+}
+
+export interface CandidatesHistoryResponse {
+  deactivated_candidates: DeactivatedCandidate[];
+  deactivated_public_terms: DeactivatedPublicTerm[];
 }
 
 export interface CandidateMetrics {
@@ -205,6 +233,24 @@ export interface PublicTerm {
   part_of_speech?: string;
   usage_example?: string;
   published_at: string;
+  is_active?: boolean;
+}
+
+// Historical (deactivated) public term
+export interface HistoricalPublicTerm {
+  id: number;
+  concept_id: number;
+  english_word: string;
+  english_definition: string;
+  kurdish_word: string;
+  kurdish_dialect?: string;
+  part_of_speech?: string;
+  usage_example?: string;
+  approved_at: string;
+  deactivated_at: string;
+  approved_by_name: string;
+  deactivated_by_name: string;
+  domain_name: string;
 }
 
 // ── References ──

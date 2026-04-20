@@ -158,44 +158,17 @@ export default function ExportImportPage() {
             Export data for backups or import concepts from external sources
           </p>
         </div>
-        <Button onClick={() => setImportOpen(true)}>Import Concepts</Button>
+        <Button variant="secondary" disabled>Import Concepts (Coming Soon)</Button>
       </div>
 
       {/* Export Section */}
       <div>
         <h2 className="mb-4 text-lg font-semibold text-gray-900">Export Data</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {exportItems.map((item) => (
-            <Card key={item.id} padding>
-              <div className="flex items-start gap-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-light">
-                  <svg
-                    className="h-5 w-5 text-primary"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                  >
-                    {item.icon}
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-medium text-gray-900">{item.title}</h3>
-                  <p className="mt-1 text-sm text-muted">{item.description}</p>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="mt-3"
-                    onClick={item.action}
-                    loading={exporting === item.id}
-                  >
-                    Export
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+        <Card>
+          <div className="text-center py-8">
+            <p className="text-muted">Export functionality is coming soon. Backend endpoints are being implemented.</p>
+          </div>
+        </Card>
       </div>
 
       {/* Domain Exports */}
@@ -203,38 +176,11 @@ export default function ExportImportPage() {
         <RoleGate roles={["admin", "domain-head"]}>
           <div>
             <h2 className="mb-4 text-lg font-semibold text-gray-900">Export by Domain</h2>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {domainExportItems.map((item) => (
-                <Card key={item.id} padding>
-                  <div className="flex items-start gap-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-success-light">
-                      <svg
-                        className="h-5 w-5 text-success"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                      >
-                        {item.icon}
-                      </svg>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-medium text-gray-900">{item.title}</h3>
-                      <p className="mt-1 text-sm text-muted">{item.description}</p>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        className="mt-3"
-                        onClick={item.action}
-                        loading={exporting === item.id}
-                      >
-                        Export
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
+            <Card>
+              <div className="text-center py-8">
+                <p className="text-muted">Domain export functionality is coming soon.</p>
+              </div>
+            </Card>
           </div>
         </RoleGate>
       )}
