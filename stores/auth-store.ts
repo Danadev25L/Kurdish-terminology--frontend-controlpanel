@@ -58,7 +58,13 @@ export const useAuthStore = create<AuthState>()(
           return;
         }
         try {
-          const user = await api.get<User>("/api/v1/auth/me");
+          const fetched = await api.get<User>("/api/v1/auth/me");
+          const existing = get().user;
+          // Preserve roles from login if /auth/me returns empty
+          const user: User = {
+            ...fetched,
+            roles: fetched.roles?.length ? fetched.roles : existing?.roles ?? [],
+          };
           set({ user, isLoading: false });
         } catch {
           set({ user: null, token: null, refreshToken: null, isLoading: false });
@@ -70,6 +76,7 @@ export const useAuthStore = create<AuthState>()(
       partialize: (state) => ({
         token: state.token,
         refreshToken: state.refreshToken,
+        user: state.user,
       }),
     }
   )
