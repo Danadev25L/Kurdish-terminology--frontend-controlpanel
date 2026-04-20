@@ -384,15 +384,15 @@ export interface VotesSummary {
 }
 
 // ── Errata ──
-export type ErrataStatus = "pending" | "under_review" | "resolved" | "rejected";
+export type ErrataStatus = "pending" | "in_progress" | "resolved" | "rejected";
 
 export interface Errata {
   id: number;
-  public_term_id: number;
-  reporter_name?: string;
-  reporter_email?: string;
-  issue_type: "incorrect_translation" | "missing_definition" | "typo" | "offensive_term" | "other";
-  description: string;
+  concept_id: number;
+  submitter_name?: string;
+  submitter_email?: string;
+  report_type?: "typo" | "definition" | "usage" | "other";
+  issue_description: string;
   suggested_correction?: string;
   status: ErrataStatus;
   admin_notes?: string;
@@ -405,8 +405,7 @@ export interface PublicErrataSubmission {
   concept_id: number;
   reporter_name?: string;
   reporter_email?: string;
-  issue_type: Errata["issue_type"];
-  description: string;
+  issue_description: string;
   suggested_correction?: string;
 }
 

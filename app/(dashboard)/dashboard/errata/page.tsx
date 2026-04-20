@@ -19,16 +19,15 @@ import { useI18n } from "@/i18n/context";
 
 const statusVariant: Record<string, "default" | "primary" | "success" | "warning" | "danger"> = {
   pending: "warning",
-  under_review: "primary",
+  in_progress: "primary",
   resolved: "success",
   rejected: "danger",
 };
 
 const issueTypeKeys: Record<string, string> = {
-  incorrect_translation: "errata.incorrect_translation",
-  missing_definition: "errata.missing_definition",
   typo: "errata.typo",
-  offensive_term: "errata.offensive_term",
+  definition: "errata.missing_definition",
+  usage: "errata.incorrect_translation",
   other: "errata.issue_other",
 };
 
@@ -62,7 +61,7 @@ export default function ErrataPage() {
 
       setProcessingId(selectedErrata.id);
       try {
-        await resolveErrata(selectedErrata.id, notes);
+        await resolveErrata(selectedErrata.id, "resolved", notes);
         setResolveOpen(false);
         setNotes("");
         setSelectedErrata(null);
@@ -154,7 +153,7 @@ export default function ErrataPage() {
           >
             <option value="">{t("concepts.all_statuses")}</option>
             <option value="pending">{t("statuses.pending")}</option>
-            <option value="under_review">{t("statuses.under_review")}</option>
+            <option value="in_progress">{t("statuses.in_progress")}</option>
             <option value="resolved">{t("statuses.resolved")}</option>
             <option value="rejected">{t("statuses.rejected")}</option>
           </select>
@@ -185,20 +184,20 @@ export default function ErrataPage() {
                         {errata.status.replace("_", " ")}
                       </Badge>
                       <Badge variant="default">
-                        {t(issueTypeKeys[errata.issue_type] ?? "errata.issue_other")}
+                        {t(issueTypeKeys[errata.report_type ?? "other"] ?? "errata.issue_other")}
                       </Badge>
                     </div>
-                    <p className="mt-2 text-[13px] text-foreground">{errata.description}</p>
+                    <p className="mt-2 text-[13px] text-foreground">{errata.issue_description}</p>
                     {errata.suggested_correction && (
                       <div className="mt-2">
                         <p className="text-xs font-semibold text-text-muted">{t("errata.suggested_correction")}</p>
                         <p className="text-[13px] text-text-secondary">{errata.suggested_correction}</p>
                       </div>
                     )}
-                    {errata.reporter_name && (
+                    {errata.submitter_name && (
                       <p className="mt-2 text-[11px] text-text-muted">
-                        {t("errata.reported_by_label")} {errata.reporter_name}
-                        {errata.reporter_email && ` (${errata.reporter_email})`}
+                        {t("errata.reported_by_label")} {errata.submitter_name}
+                        {errata.submitter_email && ` (${errata.submitter_email})`}
                       </p>
                     )}
                     {errata.admin_notes && (
@@ -218,13 +217,13 @@ export default function ErrataPage() {
                         <Button
                           size="sm"
                           variant="secondary"
-                          onClick={() => handleUpdateStatus(errata, "under_review")}
+                          onClick={() => handleUpdateStatus(errata, "in_progress")}
                           loading={processingId === errata.id}
                         >
                           {t("errata.mark_reviewing")}
                         </Button>
                       )}
-                      {errata.status === "under_review" && (
+                      {errata.status === "in_progress" && (
                         <>
                           <Button
                             size="sm"

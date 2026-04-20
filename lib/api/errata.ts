@@ -22,14 +22,17 @@ export function updateErrata(
   return api.patch<Errata>(`/api/v1/errata/${id}`, data);
 }
 
-export function resolveErrata(id: number, notes?: string) {
-  return api.post<Errata>(`/api/v1/errata/${id}/resolve`, { admin_notes: notes });
+export function resolveErrata(id: number, status: "resolved" | "rejected", notes?: string) {
+  return api.post<Errata>(`/api/v1/errata/${id}/resolve`, {
+    status,
+    admin_notes: notes,
+  });
 }
 
 export function submitPublicErrata(data: PublicErrataSubmission) {
   return api.post<Errata>("/api/v1/errata", {
     concept_id: data.concept_id,
-    issue_description: data.description,
+    issue_description: data.issue_description,
     suggested_correction: data.suggested_correction,
     submitter_name: data.reporter_name,
     submitter_email: data.reporter_email,
@@ -37,5 +40,8 @@ export function submitPublicErrata(data: PublicErrataSubmission) {
 }
 
 export function rejectErrata(id: number, reason: string) {
-  return api.post<Errata>(`/api/v1/errata/${id}/reject`, { reason });
+  return api.post<Errata>(`/api/v1/errata/${id}/resolve`, {
+    status: "rejected",
+    admin_notes: reason,
+  });
 }
