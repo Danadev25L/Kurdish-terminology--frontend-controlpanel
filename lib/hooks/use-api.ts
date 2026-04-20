@@ -5,7 +5,6 @@ import { api } from "@/lib/api/client";
 import { ApiError } from "@/lib/api/client";
 
 interface UseApiOptions {
-  pollingInterval?: number;
   enabled?: boolean;
 }
 
@@ -20,11 +19,10 @@ export function useApi<T>(
   url: string | null,
   options: UseApiOptions = {}
 ): UseApiState<T> {
-  const { pollingInterval, enabled = true } = options;
+  const { enabled = true } = options;
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const mountedRef = useRef(true);
 
   const fetchData = useCallback(
@@ -68,21 +66,6 @@ export function useApi<T>(
       mountedRef.current = false;
     };
   }, [url, enabled, fetchData]);
-
-  // Polling
-  useEffect(() => {
-    if (!pollingInterval || !url || !enabled) return;
-
-    intervalRef.current = setInterval(() => {
-      if (document.visibilityState === "visible") {
-        fetchData(false);
-      }
-    }, pollingInterval);
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [pollingInterval, url, enabled, fetchData]);
 
   return { data, error, isLoading, refetch };
 }
