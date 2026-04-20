@@ -166,7 +166,7 @@ export default function ConceptDetailPage() {
       {/* Tab content */}
       <div className="mt-6">
         {activeTab === "overview" && (
-          <OverviewTab concept={concept} />
+          <OverviewTab concept={concept} conceptId={conceptId} />
         )}
         {activeTab === "candidates" && (
           <CandidatesTab
@@ -217,7 +217,7 @@ export default function ConceptDetailPage() {
   );
 }
 
-function OverviewTab({ concept }: { concept: Concept }) {
+function OverviewTab({ concept, conceptId }: { concept: Concept; conceptId: string }) {
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       <div className="lg:col-span-2 space-y-4">
