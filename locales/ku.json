@@ -83,7 +83,9 @@
       "concepts_count": "چەمکەکان",
       "published": "بڵاوکراوەکان",
       "members": "ئەندامان",
-      "add_member": "زیادکردنی ئەندام"
+      "add_member": "زیادکردنی ئەندام",
+      "select_user": "بەکارهێنەرێک هەڵبژێرە",
+      "all_users_added": "هەموو بەکارهێنەران ئەندامن"
     }
   },
   "concepts": {
@@ -364,7 +366,9 @@
     "user_created": "بەکارهێنەر دروستکرا",
     "user_create_failed": "دروستکردنی بەکارهێنەر سەرنەکەوت",
     "user_deleted": "بەکارهێنەر سڕایەوە",
-    "user_delete_failed": "سڕینەوەی بەکارهێنەر سەرنەکەوت"
+    "user_delete_failed": "سڕینەوەی بەکارهێنەر سەرنەکەوت",
+    "member_added": "ئەندام زیادکرا",
+    "member_add_failed": "زیادکردنی ئەندام سەرنەکەوت"
   },
   "sort_options": {
     "default": "بنەڕەتی",

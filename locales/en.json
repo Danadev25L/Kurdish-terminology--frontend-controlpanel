@@ -83,7 +83,9 @@
       "concepts_count": "Concepts",
       "published": "Published",
       "members": "Members",
-      "add_member": "Add Member"
+      "add_member": "Add Member",
+      "select_user": "Select a user",
+      "all_users_added": "All users are already members"
     }
   },
   "concepts": {
@@ -347,6 +349,8 @@
     "domain_delete_failed": "Failed to delete domain",
     "member_removed": "Member removed",
     "member_remove_failed": "Failed to remove member",
+    "member_added": "Member added",
+    "member_add_failed": "Failed to add member",
     "role_updated": "Role updated",
     "role_update_failed": "Failed to update role",
     "source_created": "Source created",
