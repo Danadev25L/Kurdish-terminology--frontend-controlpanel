@@ -270,6 +270,7 @@
     "export_coming_soon_msg": "Export functionality is coming soon. Backend endpoints are being implemented.",
     "export_by_domain": "Export by Domain",
     "export_domain_coming_soon": "Domain export functionality is coming soon.",
+    "domain_coming_soon": "Domain export functionality is coming soon.",
     "import_concepts": "Import Concepts",
     "select_file": "Select File (CSV or JSON)",
     "download_template_msg": "Download a template to see the expected format",

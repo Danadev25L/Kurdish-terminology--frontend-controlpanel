@@ -82,7 +82,7 @@ export default function ExportImportPage() {
           success: false,
           imported: 0,
           failed: 0,
-          errors: [{ row: 0, error: err instanceof Error ? err.message : "Import failed" }],
+          errors: [{ row: 0, error: err instanceof Error ? err.message : t("messages.import_failed") }],
         });
       } finally {
         setImporting(false);
