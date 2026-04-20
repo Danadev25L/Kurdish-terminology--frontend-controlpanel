@@ -63,7 +63,7 @@ export default function DomainDetailPage() {
     }
   }, [domainId, selectedUser, selectedRole, refetch, addToast]);
 
-  const memberUserIds = new Set(members?.map((m) => m.user_id));
+  const memberUserIds = new Set(members?.map((m) => m.id));
   const availableUsers = usersData?.data?.filter((u) => !memberUserIds.has(u.id)) ?? [];
 
   const handleDelete = useCallback(async () => {
@@ -91,7 +91,7 @@ export default function DomainDetailPage() {
       if (!removeMember) return;
       setRemoving(true);
       try {
-        await removeDomainMember(domainId, removeMember.user_id);
+        await removeDomainMember(domainId, removeMember.id);
         setRemoveMember(null);
         refetch();
         addToast({ type: "success", message: t("messages.member_removed") });
@@ -108,7 +108,7 @@ export default function DomainDetailPage() {
     async (member: DomainMember, e: React.ChangeEvent<HTMLSelectElement>) => {
       const newRole = e.target.value as "expert" | "observer";
       try {
-        await updateDomainMember(Number(domainId), member.user_id, { role: newRole });
+        await updateDomainMember(Number(domainId), member.id, { role: newRole });
         refetch();
         addToast({ type: "success", message: t("messages.role_updated") });
       } catch {
@@ -178,18 +178,18 @@ export default function DomainDetailPage() {
               <tbody>
                 {members.map((member, index) => (
                   <tr
-                    key={`member-${member.user_id ?? index}`}
+                    key={`member-${member.id ?? index}`}
                     className="border-b border-border-light"
                   >
                     <td className="px-3 py-3">
                       <div className="flex items-center gap-2">
-                        <Avatar name={member.user?.name ?? "?"} size="sm" />
+                        <Avatar name={member.name ?? "?"} size="sm" />
                         <div>
                           <p className="text-[13px] font-semibold">
-                            {member.user?.name}
+                            {member.name}
                           </p>
                           <p className="text-[11px] text-text-muted">
-                            {member.user?.email}
+                            {member.email}
                           </p>
                         </div>
                       </div>
@@ -251,7 +251,7 @@ export default function DomainDetailPage() {
         onClose={() => setRemoveMember(null)}
         onConfirm={confirmRemoveMember}
         title={t("domains.remove_member")}
-        message={t("domains.remove_member_confirm", { name: removeMember?.user?.name ?? "" })}
+        message={t("domains.remove_member_confirm", { name: removeMember?.name ?? "" })}
         confirmLabel={t("common.remove")}
         variant="danger"
         loading={removing}

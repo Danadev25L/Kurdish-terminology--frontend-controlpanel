@@ -47,10 +47,13 @@ export interface Domain {
 }
 
 export interface DomainMember {
-  user_id: number;
-  user: User;
+  id: number;
+  name: string;
+  email: string;
   role: "expert" | "observer";
   joined_at: string;
+  left_at: string | null;
+  is_active: boolean;
 }
 
 // ── Lexicons ──
