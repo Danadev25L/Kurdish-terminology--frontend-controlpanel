@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils/cn";
@@ -8,6 +8,12 @@ import { castConsensusVotes } from "@/lib/api/voting";
 import { useRole } from "@/lib/hooks/use-role";
 import { useToastStore } from "@/stores/toast-store";
 import type { Candidate, ConsensusVote } from "@/lib/api/types";
+import { api } from "@/lib/api/client";
+
+interface ExistingVote {
+  id: number;
+  your_vote: number | null;
+}
 
 interface VoteMatrixProps {
   conceptId: number;
@@ -23,7 +29,6 @@ export function VoteMatrix({
   onVoted,
 }: VoteMatrixProps) {
   const { isExpert, isDomainHead, isAdmin, isMainBoard } = useRole();
-  // Backend only checks "expert" role (single-role middleware)
   const canVote = isExpert;
   const addToast = useToastStore((s) => s.addToast);
 
@@ -35,7 +40,36 @@ export function VoteMatrix({
     return initial;
   });
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [hasExistingVotes, setHasExistingVotes] = useState(false);
+
+  // Fetch existing votes on mount
+  useEffect(() => {
+    if (!canVote) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await api.get<{ candidates: ExistingVote[] }>(
+          `/api/v1/concepts/${conceptId}/consensus-votes`
+        );
+        if (cancelled) return;
+        const existing: Record<number, number | null> = {};
+        let foundAny = false;
+        for (const c of res.candidates ?? []) {
+          if (c.your_vote != null) {
+            existing[c.id] = c.your_vote;
+            foundAny = true;
+          }
+        }
+        if (foundAny) {
+          setVotes((prev) => ({ ...prev, ...existing }));
+          setHasExistingVotes(true);
+        }
+      } catch {
+        // Ignore — will start fresh
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [conceptId, canVote]);
 
   const setScore = (candidateId: number, score: number | null) => {
     setVotes((prev) => ({ ...prev, [candidateId]: score }));
@@ -54,7 +88,7 @@ export function VoteMatrix({
     setSubmitting(true);
     try {
       await castConsensusVotes(conceptId, { votes: voteList });
-      setSubmitted(true);
+      setHasExistingVotes(true);
       onVoted?.();
       addToast({ type: "success", message: "Votes submitted" });
     } catch {
@@ -64,7 +98,7 @@ export function VoteMatrix({
     }
   }, [conceptId, votes, onVoted]);
 
-  const isDisabled = votingClosed || submitted;
+  const isDisabled = votingClosed;
 
   return (
     <Card>
@@ -134,14 +168,14 @@ export function VoteMatrix({
           {!isDisabled && (
             <div className="mt-4">
               <Button onClick={handleSubmit} loading={submitting}>
-                Submit Votes
+                {hasExistingVotes ? "Update Votes" : "Submit Votes"}
               </Button>
             </div>
           )}
 
-          {submitted && (
-            <p className="mt-3 text-[13px] font-semibold text-success">
-              Votes submitted successfully.
+          {hasExistingVotes && !submitting && (
+            <p className="mt-3 text-[13px] text-text-muted">
+              Your previous votes have been loaded. You can change them at any time.
             </p>
           )}
         </>
