@@ -105,3 +105,15 @@ body {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+:root {
+  --font-arabic: var(--font-zain);
+}
+
+[dir="rtl"] body {
+  font-family: var(--font-arabic), sans-serif;
+}
+
+[dir="ltr"] body {
+  font-family: var(--font-sans), sans-serif;
+}

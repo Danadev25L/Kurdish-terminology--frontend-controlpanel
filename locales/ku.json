@@ -1,0 +1,194 @@
+{
+  "common": {
+    "loading": "بارکردن...",
+    "save": "پاشەکەوتکردن",
+    "cancel": "پاشگەزبوونەوە",
+    "delete": "سڕینەوە",
+    "edit": "دەستکاری",
+    "create": "دروستکردن",
+    "submit": "ناردن",
+    "close": "داخستن",
+    "search": "گەڕان",
+    "no_results": "هیچ ئەنجامێک نەدۆزرایەوە.",
+    "confirm_delete": "دڵنیایت لە سڕینەوەی ئەمە؟",
+    "back": "گەڕانەوە",
+    "error_generic": "کێشەیەک ڕوویدا. تکایە دووبارە هەوڵ بدەرەوە.",
+    "mark_all_read": "نیشانەکردنی هەمووی وەک خوێندراوە",
+    "no_notifications": "هیچ ئاگادارییەک نییە",
+    "notifications": "ئاگادارییەکان"
+  },
+  "nav": {
+    "dashboard": "داشبۆرد",
+    "concepts": "چەمکەکان",
+    "domains": "بوارەکان",
+    "board_review": "پێداچوونەوەی بۆرد",
+    "published": "بڵاوکراوەکان",
+    "analytics": "شیکاری",
+    "export_import": "هەناردن/هاوردە",
+    "errata": "هەڵەکان",
+    "recalls": "گەڕاندنەوەکان",
+    "board_recalls": "گەڕاندنەوەکانی بۆرد",
+    "admin": "بەڕێوەبەر",
+    "sign_out": "چوونەدەرەوە"
+  },
+  "dashboard": {
+    "title": "داشبۆرد",
+    "total_concepts": "کۆی چەمکەکان",
+    "published_terms": "زاراوە بڵاوکراوەکان",
+    "active_domains": "بوارە چالاکەکان",
+    "pending_reviews": "پێداچوونەوەی چاوەڕوان",
+    "recent_activity": "چالاکییەکی کۆتایی",
+    "quick_actions": "کردارە خێراکان",
+    "welcome_back": "بەخێربێیتەوە"
+  },
+  "domains": {
+    "title": "بوارەکان",
+    "add_domain": "زیادکردنی بوار",
+    "no_domains": "هیچ بوارێک نەدۆزرایەوە.",
+    "experts": "شارەزا",
+    "concepts": "چەمک",
+    "detail": {
+      "experts": "شارەزایان",
+      "observers": "چاودێران",
+      "concepts_count": "چەمکەکان",
+      "published": "بڵاوکراوەکان",
+      "members": "ئەندامان",
+      "add_member": "زیادکردنی ئەندام"
+    }
+  },
+  "concepts": {
+    "title": "چەمکەکان",
+    "new_concept": "چەمکی نوێ",
+    "search_placeholder": "گەڕان بۆ چەمکەکان...",
+    "no_results": "هیچ چەمکێک بە فلتەرەکانی تۆ نەدۆزرایەوە.",
+    "all_statuses": "هەموو بارەکان",
+    "untitled": "بێناونیشان",
+    "new": {
+      "domain": "بووار",
+      "domain_placeholder": "بوارێک هەڵبژێرە",
+      "english_term": "زاراوەی ئینگلیزی",
+      "english_term_placeholder": "بۆ نموونە Algorithm",
+      "definition": "پێناسە",
+      "definition_placeholder": "پێناسەیەکی ڕوون بدە (کەمترین ١٠ پیت)",
+      "creating": "دروست دەکرێت...",
+      "create": "دروستکردنی چەمک"
+    },
+    "detail": {
+      "definition": "پێناسە",
+      "candidates": "بەکاندیدەکان",
+      "discussions": "وتووێژەکان",
+      "history": "مێژوو",
+      "metrics": "پێوانەکان",
+      "no_candidates": "هێشتا بەکاندید نییە.",
+      "add_candidate": "زیادکردنی بەکاندید",
+      "motion_to_vote": "داواکاری دەنگدان",
+      "close_voting": "داخستنی دەنگدان",
+      "reopen": "کردنەوەی نوێ",
+      "request_info": "داواکاری زانیاری"
+    }
+  },
+  "board": {
+    "review_queue": "ڕیزی پێداچوونەوە",
+    "no_items": "هیچ بابەتێک لە ڕیزی پێداچوونەوەدا نییە.",
+    "approve": "پەسندکردن",
+    "veto": "ڤیتۆ",
+    "request_info": "داواکاری زانیاری",
+    "batch_approve": "پەسندکردنی کۆمەڵ",
+    "close_call": "نزیکە",
+    "consensus_score": "خاڵی ڕێککەوتن",
+    "vote_count": "ژمارەی دەنگەکان",
+    "published_terms": "زاراوە بڵاوکراوەکان",
+    "no_published": "هیچ زاراوەیەکی بڵاوکراوە نییە.",
+    "deactivate": "ناچالاککردن",
+    "recalls": "گەڕاندنەوەکانی بۆرد",
+    "no_recalls": "هیچ گەڕاندنەوەیەکی چالاک نییە.",
+    "approve_recall": "پەسندکردنی گەڕاندنەوە",
+    "reject_recall": "ڕەتکردنەوەی گەڕاندنەوە",
+    "analytics": {
+      "title": "شیکاری",
+      "domain_health": "تەندروستی بوار",
+      "dialect_equity": "یەکسانی زاری",
+      "word_versatility": "فرەکاری وشە"
+    }
+  },
+  "admin": {
+    "title": "بەڕێوەبەر",
+    "users": {
+      "title": "بەڕێوەبردنی بەکارهێنەران",
+      "add_user": "زیادکردنی بەکارهێنەر",
+      "name": "ناو",
+      "email": "ئیمەیڵ",
+      "role": "ڕۆڵ",
+      "domains": "بوارەکان",
+      "actions": "کردارەکان",
+      "no_users": "هیچ بەکارهێنەرێک نەدۆزرایەوە."
+    },
+    "references": {
+      "title": "سەرچاوەکانی ئاماژە",
+      "add_reference": "زیادکردنی سەرچاوە",
+      "name": "ناو",
+      "type": "جۆر",
+      "description": "وەسف",
+      "url": "بەستەر",
+      "no_references": "هیچ سەرچاوەیەکی ئاماژە نەدۆزرایەوە."
+    },
+    "audit": {
+      "title": "تۆماری چاودێری",
+      "user": "بەکارهێنەر",
+      "action": "کردار",
+      "entity": "یەکە",
+      "date": "بەروار",
+      "no_entries": "هیچ تۆمارێک نەدۆزرایەوە."
+    },
+    "settings": {
+      "title": "ڕێکخستنەکان",
+      "general": "گشتی",
+      "notifications": "ئاگادارییەکان",
+      "security": "ئاسایش"
+    }
+  },
+  "errata": {
+    "title": "هەڵەکان",
+    "no_errata": "هیچ ڕاپۆرتێکی هەڵە نەدۆزرایەوە.",
+    "status": "بار",
+    "issue_type": "جۆری کێشە",
+    "description": "وەسف",
+    "reported_by": "ڕاپۆرتکراو لەلایەن",
+    "resolve": "چارەسەر",
+    "reject": "ڕەتکردنەوە"
+  },
+  "export": {
+    "title": "هەناردن/هاوردە",
+    "export": "هەناردن",
+    "import": "هاوردە",
+    "format": "فۆرمات",
+    "scope": "بواری هەناردن",
+    "download": "داگرتن",
+    "upload": "بارکردن"
+  },
+  "recalls": {
+    "title": "گەڕاندنەوەکان",
+    "no_recalls": "هیچ گەڕاندنەوەیەکی چالاک نییە.",
+    "reason": "هۆکار",
+    "status": "بار",
+    "support": "پشتگیری",
+    "oppose": "دژایەتی",
+    "votes": "دەنگەکان",
+    "expires": "بەسەرچوون"
+  },
+  "statuses": {
+    "draft": "ڕەشنووس",
+    "threshold": "ئەستێرە",
+    "voting": "دەنگدان",
+    "review": "پێداچوونەوەی بۆرد",
+    "published": "بڵاوکراوە",
+    "recalled": "گەڕێندراوە",
+    "pending": "چاوەڕوان",
+    "under_review": "لە پێداچوونەوە",
+    "resolved": "چارەسەرکراو",
+    "rejected": "ڕەتکراوە",
+    "approved": "پەسندکراو",
+    "active": "چالاک",
+    "expired": "بەسەرچوو"
+  }
+}

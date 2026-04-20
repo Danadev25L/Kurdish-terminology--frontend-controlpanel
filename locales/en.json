@@ -1,0 +1,194 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "submit": "Submit",
+    "close": "Close",
+    "search": "Search",
+    "no_results": "No results found.",
+    "confirm_delete": "Are you sure you want to delete this?",
+    "back": "Back",
+    "error_generic": "Something went wrong. Please try again.",
+    "mark_all_read": "Mark all read",
+    "no_notifications": "No notifications",
+    "notifications": "Notifications"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "concepts": "Concepts",
+    "domains": "Domains",
+    "board_review": "Board Review",
+    "published": "Published",
+    "analytics": "Analytics",
+    "export_import": "Export/Import",
+    "errata": "Errata",
+    "recalls": "Recalls",
+    "board_recalls": "Board Recalls",
+    "admin": "Admin",
+    "sign_out": "Sign out"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "total_concepts": "Total Concepts",
+    "published_terms": "Published Terms",
+    "active_domains": "Active Domains",
+    "pending_reviews": "Pending Reviews",
+    "recent_activity": "Recent Activity",
+    "quick_actions": "Quick Actions",
+    "welcome_back": "Welcome back"
+  },
+  "domains": {
+    "title": "Domains",
+    "add_domain": "Add Domain",
+    "no_domains": "No domains found.",
+    "experts": "experts",
+    "concepts": "concepts",
+    "detail": {
+      "experts": "Experts",
+      "observers": "Observers",
+      "concepts_count": "Concepts",
+      "published": "Published",
+      "members": "Members",
+      "add_member": "Add Member"
+    }
+  },
+  "concepts": {
+    "title": "Concepts",
+    "new_concept": "New Concept",
+    "search_placeholder": "Search concepts...",
+    "no_results": "No concepts found matching your filters.",
+    "all_statuses": "All Statuses",
+    "untitled": "Untitled",
+    "new": {
+      "domain": "Domain",
+      "domain_placeholder": "Select a domain",
+      "english_term": "English Term",
+      "english_term_placeholder": "e.g. Algorithm",
+      "definition": "Definition",
+      "definition_placeholder": "Provide a clear definition (min 10 characters)",
+      "creating": "Creating...",
+      "create": "Create Concept"
+    },
+    "detail": {
+      "definition": "Definition",
+      "candidates": "Candidates",
+      "discussions": "Discussions",
+      "history": "History",
+      "metrics": "Metrics",
+      "no_candidates": "No candidates yet.",
+      "add_candidate": "Add Candidate",
+      "motion_to_vote": "Motion to Vote",
+      "close_voting": "Close Voting",
+      "reopen": "Reopen",
+      "request_info": "Request Info"
+    }
+  },
+  "board": {
+    "review_queue": "Review Queue",
+    "no_items": "No items in the review queue.",
+    "approve": "Approve",
+    "veto": "Veto",
+    "request_info": "Request Info",
+    "batch_approve": "Batch Approve",
+    "close_call": "Close Call",
+    "consensus_score": "Consensus Score",
+    "vote_count": "Vote Count",
+    "published_terms": "Published Terms",
+    "no_published": "No published terms.",
+    "deactivate": "Deactivate",
+    "recalls": "Board Recalls",
+    "no_recalls": "No active recalls.",
+    "approve_recall": "Approve Recall",
+    "reject_recall": "Reject Recall",
+    "analytics": {
+      "title": "Analytics",
+      "domain_health": "Domain Health",
+      "dialect_equity": "Dialect Equity",
+      "word_versatility": "Word Versatility"
+    }
+  },
+  "admin": {
+    "title": "Admin",
+    "users": {
+      "title": "User Management",
+      "add_user": "Add User",
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "domains": "Domains",
+      "actions": "Actions",
+      "no_users": "No users found."
+    },
+    "references": {
+      "title": "Reference Sources",
+      "add_reference": "Add Reference",
+      "name": "Name",
+      "type": "Type",
+      "description": "Description",
+      "url": "URL",
+      "no_references": "No reference sources found."
+    },
+    "audit": {
+      "title": "Audit Log",
+      "user": "User",
+      "action": "Action",
+      "entity": "Entity",
+      "date": "Date",
+      "no_entries": "No audit entries found."
+    },
+    "settings": {
+      "title": "Settings",
+      "general": "General",
+      "notifications": "Notifications",
+      "security": "Security"
+    }
+  },
+  "errata": {
+    "title": "Errata",
+    "no_errata": "No errata reports found.",
+    "status": "Status",
+    "issue_type": "Issue Type",
+    "description": "Description",
+    "reported_by": "Reported By",
+    "resolve": "Resolve",
+    "reject": "Reject"
+  },
+  "export": {
+    "title": "Export/Import",
+    "export": "Export",
+    "import": "Import",
+    "format": "Format",
+    "scope": "Scope",
+    "download": "Download",
+    "upload": "Upload"
+  },
+  "recalls": {
+    "title": "Recalls",
+    "no_recalls": "No active recalls.",
+    "reason": "Reason",
+    "status": "Status",
+    "support": "Support",
+    "oppose": "Oppose",
+    "votes": "Votes",
+    "expires": "Expires"
+  },
+  "statuses": {
+    "draft": "Draft",
+    "threshold": "Threshold",
+    "voting": "Voting",
+    "review": "Board Review",
+    "published": "Published",
+    "recalled": "Recalled",
+    "pending": "Pending",
+    "under_review": "Under Review",
+    "resolved": "Resolved",
+    "rejected": "Rejected",
+    "approved": "Approved",
+    "active": "Active",
+    "expired": "Expired"
+  }
+}
