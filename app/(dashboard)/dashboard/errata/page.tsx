@@ -34,6 +34,7 @@ const issueTypeLabels: Record<string, string> = {
 
 export default function ErrataPage() {
   const addToast = useToastStore((s) => s.addToast);
+  const { t } = useI18n();
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [selectedErrata, setSelectedErrata] = useState<Errata | null>(null);
@@ -134,12 +135,12 @@ export default function ErrataPage() {
 
   return (
     <div className="space-y-6">
-      <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: "Errata" }]} />
+      <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: t("errata.title") }]} />
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">Errata Management</h1>
+          <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">{t("errata.title")}</h1>
           <p className="mt-1 text-[13px] text-text-muted">
-            Review and resolve reported errors in published terms
+            {t("errata.no_errata")}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -162,11 +163,11 @@ export default function ErrataPage() {
 
       {errataList.length === 0 ? (
         <EmptyState
-          title="No errata reports"
+          title={t("errata.no_errata")}
           description={
             statusFilter
-              ? `No errata with status "${statusFilter}" found.`
-              : "No errata reports have been submitted yet."
+              ? t("common.no_results")
+              : t("errata.no_errata")
           }
         />
       ) : (

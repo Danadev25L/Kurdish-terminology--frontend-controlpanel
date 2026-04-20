@@ -306,6 +306,7 @@ export default function BoardRecallsPage() {
 }
 
 function RecallsLocked() {
+  const { t } = useI18n();
   return (
     <div className="flex items-center justify-center py-12">
       <EmptyState

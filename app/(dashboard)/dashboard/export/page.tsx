@@ -26,6 +26,7 @@ import { useI18n } from "@/i18n/context";
 
 export default function ExportImportPage() {
   const { isDomainHead, isAdmin } = useRole();
+  const { t } = useI18n();
   const [importOpen, setImportOpen] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
@@ -97,8 +98,8 @@ export default function ExportImportPage() {
   if (!isDomainHead && !isAdmin) {
     return (
       <EmptyState
-        title="Access Denied"
-        description="You need domain head or admin privileges to access this page."
+        title={t("common.no_results")}
+        description={t("common.error_generic")}
       />
     );
   }
@@ -151,10 +152,10 @@ export default function ExportImportPage() {
 
   return (
     <div className="space-y-6">
-      <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: "Export/Import" }]} />
+      <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: t("export.title") }]} />
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Export & Import</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t("export.title")}</h1>
           <p className="mt-1 text-sm text-muted">
             Export data for backups or import concepts from external sources
           </p>

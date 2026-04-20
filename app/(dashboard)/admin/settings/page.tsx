@@ -15,6 +15,7 @@ import { useI18n } from "@/i18n/context";
 export default function AdminSettingsPage() {
   const { data: rawSettings, isLoading, refetch } = useApi<Record<string, Setting[]>>("/api/v1/admin/settings");
   const addToast = useToastStore((s) => s.addToast);
+  const { t } = useI18n();
   const [edited, setEdited] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
@@ -58,7 +59,7 @@ export default function AdminSettingsPage() {
   return (
     <div className="space-y-6">
       <Breadcrumb items={[{ label: "Admin", href: "/admin" }, { label: "Settings" }]} />
-      <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">System Settings</h1>
+      <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">{t("admin.settings.title")}</h1>
 
       <Card>
         <div className="space-y-4">

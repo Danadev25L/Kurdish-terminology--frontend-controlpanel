@@ -29,6 +29,7 @@ const statusVariant: Record<string, "default" | "success" | "warning" | "danger"
 
 export default function RecallsPage() {
   const { user } = useAuth();
+  const { t } = useI18n();
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [submitOpen, setSubmitOpen] = useState(false);
@@ -98,10 +99,10 @@ export default function RecallsPage() {
 
   return (
     <div className="space-y-6">
-      <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: "Recalls" }]} />
+      <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: t("recalls.title") }]} />
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Term Recalls</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t("recalls.title")}</h1>
           <p className="mt-1 text-sm text-muted">
             Vote on recalls of published terms for review
           </p>
@@ -128,11 +129,11 @@ export default function RecallsPage() {
 
       {recallList.length === 0 ? (
         <EmptyState
-          title="No active recalls"
+          title={t("recalls.no_recalls")}
           description={
             statusFilter
-              ? `No recalls with status "${statusFilter}" found.`
-              : "No term recalls have been requested yet."
+              ? t("common.no_results")
+              : t("recalls.no_recalls")
           }
         />
       ) : (

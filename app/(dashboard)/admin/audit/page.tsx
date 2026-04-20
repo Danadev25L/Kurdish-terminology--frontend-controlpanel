@@ -13,6 +13,7 @@ import { useI18n } from "@/i18n/context";
 
 export default function AdminAuditPage() {
   const [page, setPage] = useState(1);
+  const { t } = useI18n();
 
   const { data, isLoading } = useApi<PaginatedResponse<AuditEvent>>(
     `/api/v1/admin/audit-events?page=${page}`
@@ -21,7 +22,7 @@ export default function AdminAuditPage() {
   return (
     <div className="space-y-6">
       <Breadcrumb items={[{ label: "Admin", href: "/admin" }, { label: "Audit Log" }]} />
-      <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">Audit Log</h1>
+      <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">{t("admin.audit.title")}</h1>
 
       {isLoading ? (
         <SkeletonTable rows={10} />
@@ -71,7 +72,7 @@ export default function AdminAuditPage() {
         </>
       ) : (
         <p className="py-8 text-center text-[13px] text-text-muted">
-          No audit events found.
+          {t("admin.audit.no_entries")}
         </p>
       )}
     </div>
