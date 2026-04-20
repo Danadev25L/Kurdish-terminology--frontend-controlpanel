@@ -15,20 +15,20 @@ import type { PaginatedResponse, Concept } from "@/lib/api/types";
 import { timeAgo } from "@/lib/utils/format";
 import { useI18n } from "@/i18n/context";
 
-const statusOptions = [
-  { value: "", label: "All Statuses" },
-  { value: "draft", label: "Draft" },
-  { value: "threshold", label: "Threshold" },
-  { value: "voting", label: "Voting" },
-  { value: "review", label: "Board Review" },
-  { value: "published", label: "Published" },
-  { value: "recalled", label: "Recalled" },
-];
-
 export default function ConceptsPage() {
   const router = useRouter();
   const { t } = useI18n();
   const { isExpert, isDomainHead, isAdmin } = useRole();
+
+  const statusOptions = [
+    { value: "", label: t("concepts.all_statuses") },
+    { value: "draft", label: t("statuses.draft") },
+    { value: "threshold", label: t("statuses.threshold") },
+    { value: "voting", label: t("statuses.voting") },
+    { value: "review", label: t("statuses.review") },
+    { value: "published", label: t("statuses.published") },
+    { value: "recalled", label: t("statuses.recalled") },
+  ];
   const [status, setStatus] = useState("");
   const [domainId, setDomainId] = useState("");
   const [search, setSearch] = useState("");
@@ -65,7 +65,7 @@ export default function ConceptsPage() {
         <SearchInput
           value={search}
           onChange={handleSearch}
-          placeholder="Search concepts..."
+          placeholder={t("concepts.search_placeholder")}
           className="w-64"
         />
         <Select
@@ -98,7 +98,7 @@ export default function ConceptsPage() {
                   <div className="flex items-center gap-4">
                     <div>
                       <h3 className="font-semibold text-foreground">
-                        {concept.english_term?.word ?? "Untitled"}
+                        {concept.english_term?.word ?? t("concepts.untitled")}
                       </h3>
                       <p className="mt-0.5 text-sm text-text-muted line-clamp-1">
                         {concept.definition}
@@ -124,7 +124,7 @@ export default function ConceptsPage() {
       ) : (
         <Card>
           <p className="text-center text-sm text-text-muted">
-            No concepts found matching your filters.
+            {t("concepts.no_results")}
           </p>
         </Card>
       )}

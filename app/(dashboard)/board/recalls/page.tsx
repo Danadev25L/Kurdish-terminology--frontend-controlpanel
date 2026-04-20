@@ -20,6 +20,7 @@ import {
 import type { Recall } from "@/lib/api/types";
 import { RequireAuth } from "@/components/auth/require-auth";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { useI18n } from "@/i18n/context";
 
 const statusVariant: Record<string, "default" | "success" | "warning" | "danger"> = {
   pending: "warning",
@@ -30,6 +31,7 @@ const statusVariant: Record<string, "default" | "success" | "warning" | "danger"
 
 function RecallsContent() {
   const router = useRouter();
+  const { t } = useI18n();
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string>("pending");
   const [selectedRecall, setSelectedRecall] = useState<Recall | null>(null);
@@ -118,12 +120,12 @@ function RecallsContent() {
 
   return (
     <div className="space-y-6">
-      <Breadcrumb items={[{ label: "Board", href: "/board/review-queue" }, { label: "Recalls" }]} />
+      <Breadcrumb items={[{ label: "Board", href: "/board/review-queue" }, { label: t("board.recalls") }]} />
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Board Recall Review</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t("board.recalls")}</h1>
           <p className="mt-1 text-sm text-muted">
-            Review and approve or reject term recall requests
+            {t("board.recalls")}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -146,11 +148,11 @@ function RecallsContent() {
 
       {recallList.length === 0 ? (
         <EmptyState
-          title="No recalls to review"
+          title={t("board.no_recalls")}
           description={
             statusFilter
-              ? `No recalls with status "${statusFilter}" found.`
-              : "No term recalls have been requested yet."
+              ? t("common.no_results")
+              : t("board.no_recalls")
           }
         />
       ) : (
@@ -307,8 +309,8 @@ function RecallsLocked() {
   return (
     <div className="flex items-center justify-center py-12">
       <EmptyState
-        title="Access Restricted"
-        description="You need Main Board or Admin privileges to review recall requests."
+        title={t("common.no_results")}
+        description={t("common.error_generic")}
       />
     </div>
   );

@@ -26,6 +26,7 @@ const sortOptions = [
 export default function BoardReviewQueuePage() {
   const router = useRouter();
   const addToast = useToastStore((s) => s.addToast);
+  const { t } = useI18n();
   const [page, setPage] = useState(1);
   const [domainId, setDomainId] = useState("");
   const [closeCall, setCloseCall] = useState(false);
@@ -71,7 +72,7 @@ export default function BoardReviewQueuePage() {
     <RoleGate roles={["main_board", "admin"]}>
       <div className="space-y-6">
         <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">
-          Board Review Queue
+          {t("board.review_queue")}
         </h1>
 
         {/* Filters */}
@@ -162,7 +163,7 @@ export default function BoardReviewQueuePage() {
           </>
         ) : (
           <p className="py-8 text-center text-[13px] text-text-muted">
-            No items in the review queue.
+            {t("board.no_items")}
           </p>
         )}
       </div>

@@ -41,6 +41,7 @@ interface InboxItem {
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { t } = useI18n();
 
   // Use optimized inbox endpoint instead of loading all concepts
   const { data: concepts, isLoading: cLoading } = useApi<PaginatedResponse<Concept>>(
@@ -82,7 +83,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">Priority Inbox</h1>
+      <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">{t("dashboard.title")}</h1>
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
@@ -172,8 +173,8 @@ export default function DashboardPage() {
         </div>
       ) : (
         <EmptyState
-          title="All caught up!"
-          description="No pending tasks. Check back later for new items."
+          title={t("dashboard.title")}
+          description={t("common.no_results")}
         />
       )}
     </div>

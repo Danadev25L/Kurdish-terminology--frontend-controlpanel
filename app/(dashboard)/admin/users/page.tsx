@@ -22,6 +22,7 @@ const allRoles = ["admin", "main_board", "domain-head", "expert"];
 export default function AdminUsersPage() {
   const { user: currentUser } = useAuth();
   const addToast = useToastStore((s) => s.addToast);
+  const { t } = useI18n();
   const [page, setPage] = useState(1);
   const [createOpen, setCreateOpen] = useState(false);
   const [createForm, setCreateForm] = useState({
@@ -96,7 +97,7 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       <Breadcrumb items={[{ label: "Admin", href: "/admin" }, { label: "Users" }]} />
       <div className="flex items-center justify-between">
-        <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">User Management</h1>
+        <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">{t("admin.users.title")}</h1>
         <Button onClick={() => setCreateOpen(true)}>Create User</Button>
       </div>
 
@@ -157,7 +158,7 @@ export default function AdminUsersPage() {
           />
         </>
       ) : (
-        <p className="py-8 text-center text-[13px] text-text-muted">No users found.</p>
+        <p className="py-8 text-center text-[13px] text-text-muted">{t("admin.users.no_users")}</p>
       )}
 
       {/* Create user modal */}

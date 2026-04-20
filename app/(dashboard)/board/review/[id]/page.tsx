@@ -25,6 +25,7 @@ export default function BoardExaminationPage() {
   const params = useParams();
   const router = useRouter();
   const conceptId = params.id as string;
+  const { t } = useI18n();
 
   const [approveOpen, setApproveOpen] = useState(false);
   const [vetoOpen, setVetoOpen] = useState(false);
@@ -100,14 +101,14 @@ export default function BoardExaminationPage() {
   return (
     <RoleGate roles={["main_board", "admin"]}>
       <div className="space-y-6">
-        <Breadcrumb items={[{ label: "Board Review", href: "/board/review-queue" }, { label: concept.english_term?.word ?? "Review" }]} />
+        <Breadcrumb items={[{ label: t("board.review_queue"), href: "/board/review-queue" }, { label: concept.english_term?.word ?? t("board.review_queue") }]} />
         {/* Back button */}
         <Button
           variant="ghost"
           size="sm"
           onClick={() => router.push("/board/review-queue")}
         >
-          Back to Queue
+          {t("common.back")}
         </Button>
 
         {/* Close call banner */}
@@ -200,14 +201,14 @@ export default function BoardExaminationPage() {
         {/* Action bar */}
         <div className="sticky bottom-0 flex items-center gap-3 rounded-xl border border-border bg-surface-raised p-4 shadow-lg">
           <Button onClick={() => setApproveOpen(true)} className="flex-1">
-            Approve
+            {t("board.approve")}
           </Button>
           <Button
             variant="danger"
             onClick={() => setVetoOpen(true)}
             className="flex-1"
           >
-            Veto
+            {t("board.veto")}
           </Button>
           <Button
             variant="secondary"

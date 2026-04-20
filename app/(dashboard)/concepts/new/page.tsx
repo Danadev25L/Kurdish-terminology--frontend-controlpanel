@@ -12,9 +12,11 @@ import { Button } from "@/components/ui/button";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { ApiError } from "@/lib/api/client";
 import type { Domain } from "@/lib/api/types";
+import { useI18n } from "@/i18n/context";
 
 export default function NewConceptPage() {
   const router = useRouter();
+  const { t } = useI18n();
   const [domains, setDomains] = useState<Domain[]>([]);
   const [domainId, setDomainId] = useState("");
   const [englishTerm, setEnglishTerm] = useState("");
@@ -63,36 +65,36 @@ export default function NewConceptPage() {
         ]}
       />
       <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">
-        New Concept
+        {t("concepts.new_concept")}
       </h1>
 
       <Card className="max-w-2xl p-6">
         <form onSubmit={handleSubmit} className="space-y-5">
           <Select
-            label="Domain"
+            label={t("concepts.new.domain")}
             options={domainOptions}
             value={domainId}
             onChange={(e) => setDomainId(e.target.value)}
-            placeholder="Select a domain"
+            placeholder={t("concepts.new.domain_placeholder")}
             error={errors.domain_id?.[0]}
             required
           />
 
           <Input
-            label="English Term"
+            label={t("concepts.new.english_term")}
             value={englishTerm}
             onChange={(e) => setEnglishTerm(e.target.value)}
-            placeholder="e.g. Algorithm"
+            placeholder={t("concepts.new.english_term_placeholder")}
             error={errors.english_term?.[0]}
             required
             maxLength={200}
           />
 
           <Textarea
-            label="Definition"
+            label={t("concepts.new.definition")}
             value={definition}
             onChange={(e) => setDefinition(e.target.value)}
-            placeholder="Provide a clear definition (min 10 characters)"
+            placeholder={t("concepts.new.definition_placeholder")}
             error={errors.definition?.[0]}
             required
             rows={4}
@@ -104,10 +106,10 @@ export default function NewConceptPage() {
               variant="secondary"
               onClick={() => router.back()}
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button type="submit" disabled={submitting}>
-              {submitting ? "Creating..." : "Create Concept"}
+              {submitting ? t("concepts.new.creating") : t("concepts.new.create")}
             </Button>
           </div>
         </form>

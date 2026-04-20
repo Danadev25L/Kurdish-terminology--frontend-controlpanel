@@ -20,6 +20,7 @@ import { useI18n } from "@/i18n/context";
 
 export default function BoardPublishedPage() {
   const addToast = useToastStore((s) => s.addToast);
+  const { t } = useI18n();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [recallOpen, setRecallOpen] = useState(false);
@@ -58,7 +59,7 @@ export default function BoardPublishedPage() {
     <RoleGate roles={["main_board", "admin"]}>
       <div className="space-y-6">
         <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">
-          Published Terms
+          {t("board.published_terms")}
         </h1>
 
         <SearchInput
@@ -121,7 +122,7 @@ export default function BoardPublishedPage() {
           </>
         ) : (
           <p className="py-8 text-center text-[13px] text-text-muted">
-            No published terms found.
+            {t("board.no_published")}
           </p>
         )}
 

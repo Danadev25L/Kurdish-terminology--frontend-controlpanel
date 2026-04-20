@@ -15,6 +15,7 @@ import type {
 import { useI18n } from "@/i18n/context";
 
 export default function BoardAnalyticsPage() {
+  const { t } = useI18n();
   const { data: dialectData, isLoading: dLoading } = useApi<DialectEquityData[]>(
     "/api/v1/analytics/dialect-equity"
   );
@@ -28,14 +29,14 @@ export default function BoardAnalyticsPage() {
     <RoleGate roles={["main_board", "admin"]}>
       <div className="space-y-6">
         <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">
-          Platform Analytics
+          {t("board.analytics.title")}
         </h1>
 
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Dialect Equity */}
           <Card>
             <CardHeader>
-              <CardTitle>Dialect Equity</CardTitle>
+              <CardTitle>{t("board.analytics.dialect_equity")}</CardTitle>
             </CardHeader>
             {dLoading ? (
               <Spinner />
@@ -49,7 +50,7 @@ export default function BoardAnalyticsPage() {
           {/* Domain Health */}
           <Card>
             <CardHeader>
-              <CardTitle>Domain Health</CardTitle>
+              <CardTitle>{t("board.analytics.domain_health")}</CardTitle>
             </CardHeader>
             {hLoading ? (
               <Spinner />
@@ -64,7 +65,7 @@ export default function BoardAnalyticsPage() {
         {/* Word Versatility - full width */}
         <Card>
           <CardHeader>
-            <CardTitle>Word Versatility</CardTitle>
+            <CardTitle>{t("board.analytics.word_versatility")}</CardTitle>
           </CardHeader>
           <p className="mb-4 text-[13px] text-text-muted">
             Shows Kurdish words shared across multiple concepts.

@@ -34,6 +34,7 @@ const sourceTypes: { value: ReferenceSourceType; label: string }[] = [
 
 export default function AdminReferencesPage() {
   const addToast = useToastStore((s) => s.addToast);
+  const { t } = useI18n();
   const [page, setPage] = useState(1);
   const { data: sourcesData, isLoading, refetch } = useApi<PaginatedSources>(
     `/api/v1/reference-sources?page=${page}`
@@ -104,7 +105,7 @@ export default function AdminReferencesPage() {
     <div className="space-y-6">
       <Breadcrumb items={[{ label: "Admin", href: "/admin" }, { label: "References" }]} />
       <div className="flex items-center justify-between">
-        <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">Reference Library</h1>
+        <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">{t("admin.references.title")}</h1>
         <Button onClick={() => setCreateOpen(true)}>Add Source</Button>
       </div>
 
@@ -149,7 +150,7 @@ export default function AdminReferencesPage() {
 
       {sources.length === 0 && (
         <p className="py-8 text-center text-[13px] text-text-muted">
-          No reference sources yet.
+          {t("admin.references.no_references")}
         </p>
       )}
 
