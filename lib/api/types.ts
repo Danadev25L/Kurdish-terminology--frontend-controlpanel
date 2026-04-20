@@ -294,11 +294,13 @@ export interface Notification {
 export interface AuditEvent {
   id: number;
   user_id: number;
-  user?: User;
+  user?: { id: number; name: string };
   action: string;
-  entity_type: string;
-  entity_id: number;
-  details?: Record<string, unknown>;
+  model_type: string;
+  model_id: number;
+  old_values?: Record<string, unknown> | null;
+  new_values?: Record<string, unknown> | null;
+  ip_address?: string;
   created_at: string;
 }
 

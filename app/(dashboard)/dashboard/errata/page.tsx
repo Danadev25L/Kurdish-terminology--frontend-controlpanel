@@ -207,7 +207,7 @@ export default function ErrataPage() {
                       </div>
                     )}
                     <p className="mt-2 text-[11px] text-text-muted">
-                      Reported {new Date(errata.created_at).toLocaleDateString()}
+                      {t("errata.reported_by_label")} {new Date(errata.created_at).toLocaleDateString()}
                     </p>
                   </div>
 
@@ -230,7 +230,7 @@ export default function ErrataPage() {
                             onClick={() => handleResolve(errata)}
                             loading={processingId === errata.id}
                           >
-                            Resolve
+                            {t("errata.resolve")}
                           </Button>
                           <Button
                             size="sm"
@@ -238,7 +238,7 @@ export default function ErrataPage() {
                             onClick={() => handleReject(errata)}
                             loading={processingId === errata.id}
                           >
-                            Reject
+                            {t("errata.reject")}
                           </Button>
                         </>
                       )}
