@@ -38,8 +38,7 @@ export function DiscussionThread({ conceptId }: DiscussionThreadProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { data: discussionsData, isLoading, refetch } = useApi<PaginatedDiscussions>(
-    `/api/v1/concepts/${conceptId}/discussions`,
-    { pollingInterval: 120000 }
+    `/api/v1/concepts/${conceptId}/discussions`
   );
 
   // Extract discussions array from paginated response

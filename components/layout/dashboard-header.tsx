@@ -21,9 +21,7 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
   const [notifOpen, setNotifOpen] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
 
-  const { data: notifications } = useApi<Notification[]>("/api/v1/notifications", {
-    pollingInterval: 120000,
-  });
+  const { data: notifications } = useApi<Notification[]>("/api/v1/notifications");
   const notifStore = useNotificationStore();
 
   useEffect(() => {

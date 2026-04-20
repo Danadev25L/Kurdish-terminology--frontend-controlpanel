@@ -39,8 +39,7 @@ export default function BoardReviewQueuePage() {
   params.set("page", String(page));
 
   const { data, isLoading, refetch } = useApi<PaginatedResponse<ReviewQueueItem>>(
-    `/api/v1/board/review-queue?${params}`,
-    { pollingInterval: 120000 }
+    `/api/v1/board/review-queue?${params}`
   );
 
   const toggleSelect = useCallback((id: number) => {

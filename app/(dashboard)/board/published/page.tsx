@@ -32,8 +32,7 @@ export default function BoardPublishedPage() {
   params.set("page", String(page));
 
   const { data, isLoading, refetch } = useApi<PaginatedResponse<Concept>>(
-    `/api/v1/concepts?${params}`,
-    { pollingInterval: 120000 }
+    `/api/v1/concepts?${params}`
   );
 
   const handleRecall = useCallback(async () => {

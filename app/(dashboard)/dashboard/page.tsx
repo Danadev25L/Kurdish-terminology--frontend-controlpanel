@@ -43,13 +43,11 @@ export default function DashboardPage() {
 
   // Use optimized inbox endpoint instead of loading all concepts
   const { data: concepts, isLoading: cLoading } = useApi<PaginatedResponse<Concept>>(
-    "/api/v1/concepts/inbox",
-    { pollingInterval: 120000 }
+    "/api/v1/concepts/inbox"
   );
 
   const { data: notifications, isLoading: nLoading } = useApi<Notification[]>(
-    "/api/v1/notifications",
-    { pollingInterval: 120000 }
+    "/api/v1/notifications"
   );
 
   // Build inbox items from concepts
