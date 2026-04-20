@@ -3,10 +3,10 @@
 import { useState, useCallback } from "react";
 import { useApi } from "@/lib/hooks/use-api";
 import { useAuth } from "@/lib/hooks/use-auth";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Select } from "@/components/ui/select";
 import { Modal } from "@/components/ui/modal";
 import { SkeletonTable } from "@/components/ui/skeleton";
 import { Pagination } from "@/components/ui/pagination";
@@ -30,10 +30,11 @@ export default function AdminUsersPage() {
     email: "",
     password: "",
   });
-  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [selectedRole, setSelectedRole] = useState<string>("");
   const [creating, setCreating] = useState(false);
   const [deleteUser, setDeleteUser] = useState<User | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [updatingRoleId, setUpdatingRoleId] = useState<number | null>(null);
 
   const { data, isLoading, refetch } = useApi<PaginatedResponse<User>>(
     `/api/v1/admin/users?page=${page}`
@@ -45,12 +46,12 @@ export default function AdminUsersPage() {
       setCreating(true);
       try {
         const user = await createUser(createForm);
-        if (selectedRoles.length > 0) {
-          await assignRoles(user.id, selectedRoles);
+        if (selectedRole) {
+          await assignRoles(user.id, [selectedRole]);
         }
         setCreateOpen(false);
         setCreateForm({ name: "", email: "", password: "" });
-        setSelectedRoles([]);
+        setSelectedRole("");
         refetch();
         addToast({ type: "success", message: t("messages.user_created") });
       } catch {
@@ -59,14 +60,7 @@ export default function AdminUsersPage() {
         setCreating(false);
       }
     },
-    [createForm, selectedRoles, refetch, addToast]
-  );
-
-  const handleDelete = useCallback(
-    async (user: User) => {
-      setDeleteUser(user);
-    },
-    []
+    [createForm, selectedRole, refetch, addToast]
   );
 
   const confirmDelete = useCallback(
@@ -87,11 +81,23 @@ export default function AdminUsersPage() {
     [deleteUser, refetch, addToast]
   );
 
-  const toggleRole = (role: string) => {
-    setSelectedRoles((prev) =>
-      prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]
-    );
-  };
+  const handleRoleChange = useCallback(
+    async (user: User, e: React.ChangeEvent<HTMLSelectElement>) => {
+      const newRole = e.target.value;
+      setUpdatingRoleId(user.id);
+      try {
+        await assignRoles(user.id, newRole ? [newRole] : []);
+        refetch();
+        addToast({ type: "success", message: t("messages.role_updated") });
+      } catch {
+        addToast({ type: "error", message: t("messages.role_update_failed") });
+        e.target.value = user.roles[0] ?? "";
+      } finally {
+        setUpdatingRoleId(null);
+      }
+    },
+    [refetch, addToast]
+  );
 
   return (
     <div className="space-y-6">
@@ -124,13 +130,26 @@ export default function AdminUsersPage() {
                       {user.email}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex flex-wrap gap-1">
-                        {user.roles.map((role) => (
-                          <Badge key={role} variant="primary">
-                            {role.replace(/_/g, " ")}
-                          </Badge>
-                        ))}
-                      </div>
+                      {user.id !== currentUser?.id ? (
+                        <Select
+                          options={[
+                            { value: "", label: `— ${t("admin.users.no_role")} —` },
+                            ...allRoles.map((r) => ({ value: r, label: t(`roles.${r.replace("-", "_")}`) ?? r.replace(/_/g, " ") })),
+                          ]}
+                          value={user.roles[0] ?? ""}
+                          onChange={(e) => handleRoleChange(user, e)}
+                          disabled={updatingRoleId === user.id}
+                          className="w-36"
+                        />
+                      ) : (
+                        <div className="flex flex-wrap gap-1">
+                          {user.roles.map((role) => (
+                            <Badge key={role} variant="primary">
+                              {role.replace(/_/g, " ")}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-[13px] text-text-muted">
                       {user.created_at}
@@ -140,7 +159,7 @@ export default function AdminUsersPage() {
                         <Button
                           size="sm"
                           variant="danger"
-                          onClick={() => handleDelete(user)}
+                          onClick={() => setDeleteUser(user)}
                         >
                           {t("common.delete")}
                         </Button>
@@ -190,25 +209,15 @@ export default function AdminUsersPage() {
             }
             required
           />
-          <div>
-            <p className="mb-2 text-[14px] font-bold text-text-secondary">{t("common.roles")}</p>
-            <div className="flex flex-wrap gap-2">
-              {allRoles.map((role) => (
-                <button
-                  key={role}
-                  type="button"
-                  onClick={() => toggleRole(role)}
-                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                    selectedRoles.includes(role)
-                      ? "bg-primary text-white"
-                      : "bg-gray-100 text-muted hover:bg-surface"
-                  }`}
-                >
-                  {role.replace("_", " ")}
-                </button>
-              ))}
-            </div>
-          </div>
+          <Select
+            label={t("common.roles")}
+            options={[
+              { value: "", label: `— ${t("admin.users.no_role")} —` },
+              ...allRoles.map((r) => ({ value: r, label: t(`roles.${r.replace("-", "_")}`) ?? r.replace(/_/g, " ") })),
+            ]}
+            value={selectedRole}
+            onChange={(e) => setSelectedRole(e.target.value)}
+          />
           <Button type="submit" loading={creating} className="w-full">
             {t("admin.users.create_user")}
           </Button>
