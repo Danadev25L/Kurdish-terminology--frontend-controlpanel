@@ -6,11 +6,11 @@ import type {
 } from "./types";
 
 export function getDialectEquity() {
-  return api.get<DialectEquityData[]>("/api/v1/board/analytics/dialect-equity");
+  return api.get<DialectEquityData[]>("/api/v1/analytics/dialect-equity");
 }
 
 export function getWordVersatility() {
-  return api.get<WordVersatilityData[]>("/api/v1/board/analytics/word-versatility");
+  return api.get<WordVersatilityData[]>("/api/v1/analytics/word-versatility");
 }
 
 export function getDomainHealth() {

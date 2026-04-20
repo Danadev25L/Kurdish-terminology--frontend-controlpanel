@@ -25,7 +25,7 @@ export function importConceptsCSV(file: File, domainId?: number): Promise<Import
   if (domainId) {
     formData.append("domain_id", String(domainId));
   }
-  return api.upload<ImportResult>("/api/v1/imports/concepts/csv", formData);
+  return api.upload<ImportResult>("/api/v1/import/concepts/csv", formData);
 }
 
 export function importConceptsJSON(file: File, domainId?: number): Promise<ImportResult> {
@@ -34,14 +34,14 @@ export function importConceptsJSON(file: File, domainId?: number): Promise<Impor
   if (domainId) {
     formData.append("domain_id", String(domainId));
   }
-  return api.upload<ImportResult>("/api/v1/imports/concepts/json", formData);
+  return api.upload<ImportResult>("/api/v1/import/concepts/json", formData);
 }
 
 export function getImportTemplate(format: "csv" | "json" = "csv"): Promise<ImportTemplate> {
-  return api.get<ImportTemplate>(`/api/v1/imports/template?format=${format}`);
+  return api.get<ImportTemplate>(`/api/v1/import/template?format=${format}`);
 }
 
 export function downloadImportTemplateURL(format: "csv" | "json" = "csv"): string {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-  return `${baseUrl}/api/v1/imports/template/download?format=${format}`;
+  return `${baseUrl}/api/v1/import/template/download?format=${format}`;
 }

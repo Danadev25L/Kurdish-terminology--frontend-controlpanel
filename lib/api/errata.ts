@@ -27,7 +27,13 @@ export function resolveErrata(id: number, notes?: string) {
 }
 
 export function submitPublicErrata(data: PublicErrataSubmission) {
-  return api.post<Errata>("/api/v1/errata", data);
+  return api.post<Errata>("/api/v1/errata", {
+    concept_id: data.concept_id,
+    issue_description: data.description,
+    suggested_correction: data.suggested_correction,
+    submitter_name: data.reporter_name,
+    submitter_email: data.reporter_email,
+  });
 }
 
 export function rejectErrata(id: number, reason: string) {

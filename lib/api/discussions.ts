@@ -38,8 +38,8 @@ export function replyToDiscussion(
   return api.post<Discussion>(`/api/v1/discussions/${discussionId}/reply`, data);
 }
 
-export function addReaction(discussionId: number) {
-  return api.post(`/api/v1/discussions/${discussionId}/react`);
+export function addReaction(discussionId: number, type: "upvote" | "downvote" = "upvote") {
+  return api.post(`/api/v1/discussions/${discussionId}/react`, { type });
 }
 
 export function deleteDiscussion(discussionId: number) {

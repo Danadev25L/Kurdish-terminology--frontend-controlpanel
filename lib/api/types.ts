@@ -399,7 +399,7 @@ export interface Errata {
 }
 
 export interface PublicErrataSubmission {
-  public_term_id: number;
+  concept_id: number;
   reporter_name?: string;
   reporter_email?: string;
   issue_type: Errata["issue_type"];
