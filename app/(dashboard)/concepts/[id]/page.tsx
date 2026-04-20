@@ -416,6 +416,9 @@ function ActivityTab({ conceptId }: { conceptId: string }) {
     `/api/v1/concepts/${conceptId}/activity-feed`
   );
 
+  // Ensure activities is always an array
+  const activitiesList = Array.isArray(activities) ? activities : [];
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-12">
@@ -424,7 +427,7 @@ function ActivityTab({ conceptId }: { conceptId: string }) {
     );
   }
 
-  if (!activities || activities.length === 0) {
+  if (activitiesList.length === 0) {
     return (
       <Card>
         <p className="text-center text-sm text-text-muted">No recent activity.</p>
@@ -436,7 +439,7 @@ function ActivityTab({ conceptId }: { conceptId: string }) {
     <Card>
       <h3 className="mb-4 text-[14px] font-bold text-foreground">Recent Activity</h3>
       <div className="space-y-3">
-        {activities.map((activity) => (
+        {activitiesList.map((activity) => (
           <div key={activity.id} className="flex items-start gap-3 border-b border-border-light pb-3 last:border-0">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface">
               <svg className="h-4 w-4 text-text-muted" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
