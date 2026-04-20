@@ -154,19 +154,29 @@ export interface CandidateMetrics {
 }
 
 // ── Discussions ──
+export interface DiscussionReactions {
+  upvotes_count: number;
+  downvotes_count: number;
+  user_reaction: "upvote" | "downvote" | null;
+}
+
+export interface DiscussionReply {
+  id: number;
+  body: string;
+  author: { id: number; name: string };
+  created_at: string;
+}
+
 export interface Discussion {
   id: number;
-  concept_id: number;
   body: string;
-  parent_id?: number;
-  author_id: number;
-  author?: User;
-  reactions_count: number;
-  user_reacted: boolean;
-  deleted_at?: string;
-  replies?: Discussion[];
+  author: { id: number; name: string };
+  is_edited: boolean;
+  edited_at: string | null;
+  reactions: DiscussionReactions;
+  replies_count: number;
+  replies: DiscussionReply[];
   created_at: string;
-  updated_at: string;
 }
 
 // ── Voting ──

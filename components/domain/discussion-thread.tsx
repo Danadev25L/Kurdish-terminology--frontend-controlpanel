@@ -15,7 +15,7 @@ import {
   deleteDiscussion,
 } from "@/lib/api/discussions";
 import type { Discussion } from "@/lib/api/types";
-import { timeAgo } from "@/lib/utils/format";
+
 
 interface PaginatedDiscussions {
   data: Discussion[];
@@ -112,7 +112,7 @@ export function DiscussionThread({ conceptId }: DiscussionThreadProps) {
 
   if (isLoading) return <Spinner />;
 
-  const topLevel = discussions.filter((d) => !d.parent_id && !d.deleted_at);
+  const topLevel = discussions;
 
   return (
     <div className="space-y-4">
@@ -156,9 +156,7 @@ export function DiscussionThread({ conceptId }: DiscussionThreadProps) {
               onReply={handleReply}
               onReact={handleReact}
               onDelete={handleDelete}
-              replies={discussions.filter(
-                (d) => d.parent_id === discussion.id && !d.deleted_at
-              )}
+              replies={discussion.replies ?? []}
             />
           ))}
         </div>
