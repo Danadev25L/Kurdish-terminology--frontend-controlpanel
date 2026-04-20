@@ -16,6 +16,7 @@ import { api } from "@/lib/api/client";
 import { useToastStore } from "@/stores/toast-store";
 import { timeAgo } from "@/lib/utils/format";
 import type { Concept, PaginatedResponse } from "@/lib/api/types";
+import { useI18n } from "@/i18n/context";
 
 export default function BoardPublishedPage() {
   const addToast = useToastStore((s) => s.addToast);

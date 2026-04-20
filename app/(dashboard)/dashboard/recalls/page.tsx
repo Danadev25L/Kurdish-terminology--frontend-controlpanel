@@ -18,6 +18,7 @@ import {
 } from "@/lib/api/recalls";
 import type { Recall, Concept } from "@/lib/api/types";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { useI18n } from "@/i18n/context";
 
 const statusVariant: Record<string, "default" | "success" | "warning" | "danger"> = {
   pending: "warning",

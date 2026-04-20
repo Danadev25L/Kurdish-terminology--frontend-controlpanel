@@ -9,6 +9,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { Concept, PaginatedResponse, Notification } from "@/lib/api/types";
 import { timeAgo } from "@/lib/utils/format";
+import { useI18n } from "@/i18n/context";
 
 type Priority = "critical" | "urgent" | "high" | "normal" | "low";
 

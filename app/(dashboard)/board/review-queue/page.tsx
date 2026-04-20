@@ -13,6 +13,7 @@ import { BatchActionBar } from "@/components/board/batch-action-bar";
 import { batchApprove } from "@/lib/api/board";
 import { useToastStore } from "@/stores/toast-store";
 import type { PaginatedResponse, ReviewQueueItem } from "@/lib/api/types";
+import { useI18n } from "@/i18n/context";
 
 const sortOptions = [
   { value: "", label: "Default" },

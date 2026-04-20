@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { timeAgo } from "@/lib/utils/format";
 import type { Notification } from "@/lib/api/types";
+import { LanguageToggle } from "@/components/layout/language-toggle";
+import { useI18n } from "@/i18n/context";
 
 interface DashboardHeaderProps {
   onToggleSidebar?: () => void;
@@ -18,6 +20,7 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
   const { user, logout } = useAuth();
   const { roles } = useRole();
   const router = useRouter();
+  const { t } = useI18n();
   const [notifOpen, setNotifOpen] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
 
@@ -84,6 +87,8 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
       </div>
 
       <div className="flex items-center gap-3">
+        <LanguageToggle />
+
         {/* Notification bell */}
         <div ref={notifRef} className="relative">
           <button
@@ -104,20 +109,20 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
           {notifOpen && (
             <div className="absolute end-0 top-full z-50 mt-1 w-80 rounded-[10px] border border-border bg-surface-raised shadow-lg">
               <div className="flex items-center justify-between border-b border-border-light px-4 py-2">
-                <span className="text-sm font-semibold text-foreground">Notifications</span>
+                <span className="text-sm font-semibold text-foreground">{t("common.notifications")}</span>
                 {notifStore.unreadCount > 0 && (
                   <button
                     onClick={() => notifStore.markAllRead()}
                     className="text-xs text-primary-500 hover:underline"
                   >
-                    Mark all read
+                    {t("common.mark_all_read")}
                   </button>
                 )}
               </div>
               <div className="max-h-64 overflow-y-auto">
                 {notifStore.notifications.length === 0 ? (
                   <p className="px-4 py-6 text-center text-sm text-text-muted">
-                    No notifications
+                    {t("common.no_notifications")}
                   </p>
                 ) : (
                   notifStore.notifications.slice(0, 10).map((notif) => (

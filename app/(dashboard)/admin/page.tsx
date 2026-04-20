@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Card, CardTitle } from "@/components/ui/card";
+import { useI18n } from "@/i18n/context";
 
 const adminCards = [
   {

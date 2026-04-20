@@ -15,6 +15,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { useToastStore } from "@/stores/toast-store";
 import type { Errata } from "@/lib/api/types";
 import { RoleGate } from "@/components/auth/role-gate";
+import { useI18n } from "@/i18n/context";
 
 const statusVariant: Record<string, "default" | "primary" | "success" | "warning" | "danger"> = {
   pending: "warning",

@@ -10,6 +10,7 @@ import { updateSetting } from "@/lib/api/settings";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { useToastStore } from "@/stores/toast-store";
 import type { Setting } from "@/lib/api/types";
+import { useI18n } from "@/i18n/context";
 
 export default function AdminSettingsPage() {
   const { data: rawSettings, isLoading, refetch } = useApi<Record<string, Setting[]>>("/api/v1/admin/settings");

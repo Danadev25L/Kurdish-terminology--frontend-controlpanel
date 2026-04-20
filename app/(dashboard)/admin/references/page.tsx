@@ -13,6 +13,7 @@ import { createReferenceSource, importReferenceEntries } from "@/lib/api/referen
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { useToastStore } from "@/stores/toast-store";
 import type { ReferenceSource, ReferenceSourceType } from "@/lib/api/types";
+import { useI18n } from "@/i18n/context";
 
 interface PaginatedSources {
   data: ReferenceSource[];

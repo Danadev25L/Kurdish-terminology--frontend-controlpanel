@@ -15,6 +15,7 @@ import { createUser, assignRoles, deleteUser as deleteUserApi } from "@/lib/api/
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { useToastStore } from "@/stores/toast-store";
 import type { User, PaginatedResponse } from "@/lib/api/types";
+import { useI18n } from "@/i18n/context";
 
 const allRoles = ["admin", "main_board", "domain-head", "expert"];
 

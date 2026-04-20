@@ -9,6 +9,7 @@ import { SkeletonTable } from "@/components/ui/skeleton";
 import { formatDateTime } from "@/lib/utils/format";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import type { AuditEvent, PaginatedResponse } from "@/lib/api/types";
+import { useI18n } from "@/i18n/context";
 
 export default function AdminAuditPage() {
   const [page, setPage] = useState(1);

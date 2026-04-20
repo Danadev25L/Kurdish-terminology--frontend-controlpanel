@@ -19,6 +19,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { useToastStore } from "@/stores/toast-store";
 import { formatNumber, formatDate } from "@/lib/utils/format";
 import type { Concept, Candidate } from "@/lib/api/types";
+import { useI18n } from "@/i18n/context";
 
 export default function BoardExaminationPage() {
   const params = useParams();

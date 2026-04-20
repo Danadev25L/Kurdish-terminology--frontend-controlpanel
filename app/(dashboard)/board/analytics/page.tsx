@@ -12,6 +12,7 @@ import type {
   WordVersatilityData,
   DomainHealthData,
 } from "@/lib/api/types";
+import { useI18n } from "@/i18n/context";
 
 export default function BoardAnalyticsPage() {
   const { data: dialectData, isLoading: dLoading } = useApi<DialectEquityData[]>(

@@ -22,6 +22,7 @@ import { getDomains } from "@/lib/api/domains";
 import type { Domain, ImportResult } from "@/lib/api/types";
 import { RoleGate } from "@/components/auth/role-gate";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { useI18n } from "@/i18n/context";
 
 export default function ExportImportPage() {
   const { isDomainHead, isAdmin } = useRole();

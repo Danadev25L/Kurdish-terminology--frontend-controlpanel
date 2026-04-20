@@ -2,6 +2,7 @@
 
 import { RequireAuth } from "@/components/auth/require-auth";
 import { DashboardShell } from "@/components/layout/dashboard-shell";
+import { I18nProvider } from "@/i18n/context";
 
 export default function DashboardLayout({
   children,
@@ -9,8 +10,10 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <RequireAuth>
-      <DashboardShell>{children}</DashboardShell>
-    </RequireAuth>
+    <I18nProvider>
+      <RequireAuth>
+        <DashboardShell>{children}</DashboardShell>
+      </RequireAuth>
+    </I18nProvider>
   );
 }

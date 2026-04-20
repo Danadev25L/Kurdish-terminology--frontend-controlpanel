@@ -8,9 +8,10 @@ import { useRole } from "@/lib/hooks/use-role";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useState, useCallback } from "react";
 import { Tooltip } from "@/components/ui/tooltip";
+import { useI18n } from "@/i18n/context";
 
 interface NavItem {
-  label: string;
+  translationKey: string;
   href: string;
   roles: string[];
   icon: React.ReactNode;
@@ -18,7 +19,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   {
-    label: "Dashboard",
+    translationKey: "nav.dashboard",
     href: "/dashboard",
     roles: ["admin", "main_board", "domain-head", "expert"],
     icon: (
@@ -28,7 +29,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Concepts",
+    translationKey: "nav.concepts",
     href: "/concepts",
     roles: ["admin", "main_board", "domain-head", "expert"],
     icon: (
@@ -38,7 +39,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Domains",
+    translationKey: "nav.domains",
     href: "/domains",
     roles: ["admin", "domain-head"],
     icon: (
@@ -48,7 +49,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Board Review",
+    translationKey: "nav.board_review",
     href: "/board/review-queue",
     roles: ["main_board"],
     icon: (
@@ -58,7 +59,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Published",
+    translationKey: "nav.published",
     href: "/board/published",
     roles: ["main_board"],
     icon: (
@@ -68,7 +69,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Analytics",
+    translationKey: "nav.analytics",
     href: "/board/analytics",
     roles: ["main_board"],
     icon: (
@@ -78,7 +79,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Export/Import",
+    translationKey: "nav.export_import",
     href: "/dashboard/export",
     roles: ["admin", "domain-head"],
     icon: (
@@ -88,7 +89,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Errata",
+    translationKey: "nav.errata",
     href: "/dashboard/errata",
     roles: ["admin", "main_board", "domain-head"],
     icon: (
@@ -98,7 +99,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Recalls",
+    translationKey: "nav.recalls",
     href: "/dashboard/recalls",
     roles: ["admin", "main_board", "domain-head", "expert"],
     icon: (
@@ -109,7 +110,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Board Recalls",
+    translationKey: "nav.board_recalls",
     href: "/board/recalls",
     roles: ["main_board", "admin"],
     icon: (
@@ -119,7 +120,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Admin",
+    translationKey: "nav.admin",
     href: "/admin",
     roles: ["admin"],
     icon: (
@@ -143,6 +144,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const router = useRouter();
   const [hovered, setHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { t } = useI18n();
 
   const handleLogout = useCallback(async () => {
     await logout();
@@ -216,10 +218,10 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
             if (!isExpanded) {
               return (
-                <Tooltip key={item.href} content={item.label}>
+                <Tooltip key={item.href} content={t(item.translationKey)}>
                   <Link
                     href={item.href}
-                    aria-label={item.label}
+                    aria-label={t(item.translationKey)}
                     className={cn(
                       "flex h-9 w-9 items-center justify-center rounded-lg mx-auto transition-colors",
                       isActive
@@ -245,7 +247,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 )}
               >
                 {item.icon}
-                <span>{item.label}</span>
+                <span>{t(item.translationKey)}</span>
               </Link>
             );
           })}
@@ -264,7 +266,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               </div>
               <button
                 onClick={handleLogout}
-                aria-label="Sign out"
+                aria-label={t("nav.sign_out")}
                 className="rounded-lg p-1.5 text-text-muted hover:bg-surface hover:text-danger"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -273,10 +275,10 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               </button>
             </div>
           ) : (
-            <Tooltip content="Sign out">
+            <Tooltip content={t("nav.sign_out")}>
               <button
                 onClick={handleLogout}
-                aria-label="Sign out"
+                aria-label={t("nav.sign_out")}
                 className="mx-auto flex h-[30px] w-[30px] items-center justify-center rounded-lg text-text-muted hover:bg-surface hover:text-danger"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">

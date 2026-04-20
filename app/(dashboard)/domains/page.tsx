@@ -8,17 +8,19 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RoleGate } from "@/components/auth/role-gate";
 import type { Domain } from "@/lib/api/types";
+import { useI18n } from "@/i18n/context";
 
 export default function DomainsPage() {
   const router = useRouter();
+  const { t } = useI18n();
   const { data: domains, isLoading } = useApi<Domain[]>("/api/v1/domains");
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">Domains</h1>
+        <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">{t("domains.title")}</h1>
         <RoleGate roles={["admin"]}>
-          <Button>Add Domain</Button>
+          <Button>{t("domains.add_domain")}</Button>
         </RoleGate>
       </div>
 
@@ -53,8 +55,8 @@ export default function DomainsPage() {
                     <Badge>{domain.slug}</Badge>
                   </div>
                   <div className="mt-3 flex gap-4 text-xs text-text-muted">
-                    <span>{domain.experts_count ?? 0} experts</span>
-                    <span>{domain.concepts_count ?? 0} concepts</span>
+                    <span>{domain.experts_count ?? 0} {t("domains.experts")}</span>
+                    <span>{domain.concepts_count ?? 0} {t("domains.concepts")}</span>
                   </div>
                 </Card>
               </button>
@@ -63,7 +65,7 @@ export default function DomainsPage() {
         </ul>
       ) : (
         <p className="py-8 text-center text-[13px] text-text-muted">
-          No domains found.
+          {t("domains.no_domains")}
         </p>
       )}
     </div>

@@ -13,6 +13,7 @@ import { ConceptStatusBadge } from "@/components/domain/concept-status-badge";
 import { SkeletonCard } from "@/components/ui/skeleton";
 import type { PaginatedResponse, Concept } from "@/lib/api/types";
 import { timeAgo } from "@/lib/utils/format";
+import { useI18n } from "@/i18n/context";
 
 const statusOptions = [
   { value: "", label: "All Statuses" },
@@ -26,6 +27,7 @@ const statusOptions = [
 
 export default function ConceptsPage() {
   const router = useRouter();
+  const { t } = useI18n();
   const { isExpert, isDomainHead, isAdmin } = useRole();
   const [status, setStatus] = useState("");
   const [domainId, setDomainId] = useState("");
@@ -50,10 +52,10 @@ export default function ConceptsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">Concepts</h1>
+        <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">{t("concepts.title")}</h1>
         {(isExpert || isAdmin) && (
           <Button onClick={() => router.push("/concepts/new")}>
-            New Concept
+            {t("concepts.new_concept")}
           </Button>
         )}
       </div>
