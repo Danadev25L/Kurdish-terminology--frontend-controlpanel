@@ -75,7 +75,7 @@ export default function ConceptsPage() {
             setStatus(e.target.value);
             setPage(1);
           }}
-          placeholder="Status"
+          placeholder={t("common.status")}
           className="w-44"
         />
       </div>

@@ -23,13 +23,13 @@ interface PaginatedSources {
   total?: number;
 }
 
-const sourceTypes: { value: ReferenceSourceType; label: string }[] = [
-  { value: "academic", label: "Academic" },
-  { value: "dictionary", label: "Dictionary" },
-  { value: "government", label: "Government" },
-  { value: "encyclopedia", label: "Encyclopedia" },
-  { value: "journal", label: "Journal" },
-  { value: "other", label: "Other" },
+const sourceTypeValues: { value: ReferenceSourceType; key: string }[] = [
+  { value: "academic", key: "source_types.academic" },
+  { value: "dictionary", key: "source_types.dictionary" },
+  { value: "government", key: "source_types.government" },
+  { value: "encyclopedia", key: "source_types.encyclopedia" },
+  { value: "journal", key: "source_types.journal" },
+  { value: "other", key: "source_types.other" },
 ];
 
 export default function AdminReferencesPage() {
@@ -63,9 +63,9 @@ export default function AdminReferencesPage() {
         setType("dictionary");
         setDesc("");
         refetch();
-        addToast({ type: "success", message: "Source created" });
+        addToast({ type: "success", message: t("messages.source_created") });
       } catch {
-        addToast({ type: "error", message: "Failed to create source" });
+        addToast({ type: "error", message: t("messages.source_create_failed") });
       } finally {
         setCreating(false);
       }
@@ -83,9 +83,9 @@ export default function AdminReferencesPage() {
       try {
         await importReferenceEntries(sourceId, file);
         refetch();
-        addToast({ type: "success", message: "CSV imported" });
+        addToast({ type: "success", message: t("messages.csv_imported") });
       } catch {
-        addToast({ type: "error", message: "Import failed" });
+        addToast({ type: "error", message: t("messages.import_failed") });
       } finally {
         setUploadingId(null);
       }
@@ -103,10 +103,10 @@ export default function AdminReferencesPage() {
 
   return (
     <div className="space-y-6">
-      <Breadcrumb items={[{ label: "Admin", href: "/admin" }, { label: "References" }]} />
+      <Breadcrumb items={[{ label: t("nav.admin"), href: "/admin" }, { label: t("admin.references.title") }]} />
       <div className="flex items-center justify-between">
         <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">{t("admin.references.title")}</h1>
-        <Button onClick={() => setCreateOpen(true)}>Add Source</Button>
+        <Button onClick={() => setCreateOpen(true)}>{t("admin.references.add_source")}</Button>
       </div>
 
       <div className="space-y-4">
@@ -123,7 +123,7 @@ export default function AdminReferencesPage() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-[13px] text-text-muted">
-                  {source.entry_count ?? 0} entries
+                  {source.entry_count ?? 0} {t("admin.references.entries")}
                 </span>
                 <Button
                   size="sm"
@@ -140,7 +140,7 @@ export default function AdminReferencesPage() {
                     input.click();
                   }}
                 >
-                  Import CSV
+                  {t("admin.references.import_csv")}
                 </Button>
               </div>
             </CardHeader>
@@ -165,31 +165,31 @@ export default function AdminReferencesPage() {
       <Modal
         open={createOpen}
         onClose={() => setCreateOpen(false)}
-        title="Add Reference Source"
+        title={t("admin.references.add_source_title")}
       >
         <form onSubmit={handleCreate} className="space-y-4">
           <Input
-            label="Name"
+            label={t("common.name")}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g., Hazhar Dictionary"
+            placeholder={t("admin.references.name_placeholder")}
             required
           />
           <Select
-            label="Type"
-            options={sourceTypes}
+            label={t("admin.references.type")}
+            options={sourceTypeValues.map((s) => ({ value: s.value, label: t(s.key) }))}
             value={type}
             onChange={(e) => setType(e.target.value as ReferenceSourceType)}
             required
           />
           <Input
-            label="Description"
+            label={t("admin.references.description")}
             value={desc}
             onChange={(e) => setDesc(e.target.value)}
-            placeholder="Optional description"
+            placeholder={t("admin.references.desc_placeholder")}
           />
           <Button type="submit" loading={creating} className="w-full">
-            Create Source
+            {t("admin.references.create_source")}
           </Button>
         </form>
       </Modal>

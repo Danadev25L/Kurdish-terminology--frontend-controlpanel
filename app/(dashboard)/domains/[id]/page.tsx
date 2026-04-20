@@ -15,6 +15,7 @@ import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { deleteDomain, removeDomainMember, updateDomainMember } from "@/lib/api/domains";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { useToastStore } from "@/stores/toast-store";
+import { useI18n } from "@/i18n/context";
 import type { Domain, DomainMember } from "@/lib/api/types";
 
 export default function DomainDetailPage() {
@@ -24,6 +25,7 @@ export default function DomainDetailPage() {
   const { isAdmin, isDomainHead } = useRole();
   const addToast = useToastStore((s) => s.addToast);
   const canManage = isAdmin || isDomainHead;
+  const { t } = useI18n();
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -39,10 +41,10 @@ export default function DomainDetailPage() {
     setDeleting(true);
     try {
       await deleteDomain(domainId);
-      addToast({ type: "success", message: "Domain deleted" });
+      addToast({ type: "success", message: t("messages.domain_deleted") });
       router.push("/domains");
     } catch {
-      addToast({ type: "error", message: "Failed to delete domain" });
+      addToast({ type: "error", message: t("messages.domain_delete_failed") });
     } finally {
       setDeleting(false);
     }
@@ -63,9 +65,9 @@ export default function DomainDetailPage() {
         await removeDomainMember(domainId, removeMember.user_id);
         setRemoveMember(null);
         refetch();
-        addToast({ type: "success", message: "Member removed" });
+        addToast({ type: "success", message: t("messages.member_removed") });
       } catch {
-        addToast({ type: "error", message: "Failed to remove member" });
+        addToast({ type: "error", message: t("messages.member_remove_failed") });
       } finally {
         setRemoving(false);
       }
@@ -79,9 +81,9 @@ export default function DomainDetailPage() {
       try {
         await updateDomainMember(Number(domainId), member.user_id, { role: newRole });
         refetch();
-        addToast({ type: "success", message: "Role updated" });
+        addToast({ type: "success", message: t("messages.role_updated") });
       } catch {
-        addToast({ type: "error", message: "Failed to update role" });
+        addToast({ type: "error", message: t("messages.role_update_failed") });
         // Revert the select to the original value on failure
         e.target.value = member.role;
       }
@@ -98,12 +100,12 @@ export default function DomainDetailPage() {
   }
 
   if (!domain) {
-    return <p className="text-center text-text-muted">Domain not found.</p>;
+    return <p className="text-center text-text-muted">{t("domains.not_found")}</p>;
   }
 
   return (
     <div className="space-y-6">
-      <Breadcrumb items={[{ label: "Domains", href: "/domains" }, { label: domain?.name ?? "Domain" }]} />
+      <Breadcrumb items={[{ label: t("domains.title"), href: "/domains" }, { label: domain?.name ?? t("domains.title") }]} />
       {/* Domain info */}
       <Card>
         <div className="flex items-start justify-between">
@@ -117,7 +119,7 @@ export default function DomainDetailPage() {
             <Badge>{domain.slug}</Badge>
             <RoleGate roles={["admin"]}>
               <Button variant="danger" size="sm" onClick={() => setDeleteOpen(true)}>
-                Delete Domain
+                {t("domains.delete_domain")}
               </Button>
             </RoleGate>
           </div>
@@ -127,21 +129,21 @@ export default function DomainDetailPage() {
       {/* Members */}
       <Card>
         <CardHeader>
-          <CardTitle>Members</CardTitle>
-          {canManage && <Button size="sm">Add Member</Button>}
+          <CardTitle>{t("domains.detail.members")}</CardTitle>
+          {canManage && <Button size="sm">{t("domains.detail.add_member")}</Button>}
         </CardHeader>
 
         {!members || members.length === 0 ? (
-          <p className="text-[13px] text-text-muted">No members yet.</p>
+          <p className="text-[13px] text-text-muted">{t("domains.no_members")}</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border-light text-start text-[11px] font-semibold uppercase tracking-[0.05em] text-text-muted">
-                  <th key="header-user" className="px-3 py-2">User</th>
-                  <th key="header-role" className="px-3 py-2">Role</th>
-                  <th key="header-joined" className="px-3 py-2">Joined</th>
-                  {canManage ? <th key="header-actions" className="px-3 py-2">Actions</th> : null}
+                  <th key="header-user" className="px-3 py-2">{t("common.user")}</th>
+                  <th key="header-role" className="px-3 py-2">{t("common.role")}</th>
+                  <th key="header-joined" className="px-3 py-2">{t("common.joined")}</th>
+                  {canManage ? <th key="header-actions" className="px-3 py-2">{t("common.actions")}</th> : null}
                 </tr>
               </thead>
               <tbody>
@@ -167,8 +169,8 @@ export default function DomainDetailPage() {
                       {canManage ? (
                         <Select
                           options={[
-                            { value: "expert", label: "Expert" },
-                            { value: "observer", label: "Observer" },
+                            { value: "expert", label: t("roles.expert") },
+                            { value: "observer", label: t("roles.observer") },
                           ]}
                           value={member.role}
                           onChange={(e) => handleRoleChange(member, e)}
@@ -176,7 +178,7 @@ export default function DomainDetailPage() {
                         />
                       ) : (
                         <Badge variant={member.role === "expert" ? "primary" : "default"}>
-                          {member.role}
+                          {member.role === "expert" ? t("roles.expert") : t("roles.observer")}
                         </Badge>
                       )}
                     </td>
@@ -190,7 +192,7 @@ export default function DomainDetailPage() {
                           size="sm"
                           onClick={() => handleRemoveMember(member)}
                         >
-                          Remove
+                          {t("common.remove")}
                         </Button>
                       </td>
                     ) : null}
@@ -207,9 +209,9 @@ export default function DomainDetailPage() {
         open={deleteOpen}
         onClose={() => setDeleteOpen(false)}
         onConfirm={handleDelete}
-        title="Delete Domain"
-        message={`Are you sure you want to delete "${domain.name}"? This will also delete all concepts and candidates associated with this domain. This action cannot be undone.`}
-        confirmLabel="Delete"
+        title={t("domains.delete_domain")}
+        message={t("domains.delete_confirm", { name: domain.name })}
+        confirmLabel={t("common.delete")}
         variant="danger"
         loading={deleting}
       />
@@ -219,9 +221,9 @@ export default function DomainDetailPage() {
         open={!!removeMember}
         onClose={() => setRemoveMember(null)}
         onConfirm={confirmRemoveMember}
-        title="Remove Member"
-        message={`Are you sure you want to remove ${removeMember?.user?.name} from this domain?`}
-        confirmLabel="Remove"
+        title={t("domains.remove_member")}
+        message={t("domains.remove_member_confirm", { name: removeMember?.user?.name ?? "" })}
+        confirmLabel={t("common.remove")}
         variant="danger"
         loading={removing}
       />

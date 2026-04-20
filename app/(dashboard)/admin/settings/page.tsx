@@ -40,9 +40,9 @@ export default function AdminSettingsPage() {
     try {
       await updateSetting({ key, value: edited[key] });
       refetch();
-      addToast({ type: "success", message: "Setting saved" });
+      addToast({ type: "success", message: t("messages.status_updated") });
     } catch {
-      addToast({ type: "error", message: "Failed to save setting" });
+      addToast({ type: "error", message: t("messages.status_update_failed") });
     } finally {
       setSaving(false);
     }
@@ -58,7 +58,7 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <Breadcrumb items={[{ label: "Admin", href: "/admin" }, { label: "Settings" }]} />
+      <Breadcrumb items={[{ label: t("nav.admin"), href: "/admin" }, { label: t("admin.settings.title") }]} />
       <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">{t("admin.settings.title")}</h1>
 
       <Card>
@@ -85,7 +85,7 @@ export default function AdminSettingsPage() {
                 onClick={() => handleSave(setting.key)}
                 loading={saving}
               >
-                Save
+                {t("common.save")}
               </Button>
             </div>
           ))}

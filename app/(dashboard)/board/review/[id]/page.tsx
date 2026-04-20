@@ -47,10 +47,10 @@ export default function BoardExaminationPage() {
     setLoading(true);
     try {
       await approveConcept(Number(conceptId), approvalNote || undefined);
-      addToast({ type: "success", message: "Term approved and published" });
+      addToast({ type: "success", message: t("messages.term_recalled") });
       router.push("/board/review-queue");
     } catch {
-      addToast({ type: "error", message: "Failed to approve" });
+      addToast({ type: "error", message: t("messages.term_recall_failed") });
     } finally {
       setLoading(false);
     }
@@ -61,10 +61,10 @@ export default function BoardExaminationPage() {
     setLoading(true);
     try {
       await vetoConcept(Number(conceptId), vetoReason);
-      addToast({ type: "success", message: "Term vetoed" });
+      addToast({ type: "success", message: t("messages.status_updated") });
       router.push("/board/review-queue");
     } catch {
-      addToast({ type: "error", message: "Failed to veto" });
+      addToast({ type: "error", message: t("messages.status_update_failed") });
     } finally {
       setLoading(false);
     }
@@ -79,7 +79,7 @@ export default function BoardExaminationPage() {
   }
 
   if (!concept) {
-    return <p className="text-center text-text-muted">Concept not found.</p>;
+    return <p className="text-center text-text-muted">{t("concepts.not_found")}</p>;
   }
 
   const activeCandidates = (candidates ?? []).filter((c) => !c.withdrawn_at);
@@ -120,7 +120,7 @@ export default function BoardExaminationPage() {
             <div>
               <div className="flex items-center gap-3">
                 <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">
-                  {concept.english_term?.word ?? "Untitled"}
+                  {concept.english_term?.word ?? t("concepts.untitled")}
                 </h1>
                 <ConceptStatusBadge status={concept.status} />
               </div>
@@ -134,23 +134,23 @@ export default function BoardExaminationPage() {
           {/* Leading candidate */}
           {leading && (
             <div className="mt-4 rounded-lg border border-success bg-success-light p-4">
-              <p className="text-xs font-medium text-success">Leading Candidate</p>
+              <p className="text-xs font-medium text-success">{t("concepts.leading_candidate")}</p>
               <p className="mt-1 text-lg font-semibold text-foreground" dir="rtl">
                 {leading.kurdish_term?.word}
               </p>
               {leading.metrics && (
                 <div className="mt-2 flex gap-4 text-[13px]">
                   <span>
-                    Cs: <strong>{formatNumber(leading.metrics.consensus_score)}</strong>
+                    {t("concepts.cs")}: <strong>{formatNumber(leading.metrics.consensus_score)}</strong>
                   </span>
                   <span>
-                    Mean: <strong>{formatNumber(leading.metrics.mean)}</strong>
+                    {t("concepts.mean")}: <strong>{formatNumber(leading.metrics.mean)}</strong>
                   </span>
                   <span>
-                    Std Dev: <strong>{formatNumber(leading.metrics.std_dev)}</strong>
+                    {t("concepts.std_dev")}: <strong>{formatNumber(leading.metrics.std_dev)}</strong>
                   </span>
                   <span>
-                    Votes: <strong>{leading.metrics.vote_count}</strong>
+                    {t("concepts.votes")}: <strong>{leading.metrics.vote_count}</strong>
                   </span>
                 </div>
               )}
@@ -161,7 +161,7 @@ export default function BoardExaminationPage() {
         {/* Consensus chart */}
         <Card>
           <h3 className="mb-4 text-sm font-bold text-foreground">
-            Consensus Scores
+            {t("concepts.consensus_scores")}
           </h3>
           <ConsensusChart
             candidates={sortedCandidates}
@@ -173,16 +173,16 @@ export default function BoardExaminationPage() {
         {runnerUp && (
           <Card>
             <h3 className="mb-3 text-sm font-bold text-foreground">
-              Runner-up Comparison
+              {t("concepts.runner_up")}
             </h3>
             <div className="grid grid-cols-2 gap-4">
               <ComparisonBlock
-                label="Leader"
+                label={t("concepts.leader")}
                 name={leading?.kurdish_term?.word ?? "—"}
                 metrics={leading?.metrics}
               />
               <ComparisonBlock
-                label="Runner-up"
+                label={t("concepts.runner_up_label")}
                 name={runnerUp.kurdish_term?.word ?? "—"}
                 metrics={runnerUp.metrics}
               />
@@ -193,7 +193,7 @@ export default function BoardExaminationPage() {
         {/* Discussions (read-only context) */}
         <Card>
           <h3 className="mb-4 text-sm font-bold text-foreground">
-            Discussion History
+            {t("concepts.discussion_history")}
           </h3>
           <DiscussionThread conceptId={conceptId} />
         </Card>
@@ -214,7 +214,7 @@ export default function BoardExaminationPage() {
             variant="secondary"
             onClick={() => router.push(`/concepts/${conceptId}`)}
           >
-            View Concept Hub
+            {t("concepts.view_hub")}
           </Button>
         </div>
 
@@ -223,16 +223,16 @@ export default function BoardExaminationPage() {
           open={approveOpen}
           onClose={() => setApproveOpen(false)}
           onConfirm={handleApprove}
-          title="Approve Term"
-          message="This will publish the term to the public registry."
-          confirmLabel="Approve"
+          title={t("board.approve_term")}
+          message={t("board.approve_term_msg")}
+          confirmLabel={t("board.approve")}
           loading={loading}
         >
           <div className="mt-3">
             <Textarea
               value={approvalNote}
               onChange={(e) => setApprovalNote(e.target.value)}
-              placeholder="Optional approval note..."
+              placeholder={t("board.approve_note_placeholder")}
               rows={2}
             />
           </div>
@@ -243,9 +243,9 @@ export default function BoardExaminationPage() {
           open={vetoOpen}
           onClose={() => setVetoOpen(false)}
           onConfirm={handleVeto}
-          title="Veto Term"
-          message="This will send the concept back to Stage 1 with critical priority."
-          confirmLabel="Veto"
+          title={t("board.veto_term")}
+          message={t("board.veto_term_msg")}
+          confirmLabel={t("board.veto")}
           variant="danger"
           loading={loading}
         >
@@ -253,7 +253,7 @@ export default function BoardExaminationPage() {
             <Textarea
               value={vetoReason}
               onChange={(e) => setVetoReason(e.target.value)}
-              placeholder="Veto reason (required)..."
+              placeholder={t("board.veto_reason_placeholder")}
               rows={3}
             />
           </div>
@@ -272,6 +272,7 @@ function ComparisonBlock({
   name: string;
   metrics?: { consensus_score: number; mean: number; std_dev: number; vote_count: number };
 }) {
+  const { t } = useI18n();
   return (
     <div className="rounded-lg border border-border p-3">
       <p className="text-xs font-medium text-text-muted">{label}</p>
@@ -280,10 +281,10 @@ function ComparisonBlock({
       </p>
       {metrics && (
         <div className="mt-2 grid grid-cols-2 gap-2 text-[13px]">
-          <p>Cs: {formatNumber(metrics.consensus_score)}</p>
-          <p>Mean: {formatNumber(metrics.mean)}</p>
-          <p>Std Dev: {formatNumber(metrics.std_dev)}</p>
-          <p>Votes: {metrics.vote_count}</p>
+          <p>{t("concepts.cs")}: {formatNumber(metrics.consensus_score)}</p>
+          <p>{t("concepts.mean")}: {formatNumber(metrics.mean)}</p>
+          <p>{t("concepts.std_dev")}: {formatNumber(metrics.std_dev)}</p>
+          <p>{t("concepts.votes")}: {metrics.vote_count}</p>
         </div>
       )}
     </div>

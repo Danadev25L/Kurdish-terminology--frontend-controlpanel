@@ -43,7 +43,7 @@ export default function BoardAnalyticsPage() {
             ) : dialectData && dialectData.length > 0 ? (
               <DialectEquityChart data={dialectData} />
             ) : (
-              <p className="text-[13px] text-text-muted">No data available.</p>
+              <p className="text-[13px] text-text-muted">{t("common.no_data")}</p>
             )}
           </Card>
 
@@ -57,7 +57,7 @@ export default function BoardAnalyticsPage() {
             ) : healthData && healthData.length > 0 ? (
               <DomainHealthChart data={healthData} />
             ) : (
-              <p className="text-[13px] text-text-muted">No data available.</p>
+              <p className="text-[13px] text-text-muted">{t("common.no_data")}</p>
             )}
           </Card>
         </div>
@@ -68,14 +68,14 @@ export default function BoardAnalyticsPage() {
             <CardTitle>{t("board.analytics.word_versatility")}</CardTitle>
           </CardHeader>
           <p className="mb-4 text-[13px] text-text-muted">
-            Shows Kurdish words shared across multiple concepts.
+            {t("board.word_versatility_desc")}
           </p>
           {vLoading ? (
             <Spinner />
           ) : versatilityData && versatilityData.length > 0 ? (
             <WordVersatilityChart data={versatilityData} />
           ) : (
-            <p className="text-[13px] text-text-muted">No data available.</p>
+            <p className="text-[13px] text-text-muted">{t("common.no_data")}</p>
           )}
         </Card>
       </div>

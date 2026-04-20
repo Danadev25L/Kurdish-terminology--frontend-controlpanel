@@ -99,15 +99,15 @@ export default function RecallsPage() {
 
   return (
     <div className="space-y-6">
-      <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: t("recalls.title") }]} />
+      <Breadcrumb items={[{ label: t("nav.dashboard"), href: "/dashboard" }, { label: t("recalls.title") }]} />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{t("recalls.title")}</h1>
           <p className="mt-1 text-sm text-muted">
-            Vote on recalls of published terms for review
+            {t("recalls.subtitle")}
           </p>
         </div>
-        <Button onClick={() => setSubmitOpen(true)}>Request Recall</Button>
+        <Button onClick={() => setSubmitOpen(true)}>{t("recalls.request_recall")}</Button>
       </div>
 
       <div className="flex items-center gap-2">
@@ -119,11 +119,11 @@ export default function RecallsPage() {
             setPage(1);
           }}
         >
-          <option value="">All Statuses</option>
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-          <option value="rejected">Rejected</option>
-          <option value="expired">Expired</option>
+          <option value="">{t("concepts.all_statuses")}</option>
+          <option value="pending">{t("statuses.pending")}</option>
+          <option value="approved">{t("statuses.approved")}</option>
+          <option value="rejected">{t("statuses.rejected")}</option>
+          <option value="expired">{t("statuses.expired")}</option>
         </select>
       </div>
 
@@ -151,38 +151,37 @@ export default function RecallsPage() {
                     <div className="flex-1">
                       <div className="flex items-center gap-3">
                         <h3 className="font-medium text-gray-900">
-                          {recall.concept?.english_term ?? "Unknown Term"}
+                          {recall.concept?.english_term ?? t("recalls.unknown_term")}
                         </h3>
                         <Badge variant={statusVariant[recall.status] ?? "default"}>
                           {recall.status}
                         </Badge>
                         {isExpired && recall.status === "pending" && (
-                          <Badge variant="default">Expired</Badge>
+                          <Badge variant="default">{t("statuses.expired")}</Badge>
                         )}
                       </div>
                       <p className="mt-2 text-sm text-gray-900">{recall.reason}</p>
                       <div className="mt-3 flex items-center gap-4">
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-medium text-success">
-                            {recall.support_count} Support
+                            {recall.support_count} {t("recalls.support")}
                           </span>
                           <span className="text-sm text-muted">·</span>
                           <span className="text-sm font-medium text-danger">
-                            {recall.oppose_count} Oppose
+                            {recall.oppose_count} {t("recalls.oppose")}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Badge
                             variant={netVotes > 0 ? "success" : netVotes < 0 ? "danger" : "default"}
                           >
-                            Net: {netVotes > 0 ? "+" : ""}
-                            {netVotes}
+                            {t("recalls.net_votes", { votes: `${netVotes > 0 ? "+" : ""}${netVotes}` })}
                           </Badge>
                         </div>
                       </div>
                       <p className="mt-2 text-xs text-muted">
-                        Requested by {recall.requester?.name ?? "Unknown"} ·{" "}
-                        Expires {new Date(recall.expires_at).toLocaleDateString()}
+                        {t("recalls.requested_by")} {recall.requester?.name ?? t("common.unknown")} ·{" "}
+                        {t("recalls.expires_label")} {new Date(recall.expires_at).toLocaleDateString()}
                       </p>
                     </div>
 
@@ -194,7 +193,7 @@ export default function RecallsPage() {
                           onClick={() => handleVote(recall.id, "support")}
                           loading={voting === recall.id}
                         >
-                          Support
+                          {t("recalls.support")}
                         </Button>
                         <Button
                           size="sm"
@@ -202,12 +201,12 @@ export default function RecallsPage() {
                           onClick={() => handleVote(recall.id, "oppose")}
                           loading={voting === recall.id}
                         >
-                          Oppose
+                          {t("recalls.oppose")}
                         </Button>
                       </div>
                     )}
                     {canVote && hasVoted && (
-                      <span className="text-sm text-muted">Voted</span>
+                      <span className="text-sm text-muted">{t("recalls.voted_label")}</span>
                     )}
                   </div>
                 </Card>
@@ -226,11 +225,11 @@ export default function RecallsPage() {
       )}
 
       {/* Submit Recall Modal */}
-      <Modal open={submitOpen} onClose={() => setSubmitOpen(false)} title="Request Term Recall">
+      <Modal open={submitOpen} onClose={() => setSubmitOpen(false)} title={t("recalls.request_term_recall")}>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
-              Select Term to Recall
+              {t("recalls.select_term")}
             </label>
             <select
               className="w-full rounded-lg border border-border bg-surface-raised px-3 py-2 text-sm"
@@ -238,18 +237,18 @@ export default function RecallsPage() {
               onChange={(e) => setSelectedConcept(e.target.value ? Number(e.target.value) : null)}
               required
             >
-              <option value="">Choose a term...</option>
+              <option value="">{t("recalls.choose_term_placeholder")}</option>
               {concepts?.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.english_term?.word ?? "Untitled"} ({c.domain?.name})
+                  {c.english_term?.word ?? t("concepts.untitled")} ({c.domain?.name})
                 </option>
               ))}
             </select>
           </div>
 
           <Textarea
-            label="Reason for Recall"
-            placeholder="Explain why this term should be recalled for review..."
+            label={t("recalls.reason_label")}
+            placeholder={t("recalls.reason_placeholder")}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             rows={4}
@@ -257,16 +256,15 @@ export default function RecallsPage() {
           />
 
           <p className="text-xs text-muted">
-            The recall will be voted on by the community. If approved, the term will be
-            returned to the review stage for reconsideration.
+            {t("recalls.recall_help")}
           </p>
 
           <div className="flex justify-end gap-2">
             <Button type="button" variant="secondary" onClick={() => setSubmitOpen(false)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button type="submit" loading={submitting}>
-              Submit Recall
+              {t("recalls.submit_recall")}
             </Button>
           </div>
         </form>

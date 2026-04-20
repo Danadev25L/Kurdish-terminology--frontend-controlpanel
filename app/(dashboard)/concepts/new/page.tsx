@@ -60,8 +60,8 @@ export default function NewConceptPage() {
     <div className="space-y-6">
       <Breadcrumb
         items={[
-          { label: "Concepts", href: "/concepts" },
-          { label: "New Concept" },
+          { label: t("concepts.title"), href: "/concepts" },
+          { label: t("concepts.new_concept") },
         ]}
       />
       <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">

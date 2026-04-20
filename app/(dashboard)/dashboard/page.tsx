@@ -56,16 +56,16 @@ export default function DashboardPage() {
   const inboxItems: InboxItem[] = (concepts?.data ?? [])
     .filter((c) => c.status !== "published")
     .map((c) => {
-      let action = "Review";
-      if (c.status === "draft") action = "Discussion open";
-      if (c.status === "threshold") action = "Vote: Threshold";
-      if (c.status === "voting") action = "Vote: Consensus";
-      if (c.status === "review") action = "Board review";
-      if (c.status === "recalled") action = "Reopened";
+      let action = t("actions.review");
+      if (c.status === "draft") action = t("actions.discussion_open");
+      if (c.status === "threshold") action = t("actions.vote_threshold");
+      if (c.status === "voting") action = t("actions.vote_consensus");
+      if (c.status === "review") action = t("actions.board_review");
+      if (c.status === "recalled") action = t("actions.reopened");
 
       return {
         id: c.id,
-        english_term: c.english_term?.word ?? "Untitled",
+        english_term: c.english_term?.word ?? t("concepts.untitled"),
         domain_name: c.domain?.name ?? "—",
         status: c.status,
         priority: c.priority,
@@ -98,7 +98,7 @@ export default function DashboardPage() {
               <p className="text-[28px] font-extrabold tracking-[-0.02em] text-foreground">
                 {inboxItems.length}
               </p>
-              <p className="text-[11px] text-text-muted font-semibold uppercase tracking-[0.05em]">Active tasks</p>
+              <p className="text-[11px] text-text-muted font-semibold uppercase tracking-[0.05em]">{t("dashboard.active_tasks")}</p>
             </div>
           </div>
         </Card>
@@ -113,7 +113,7 @@ export default function DashboardPage() {
               <p className="text-[28px] font-extrabold tracking-[-0.02em] text-foreground">
                 {inboxItems.filter((i) => i.priority === "critical").length}
               </p>
-              <p className="text-[11px] text-text-muted font-semibold uppercase tracking-[0.05em]">Critical</p>
+              <p className="text-[11px] text-text-muted font-semibold uppercase tracking-[0.05em]">{t("dashboard.critical")}</p>
             </div>
           </div>
         </Card>
@@ -126,7 +126,7 @@ export default function DashboardPage() {
             </div>
             <div>
               <p className="text-[28px] font-extrabold tracking-[-0.02em] text-foreground">{unreadCount}</p>
-              <p className="text-[11px] text-text-muted font-semibold uppercase tracking-[0.05em]">Unread notifications</p>
+              <p className="text-[11px] text-text-muted font-semibold uppercase tracking-[0.05em]">{t("dashboard.unread_notifications")}</p>
             </div>
           </div>
         </Card>

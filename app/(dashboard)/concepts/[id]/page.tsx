@@ -19,6 +19,7 @@ import { ConsensusChart } from "@/components/domain/consensus-chart";
 import { ReferenceSidebar } from "@/components/domain/reference-sidebar";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { useToastStore } from "@/stores/toast-store";
+import { useI18n } from "@/i18n/context";
 import { withdrawCandidate } from "@/lib/api/candidates";
 import { motionToVote, reopenConcept } from "@/lib/api/concepts";
 import {
@@ -51,6 +52,7 @@ export default function ConceptDetailPage() {
   const { isDomainHead, isAdmin, isMainBoard } = useRole();
   const { user } = useAuth();
   const addToast = useToastStore((s) => s.addToast);
+  const { t } = useI18n();
   const [activeTab, setActiveTab] = useState("overview");
 
   // Concept endpoint already includes candidates - no need for separate call
@@ -66,9 +68,9 @@ export default function ConceptDetailPage() {
       try {
         await withdrawCandidate(id);
         refetch();
-        addToast({ type: "success", message: "Candidate withdrawn" });
+        addToast({ type: "success", message: t("messages.status_updated") });
       } catch {
-        addToast({ type: "error", message: "Failed to withdraw" });
+        addToast({ type: "error", message: t("messages.status_update_failed") });
       }
     },
     [refetch, addToast]
@@ -78,9 +80,9 @@ export default function ConceptDetailPage() {
     try {
       await motionToVote(Number(conceptId));
       refetch();
-      addToast({ type: "success", message: "Motion to vote submitted" });
+      addToast({ type: "success", message: t("messages.status_updated") });
     } catch {
-      addToast({ type: "error", message: "Failed to submit motion" });
+      addToast({ type: "error", message: t("messages.status_update_failed") });
     }
   }, [conceptId, refetch, addToast]);
 
@@ -88,9 +90,9 @@ export default function ConceptDetailPage() {
     try {
       await reopenConcept(Number(conceptId));
       refetch();
-      addToast({ type: "success", message: "Concept reopened" });
+      addToast({ type: "success", message: t("messages.status_updated") });
     } catch {
-      addToast({ type: "error", message: "Failed to reopen concept" });
+      addToast({ type: "error", message: t("messages.status_update_failed") });
     }
   }, [conceptId, refetch, addToast]);
 
@@ -107,7 +109,7 @@ export default function ConceptDetailPage() {
   }
 
   if (!concept) {
-    return <p className="text-center text-text-muted">Concept not found.</p>;
+    return <p className="text-center text-text-muted">{t("concepts.not_found")}</p>;
   }
 
   const isDraft = concept.status === "draft";
@@ -116,43 +118,43 @@ export default function ConceptDetailPage() {
   const candidateCount = candidates?.length ?? 0;
 
   const tabs = [
-    { id: "overview", label: "Overview" },
-    { id: "candidates", label: "Candidates", count: candidateCount },
-    { id: "discussions", label: "Discussions" },
-    { id: "history", label: "History" },
-    { id: "metrics", label: "Metrics" },
-    { id: "activity", label: "Activity" },
+    { id: "overview", label: t("concepts.detail.definition") },
+    { id: "candidates", label: t("concepts.detail.candidates"), count: candidateCount },
+    { id: "discussions", label: t("concepts.detail.discussions") },
+    { id: "history", label: t("concepts.detail.history") },
+    { id: "metrics", label: t("concepts.detail.metrics") },
+    { id: "activity", label: t("concepts.detail.recent_activity_label") },
     ...(isThreshold || isVoting
-      ? [{ id: "voting", label: "Voting" }]
+      ? [{ id: "voting", label: t("statuses.voting") }]
       : []),
   ];
 
   return (
     <div className="space-y-6">
-      <Breadcrumb items={[{ label: "Concepts", href: "/concepts" }, { label: concept.english_term?.word ?? "Concept" }]} />
+      <Breadcrumb items={[{ label: t("concepts.title"), href: "/concepts" }, { label: concept.english_term?.word ?? t("concepts.title") }]} />
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">
-              {concept.english_term?.word ?? "Untitled Concept"}
+              {concept.english_term?.word ?? t("concepts.untitled")}
             </h1>
             <ConceptStatusBadge status={concept.status} />
           </div>
           <p className="mt-1 text-[13px] text-text-muted">
-            {concept.domain?.name} &middot; Created {formatDate(concept.created_at)}
+            {concept.domain?.name} &middot; {t("common.created")} {formatDate(concept.created_at)}
           </p>
         </div>
         <div className="flex gap-2">
           {(isDomainHead || isAdmin) && isDraft && candidateCount > 0 && (
-            <Button onClick={handleMotionToVote}>Motion to Vote</Button>
+            <Button onClick={handleMotionToVote}>{t("concepts.detail.motion_to_vote")}</Button>
           )}
           {(isMainBoard || isAdmin) && (
             <Button
               variant="secondary"
               onClick={handleReopen}
             >
-              Reopen
+              {t("concepts.detail.reopen")}
             </Button>
           )}
         </div>
@@ -199,7 +201,7 @@ export default function ConceptDetailPage() {
                 />
                 <Card>
                   <h3 className="mb-4 text-[14px] font-bold text-foreground">
-                    Consensus Scores
+                    {t("concepts.consensus_scores")}
                   </h3>
                   <ConsensusChart
                     candidates={candidates ?? []}
@@ -216,37 +218,38 @@ export default function ConceptDetailPage() {
 }
 
 function OverviewTab({ concept, conceptId }: { concept: Concept; conceptId: string }) {
+  const { t } = useI18n();
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       <div className="lg:col-span-2 space-y-4">
         <Card>
-          <h3 className="mb-2 text-sm font-medium text-text-muted">Definition</h3>
+          <h3 className="mb-2 text-sm font-medium text-text-muted">{t("concepts.detail.definition")}</h3>
           <p className="text-foreground">{concept.definition}</p>
         </Card>
 
         <Card>
-          <h3 className="mb-3 text-sm font-medium text-text-muted">Details</h3>
+          <h3 className="mb-3 text-sm font-medium text-text-muted">{t("common.details")}</h3>
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
-              <p className="text-xs text-text-muted">English Term</p>
+              <p className="text-xs text-text-muted">{t("concepts.english_term")}</p>
               <p className="text-sm font-medium">
-                {concept.english_term?.word ?? "—"}
+                {concept.english_term?.word ?? t("common.dash")}
               </p>
             </div>
             <div>
-              <p className="text-xs text-text-muted">Domain</p>
+              <p className="text-xs text-text-muted">{t("concepts.domain")}</p>
               <p className="text-sm font-medium">
-                {concept.domain?.name ?? "—"}
+                {concept.domain?.name ?? t("common.dash")}
               </p>
             </div>
             <div>
-              <p className="text-xs text-text-muted">Stage Entered</p>
+              <p className="text-xs text-text-muted">{t("concepts.stage_entered")}</p>
               <p className="text-sm font-medium">
                 {formatDate(concept.stage_entered_at)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-text-muted">Priority</p>
+              <p className="text-xs text-text-muted">{t("concepts.priority")}</p>
               <p className="text-sm font-medium capitalize">
                 {concept.priority}
               </p>
@@ -274,11 +277,12 @@ function CandidatesTab({
   currentUserId?: number;
   onWithdraw: (id: number) => void;
 }) {
+  const { t } = useI18n();
   if (candidates.length === 0) {
     return (
       <Card>
         <p className="text-center text-sm text-text-muted">
-          No candidates proposed yet.
+          {t("concepts.no_candidates")}
         </p>
       </Card>
     );
@@ -302,6 +306,7 @@ function CandidatesTab({
 }
 
 function HistoryTab({ conceptId }: { conceptId: string }) {
+  const { t } = useI18n();
   const { data: history, isLoading } = useApi<ConceptHistoryEntry[]>(
     `/api/v1/concepts/${conceptId}/history`
   );
@@ -317,14 +322,14 @@ function HistoryTab({ conceptId }: { conceptId: string }) {
   if (!history || history.length === 0) {
     return (
       <Card>
-        <p className="text-center text-sm text-text-muted">No history recorded yet.</p>
+        <p className="text-center text-sm text-text-muted">{t("concepts.no_history")}</p>
       </Card>
     );
   }
 
   return (
     <Card>
-      <h3 className="mb-4 text-[14px] font-bold text-foreground">Concept History</h3>
+      <h3 className="mb-4 text-[14px] font-bold text-foreground">{t("concepts.concept_history")}</h3>
       <div className="space-y-3">
         {history.map((entry) => (
           <div key={entry.id} className="flex items-start gap-3 border-b border-border-light pb-3 last:border-0">
@@ -336,7 +341,7 @@ function HistoryTab({ conceptId }: { conceptId: string }) {
             <div className="flex-1">
               <p className="text-sm font-medium text-foreground">{entry.description}</p>
               <p className="text-xs text-text-muted">
-                {entry.user?.name ?? "Unknown"} · {formatDate(entry.created_at)}
+                {entry.user?.name ?? t("common.unknown")} · {formatDate(entry.created_at)}
               </p>
             </div>
           </div>
@@ -347,6 +352,7 @@ function HistoryTab({ conceptId }: { conceptId: string }) {
 }
 
 function MetricsTab({ conceptId }: { conceptId: string }) {
+  const { t } = useI18n();
   const { data: metrics, isLoading } = useApi<BackendConceptMetrics>(
     `/api/v1/concepts/${conceptId}/metrics`
   );
@@ -362,7 +368,7 @@ function MetricsTab({ conceptId }: { conceptId: string }) {
   if (!metrics) {
     return (
       <Card>
-        <p className="text-center text-sm text-text-muted">No metrics available yet.</p>
+        <p className="text-center text-sm text-text-muted">{t("concepts.detail.no_metrics")}</p>
       </Card>
     );
   }
@@ -377,21 +383,21 @@ function MetricsTab({ conceptId }: { conceptId: string }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <Card padding>
-        <p className="text-sm text-text-muted">Total Candidates</p>
+        <p className="text-sm text-text-muted">{t("concepts.detail.total_candidates")}</p>
         <p className="text-2xl font-extrabold tracking-[-0.02em] text-foreground">{metrics.candidates.length}</p>
       </Card>
       <Card padding>
-        <p className="text-sm text-text-muted">Total Votes</p>
+        <p className="text-sm text-text-muted">{t("concepts.detail.total_votes")}</p>
         <p className="text-2xl font-extrabold tracking-[-0.02em] text-foreground">{totalVotes}</p>
       </Card>
       <Card padding>
-        <p className="text-sm text-text-muted">Avg Consensus</p>
+        <p className="text-sm text-text-muted">{t("concepts.detail.avg_consensus")}</p>
         <p className="text-2xl font-extrabold tracking-[-0.02em] text-foreground">
           {avgConsensus.toFixed(2)}
         </p>
       </Card>
       <Card padding>
-        <p className="text-sm text-text-muted">Threshold Turnout</p>
+        <p className="text-sm text-text-muted">{t("concepts.detail.threshold_turnout")}</p>
         <p className="text-2xl font-extrabold tracking-[-0.02em] text-foreground">
           {metrics.threshold_votes.turnout.toFixed(0)}%
         </p>
@@ -400,7 +406,7 @@ function MetricsTab({ conceptId }: { conceptId: string }) {
         </p>
       </Card>
       <Card padding>
-        <p className="text-sm text-text-muted">Stage</p>
+        <p className="text-sm text-text-muted">{t("concepts.stage")}</p>
         <p className="text-2xl font-extrabold tracking-[-0.02em] text-foreground capitalize">
           {metrics.stage}
         </p>
@@ -410,6 +416,7 @@ function MetricsTab({ conceptId }: { conceptId: string }) {
 }
 
 function ActivityTab({ conceptId }: { conceptId: string }) {
+  const { t } = useI18n();
   const { data: activities, isLoading } = useApi<ConceptActivityEntry[]>(
     `/api/v1/concepts/${conceptId}/activity-feed`
   );
@@ -428,14 +435,14 @@ function ActivityTab({ conceptId }: { conceptId: string }) {
   if (activitiesList.length === 0) {
     return (
       <Card>
-        <p className="text-center text-sm text-text-muted">No recent activity.</p>
+        <p className="text-center text-sm text-text-muted">{t("concepts.no_history")}</p>
       </Card>
     );
   }
 
   return (
     <Card>
-      <h3 className="mb-4 text-[14px] font-bold text-foreground">Recent Activity</h3>
+      <h3 className="mb-4 text-[14px] font-bold text-foreground">{t("concepts.detail.recent_activity_label")}</h3>
       <div className="space-y-3">
         {activitiesList.map((activity) => (
           <div key={activity.id} className="flex items-start gap-3 border-b border-border-light pb-3 last:border-0">
@@ -448,7 +455,7 @@ function ActivityTab({ conceptId }: { conceptId: string }) {
             <div className="flex-1">
               <p className="text-sm text-foreground">{activity.description}</p>
               <p className="text-xs text-text-muted">
-                {activity.user?.name ?? "Unknown"} · {formatDate(activity.created_at)}
+                {activity.user?.name ?? t("common.unknown")} · {formatDate(activity.created_at)}
               </p>
             </div>
           </div>

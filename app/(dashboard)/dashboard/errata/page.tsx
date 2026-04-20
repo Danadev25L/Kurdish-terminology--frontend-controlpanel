@@ -24,12 +24,12 @@ const statusVariant: Record<string, "default" | "primary" | "success" | "warning
   rejected: "danger",
 };
 
-const issueTypeLabels: Record<string, string> = {
-  incorrect_translation: "Incorrect Translation",
-  missing_definition: "Missing Definition",
-  typo: "Typo",
-  offensive_term: "Offensive Term",
-  other: "Other",
+const issueTypeKeys: Record<string, string> = {
+  incorrect_translation: "errata.incorrect_translation",
+  missing_definition: "errata.missing_definition",
+  typo: "errata.typo",
+  offensive_term: "errata.offensive_term",
+  other: "errata.issue_other",
 };
 
 export default function ErrataPage() {
@@ -67,9 +67,9 @@ export default function ErrataPage() {
         setNotes("");
         setSelectedErrata(null);
         refetch();
-        addToast({ type: "success", message: "Errata resolved" });
+        addToast({ type: "success", message: t("messages.errata_resolved") });
       } catch {
-        addToast({ type: "error", message: "Failed to resolve" });
+        addToast({ type: "error", message: t("messages.errata_resolve_failed") });
       } finally {
         setProcessingId(null);
       }
@@ -97,9 +97,9 @@ export default function ErrataPage() {
         setNotes("");
         setSelectedErrata(null);
         refetch();
-        addToast({ type: "success", message: "Errata rejected" });
+        addToast({ type: "success", message: t("messages.errata_rejected") });
       } catch {
-        addToast({ type: "error", message: "Failed to reject" });
+        addToast({ type: "error", message: t("messages.errata_reject_failed") });
       } finally {
         setProcessingId(null);
       }
@@ -113,9 +113,9 @@ export default function ErrataPage() {
       try {
         await updateErrata(errata.id, { status });
         refetch();
-        addToast({ type: "success", message: "Status updated" });
+        addToast({ type: "success", message: t("messages.status_updated") });
       } catch {
-        addToast({ type: "error", message: "Failed to update status" });
+        addToast({ type: "error", message: t("messages.status_update_failed") });
       } finally {
         setProcessingId(null);
       }
@@ -135,7 +135,7 @@ export default function ErrataPage() {
 
   return (
     <div className="space-y-6">
-      <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: t("errata.title") }]} />
+      <Breadcrumb items={[{ label: t("nav.dashboard"), href: "/dashboard" }, { label: t("errata.title") }]} />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">{t("errata.title")}</h1>
@@ -152,11 +152,11 @@ export default function ErrataPage() {
               setPage(1);
             }}
           >
-            <option value="">All Statuses</option>
-            <option value="pending">Pending</option>
-            <option value="under_review">Under Review</option>
-            <option value="resolved">Resolved</option>
-            <option value="rejected">Rejected</option>
+            <option value="">{t("concepts.all_statuses")}</option>
+            <option value="pending">{t("statuses.pending")}</option>
+            <option value="under_review">{t("statuses.under_review")}</option>
+            <option value="resolved">{t("statuses.resolved")}</option>
+            <option value="rejected">{t("statuses.rejected")}</option>
           </select>
         </div>
       </div>
@@ -185,25 +185,25 @@ export default function ErrataPage() {
                         {errata.status.replace("_", " ")}
                       </Badge>
                       <Badge variant="default">
-                        {issueTypeLabels[errata.issue_type] ?? errata.issue_type}
+                        {t(issueTypeKeys[errata.issue_type] ?? "errata.issue_other")}
                       </Badge>
                     </div>
                     <p className="mt-2 text-[13px] text-foreground">{errata.description}</p>
                     {errata.suggested_correction && (
                       <div className="mt-2">
-                        <p className="text-xs font-semibold text-text-muted">Suggested Correction:</p>
+                        <p className="text-xs font-semibold text-text-muted">{t("errata.suggested_correction")}</p>
                         <p className="text-[13px] text-text-secondary">{errata.suggested_correction}</p>
                       </div>
                     )}
                     {errata.reporter_name && (
                       <p className="mt-2 text-[11px] text-text-muted">
-                        Reported by: {errata.reporter_name}
+                        {t("errata.reported_by_label")} {errata.reporter_name}
                         {errata.reporter_email && ` (${errata.reporter_email})`}
                       </p>
                     )}
                     {errata.admin_notes && (
                       <div className="mt-2 rounded-md bg-surface p-2">
-                        <p className="text-xs font-semibold text-text-muted">Admin Notes:</p>
+                        <p className="text-xs font-semibold text-text-muted">{t("errata.admin_notes")}</p>
                         <p className="text-[13px] text-text-secondary">{errata.admin_notes}</p>
                       </div>
                     )}
@@ -221,7 +221,7 @@ export default function ErrataPage() {
                           onClick={() => handleUpdateStatus(errata, "under_review")}
                           loading={processingId === errata.id}
                         >
-                          Mark Reviewing
+                          {t("errata.mark_reviewing")}
                         </Button>
                       )}
                       {errata.status === "under_review" && (
@@ -261,38 +261,38 @@ export default function ErrataPage() {
       )}
 
       {/* Resolve Modal */}
-      <Modal open={resolveOpen} onClose={() => setResolveOpen(false)} title="Resolve Errata">
+      <Modal open={resolveOpen} onClose={() => setResolveOpen(false)} title={t("errata.resolve")}>
         <form onSubmit={confirmResolve} className="space-y-4">
           <p className="text-[13px] text-text-muted">
-            Are you sure you want to resolve this errata report? This will mark it as resolved.
+            {t("errata.resolve_msg")}
           </p>
           <Textarea
-            label="Resolution Notes (Optional)"
-            placeholder="Describe how this errata was resolved..."
+            label={t("errata.resolution_notes")}
+            placeholder={t("errata.resolution_placeholder")}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
           />
           <div className="flex justify-end gap-2">
             <Button type="button" variant="secondary" onClick={() => setResolveOpen(false)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button type="submit" loading={processingId !== null}>
-              Resolve
+              {t("errata.resolve")}
             </Button>
           </div>
         </form>
       </Modal>
 
       {/* Reject Modal */}
-      <Modal open={rejectOpen} onClose={() => setRejectOpen(false)} title="Reject Errata">
+      <Modal open={rejectOpen} onClose={() => setRejectOpen(false)} title={t("errata.reject")}>
         <form onSubmit={confirmReject} className="space-y-4">
           <p className="text-[13px] text-text-muted">
-            Are you sure you want to reject this errata report? Please provide a reason.
+            {t("errata.reject_msg")}
           </p>
           <Textarea
-            label="Rejection Reason"
-            placeholder="Explain why this errata is being rejected..."
+            label={t("errata.rejection_reason")}
+            placeholder={t("errata.reject_placeholder")}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
@@ -300,10 +300,10 @@ export default function ErrataPage() {
           />
           <div className="flex justify-end gap-2">
             <Button type="button" variant="secondary" onClick={() => setRejectOpen(false)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button type="submit" variant="danger" loading={processingId !== null}>
-              Reject
+              {t("errata.reject")}
             </Button>
           </div>
         </form>

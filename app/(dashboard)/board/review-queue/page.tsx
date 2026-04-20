@@ -15,13 +15,14 @@ import { useToastStore } from "@/stores/toast-store";
 import type { PaginatedResponse, ReviewQueueItem } from "@/lib/api/types";
 import { useI18n } from "@/i18n/context";
 
-const sortOptions = [
-  { value: "", label: "Default" },
-  { value: "oldest", label: "Oldest Update" },
-  { value: "newest", label: "Newest Update" },
-  { value: "cs_asc", label: "Score: Low to High" },
-  { value: "cs_desc", label: "Score: High to Low" },
-];
+const sortValues = ["", "oldest", "newest", "cs_asc", "cs_desc"] as const;
+const sortKeys: Record<string, string> = {
+  "": "sort_options.default",
+  oldest: "sort_options.oldest",
+  newest: "sort_options.newest",
+  cs_asc: "sort_options.cs_asc",
+  cs_desc: "sort_options.cs_desc",
+};
 
 export default function BoardReviewQueuePage() {
   const router = useRouter();
@@ -60,9 +61,9 @@ export default function BoardReviewQueuePage() {
       const count = selected.size;
       setSelected(new Set());
       refetch();
-      addToast({ type: "success", message: `${count} concepts approved` });
+      addToast({ type: "success", message: t("messages.concept_approved", { count }) });
     } catch {
-      addToast({ type: "error", message: "Batch approval failed" });
+      addToast({ type: "error", message: t("messages.batch_approval_failed") });
     } finally {
       setBatchLoading(false);
     }
@@ -79,7 +80,7 @@ export default function BoardReviewQueuePage() {
         <div className="flex flex-wrap items-center gap-3">
           <Input
             type="date"
-            placeholder="From date"
+            placeholder={t("common.from_date")}
             className="w-40"
             onChange={(e) => {
               /* date filter - wired to API */
@@ -87,7 +88,7 @@ export default function BoardReviewQueuePage() {
           />
           <Input
             type="date"
-            placeholder="To date"
+            placeholder={t("common.to_date")}
             className="w-40"
             onChange={(e) => {
               /* date filter */
@@ -103,13 +104,13 @@ export default function BoardReviewQueuePage() {
               }}
               className="rounded border-border text-primary focus:ring-primary"
             />
-            Close calls only
+            {t("board.close_calls_only")}
           </label>
           <Select
-            options={sortOptions}
+            options={sortValues.map((v) => ({ value: v, label: t(sortKeys[v]) }))}
             value={sort}
             onChange={(e) => setSort(e.target.value)}
-            placeholder="Sort"
+            placeholder={t("common.sort")}
             className="w-44"
           />
         </div>
@@ -131,13 +132,13 @@ export default function BoardReviewQueuePage() {
                 <thead>
                   <tr className="border-b border-border-light bg-surface text-start text-[11px] font-semibold uppercase tracking-[0.05em] text-text-muted">
                     <th className="px-4 py-3 w-10" />
-                    <th className="px-4 py-3">English Term</th>
-                    <th className="px-4 py-3">Domain</th>
-                    <th className="px-4 py-3">Leading Candidate</th>
-                    <th className="px-4 py-3">Cs</th>
-                    <th className="px-4 py-3">Votes</th>
-                    <th className="px-4 py-3">Status</th>
-                    <th className="px-4 py-3">Updated</th>
+                    <th className="px-4 py-3">{t("concepts.english_term")}</th>
+                    <th className="px-4 py-3">{t("concepts.domain")}</th>
+                    <th className="px-4 py-3">{t("concepts.leading_candidate")}</th>
+                    <th className="px-4 py-3">{t("board.consensus_score_short")}</th>
+                    <th className="px-4 py-3">{t("board.votes")}</th>
+                    <th className="px-4 py-3">{t("common.status")}</th>
+                    <th className="px-4 py-3">{t("board.updated")}</th>
                   </tr>
                 </thead>
                 <tbody>

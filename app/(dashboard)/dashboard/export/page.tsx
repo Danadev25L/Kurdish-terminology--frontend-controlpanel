@@ -107,8 +107,8 @@ export default function ExportImportPage() {
   const exportItems = [
     {
       id: "concepts-csv",
-      title: "All Concepts (CSV)",
-      description: "Export all concepts across all domains to CSV format",
+      title: t("export.all_concepts_csv"),
+      description: t("export.all_concepts_csv_desc"),
       icon: (
         <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
       ),
@@ -119,8 +119,8 @@ export default function ExportImportPage() {
     },
     {
       id: "concepts-json",
-      title: "All Concepts (JSON)",
-      description: "Export all concepts with full metadata to JSON format",
+      title: t("export.all_concepts_json"),
+      description: t("export.all_concepts_json_desc"),
       icon: (
         <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
       ),
@@ -131,8 +131,8 @@ export default function ExportImportPage() {
     },
     {
       id: "public-terms",
-      title: "Public Terms (CSV)",
-      description: "Export all published terms to CSV format",
+      title: t("export.public_terms_csv"),
+      description: t("export.public_terms_csv_desc"),
       icon: (
         <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
       ),
@@ -142,8 +142,8 @@ export default function ExportImportPage() {
 
   const domainExportItems = domains?.map((domain) => ({
     id: `domain-${domain.id}`,
-    title: `${domain.name} (CSV)`,
-    description: `Export all concepts from ${domain.name} domain`,
+    title: t("export.domain_csv", { name: domain.name }),
+    description: t("export.domain_csv_desc", { name: domain.name }),
     icon: (
       <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
     ),
@@ -152,23 +152,23 @@ export default function ExportImportPage() {
 
   return (
     <div className="space-y-6">
-      <Breadcrumb items={[{ label: "Dashboard", href: "/dashboard" }, { label: t("export.title") }]} />
+      <Breadcrumb items={[{ label: t("nav.dashboard"), href: "/dashboard" }, { label: t("export.title") }]} />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{t("export.title")}</h1>
           <p className="mt-1 text-sm text-muted">
-            Export data for backups or import concepts from external sources
+            {t("export.data_backup_desc")}
           </p>
         </div>
-        <Button variant="secondary" disabled>Import Concepts (Coming Soon)</Button>
+        <Button variant="secondary" disabled>{t("export.import_coming_soon")}</Button>
       </div>
 
       {/* Export Section */}
       <div>
-        <h2 className="mb-4 text-lg font-semibold text-gray-900">Export Data</h2>
+        <h2 className="mb-4 text-lg font-semibold text-gray-900">{t("export.export_data")}</h2>
         <Card>
           <div className="text-center py-8">
-            <p className="text-muted">Export functionality is coming soon. Backend endpoints are being implemented.</p>
+            <p className="text-muted">{t("export.export_coming_soon_msg")}</p>
           </div>
         </Card>
       </div>
@@ -177,10 +177,10 @@ export default function ExportImportPage() {
       {domains && domains.length > 0 && (
         <RoleGate roles={["admin", "domain-head"]}>
           <div>
-            <h2 className="mb-4 text-lg font-semibold text-gray-900">Export by Domain</h2>
+            <h2 className="mb-4 text-lg font-semibold text-gray-900">{t("export.export_by_domain")}</h2>
             <Card>
               <div className="text-center py-8">
-                <p className="text-muted">Domain export functionality is coming soon.</p>
+                <p className="text-muted">{t("export.domain_coming_soon")}</p>
               </div>
             </Card>
           </div>
@@ -188,11 +188,11 @@ export default function ExportImportPage() {
       )}
 
       {/* Import Modal */}
-      <Modal open={importOpen} onClose={() => setImportOpen(false)} title="Import Concepts">
+      <Modal open={importOpen} onClose={() => setImportOpen(false)} title={t("export.import_concepts")}>
         <form onSubmit={handleImport} className="space-y-4">
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-700">
-              Select File (CSV or JSON)
+              {t("export.select_file")}
             </label>
             <Input
               type="file"
@@ -201,7 +201,7 @@ export default function ExportImportPage() {
               required
             />
             <p className="mt-1 text-xs text-muted">
-              Download a template to see the expected format
+              {t("export.download_template_msg")}
             </p>
           </div>
 
@@ -212,7 +212,7 @@ export default function ExportImportPage() {
               size="sm"
               onClick={() => downloadTemplate("csv")}
             >
-              Download CSV Template
+              {t("export.download_csv_template")}
             </Button>
             <Button
               type="button"
@@ -220,21 +220,21 @@ export default function ExportImportPage() {
               size="sm"
               onClick={() => downloadTemplate("json")}
             >
-              Download JSON Template
+              {t("export.download_json_template")}
             </Button>
           </div>
 
           {domains && domains.length > 0 && (
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-700">
-                Target Domain (Optional)
+                {t("export.target_domain")}
               </label>
               <select
                 className="w-full rounded-lg border border-border bg-surface-raised px-3 py-2 text-sm"
                 value={selectedDomain ?? ""}
                 onChange={(e) => setSelectedDomain(e.target.value ? Number(e.target.value) : null)}
               >
-                <option value="">Auto-detect from file</option>
+                <option value="">{t("export.auto_detect")}</option>
                 {domains.map((d) => (
                   <option key={d.id} value={d.id}>
                     {d.name}
@@ -254,17 +254,16 @@ export default function ExportImportPage() {
             >
               {importResult.success ? (
                 <p>
-                  Successfully imported {importResult.imported} concepts.
-                  {importResult.failed > 0 && ` Failed: ${importResult.failed}`}
+                  {t("export.import_success", { imported: importResult.imported, failed: importResult.failed })}
                 </p>
               ) : (
                 <p>
-                  Import failed. {importResult.failed} errors occurred.
+                  {t("export.import_failed", { failed: importResult.failed })}
                   {importResult.errors && importResult.errors.length > 0 && (
                     <ul className="mt-2 text-sm">
                       {importResult.errors.slice(0, 5).map((err, i) => (
                         <li key={i}>
-                          Row {err.row}: {err.error}
+                          {t("export.import_error_row", { row: err.row, error: err.error })}
                         </li>
                       ))}
                     </ul>
@@ -276,10 +275,10 @@ export default function ExportImportPage() {
 
           <div className="flex justify-end gap-2">
             <Button type="button" variant="secondary" onClick={() => setImportOpen(false)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button type="submit" loading={importing} disabled={!selectedFile}>
-              Import
+              {t("export.import")}
             </Button>
           </div>
         </form>

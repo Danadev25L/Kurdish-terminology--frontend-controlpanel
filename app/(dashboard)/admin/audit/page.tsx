@@ -21,7 +21,7 @@ export default function AdminAuditPage() {
 
   return (
     <div className="space-y-6">
-      <Breadcrumb items={[{ label: "Admin", href: "/admin" }, { label: "Audit Log" }]} />
+      <Breadcrumb items={[{ label: t("nav.admin"), href: "/admin" }, { label: t("admin.audit.title") }]} />
       <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">{t("admin.audit.title")}</h1>
 
       {isLoading ? (
@@ -32,11 +32,11 @@ export default function AdminAuditPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border-light bg-surface text-start text-[11px] font-semibold uppercase tracking-[0.05em] text-text-muted">
-                  <th className="px-4 py-3">Timestamp</th>
-                  <th className="px-4 py-3">User</th>
-                  <th className="px-4 py-3">Action</th>
-                  <th className="px-4 py-3">Entity</th>
-                  <th className="px-4 py-3">Details</th>
+                  <th className="px-4 py-3">{t("common.timestamp")}</th>
+                  <th className="px-4 py-3">{t("common.user")}</th>
+                  <th className="px-4 py-3">{t("admin.audit.action")}</th>
+                  <th className="px-4 py-3">{t("admin.audit.entity")}</th>
+                  <th className="px-4 py-3">{t("admin.audit.details")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -46,7 +46,7 @@ export default function AdminAuditPage() {
                       {formatDateTime(event.created_at)}
                     </td>
                     <td className="px-4 py-3 text-[13px]">
-                      {event.user?.name ?? `User #${event.user_id}`}
+                      {event.user?.name ?? t("admin.audit.user_fallback", { id: event.user_id })}
                     </td>
                     <td className="px-4 py-3">
                       <Badge>{event.action}</Badge>
@@ -57,7 +57,7 @@ export default function AdminAuditPage() {
                     <td className="px-4 py-3 text-[13px] text-text-muted">
                       {event.details
                         ? JSON.stringify(event.details).slice(0, 80)
-                        : "—"}
+                        : t("common.dash")}
                     </td>
                   </tr>
                 ))}

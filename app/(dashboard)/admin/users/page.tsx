@@ -52,9 +52,9 @@ export default function AdminUsersPage() {
         setCreateForm({ name: "", email: "", password: "" });
         setSelectedRoles([]);
         refetch();
-        addToast({ type: "success", message: "User created" });
+        addToast({ type: "success", message: t("messages.user_created") });
       } catch {
-        addToast({ type: "error", message: "Failed to create user" });
+        addToast({ type: "error", message: t("messages.user_create_failed") });
       } finally {
         setCreating(false);
       }
@@ -77,9 +77,9 @@ export default function AdminUsersPage() {
         await deleteUserApi(deleteUser.id);
         setDeleteUser(null);
         refetch();
-        addToast({ type: "success", message: "User deleted" });
+        addToast({ type: "success", message: t("messages.user_deleted") });
       } catch {
-        addToast({ type: "error", message: "Failed to delete user" });
+        addToast({ type: "error", message: t("messages.user_delete_failed") });
       } finally {
         setDeleting(false);
       }
@@ -95,10 +95,10 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-6">
-      <Breadcrumb items={[{ label: "Admin", href: "/admin" }, { label: "Users" }]} />
+      <Breadcrumb items={[{ label: t("nav.admin"), href: "/admin" }, { label: t("admin.users.title") }]} />
       <div className="flex items-center justify-between">
         <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">{t("admin.users.title")}</h1>
-        <Button onClick={() => setCreateOpen(true)}>Create User</Button>
+        <Button onClick={() => setCreateOpen(true)}>{t("admin.users.create_user")}</Button>
       </div>
 
       {isLoading ? (
@@ -109,11 +109,11 @@ export default function AdminUsersPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border-light bg-surface text-start text-[11px] font-semibold uppercase tracking-[0.05em] text-text-muted">
-                  <th className="px-4 py-3">Name</th>
-                  <th className="px-4 py-3">Email</th>
-                  <th className="px-4 py-3">Roles</th>
-                  <th className="px-4 py-3">Created</th>
-                  <th className="px-4 py-3">Actions</th>
+                  <th className="px-4 py-3">{t("common.name")}</th>
+                  <th className="px-4 py-3">{t("common.email")}</th>
+                  <th className="px-4 py-3">{t("common.roles")}</th>
+                  <th className="px-4 py-3">{t("common.created")}</th>
+                  <th className="px-4 py-3">{t("common.actions")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -127,7 +127,7 @@ export default function AdminUsersPage() {
                       <div className="flex flex-wrap gap-1">
                         {user.roles.map((role) => (
                           <Badge key={role} variant="primary">
-                            {role.replace("_", " ")}
+                            {role.replace(/_/g, " ")}
                           </Badge>
                         ))}
                       </div>
@@ -142,7 +142,7 @@ export default function AdminUsersPage() {
                           variant="danger"
                           onClick={() => handleDelete(user)}
                         >
-                          Delete
+                          {t("common.delete")}
                         </Button>
                       )}
                     </td>
@@ -162,10 +162,10 @@ export default function AdminUsersPage() {
       )}
 
       {/* Create user modal */}
-      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title="Create User">
+      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t("admin.users.create_user")}>
         <form onSubmit={handleCreate} className="space-y-4">
           <Input
-            label="Name"
+            label={t("common.name")}
             value={createForm.name}
             onChange={(e) =>
               setCreateForm((f) => ({ ...f, name: e.target.value }))
@@ -173,7 +173,7 @@ export default function AdminUsersPage() {
             required
           />
           <Input
-            label="Email"
+            label={t("common.email")}
             type="email"
             value={createForm.email}
             onChange={(e) =>
@@ -182,7 +182,7 @@ export default function AdminUsersPage() {
             required
           />
           <Input
-            label="Password"
+            label={t("admin.users.password")}
             type="password"
             value={createForm.password}
             onChange={(e) =>
@@ -191,7 +191,7 @@ export default function AdminUsersPage() {
             required
           />
           <div>
-            <p className="mb-2 text-[14px] font-bold text-text-secondary">Roles</p>
+            <p className="mb-2 text-[14px] font-bold text-text-secondary">{t("common.roles")}</p>
             <div className="flex flex-wrap gap-2">
               {allRoles.map((role) => (
                 <button
@@ -210,7 +210,7 @@ export default function AdminUsersPage() {
             </div>
           </div>
           <Button type="submit" loading={creating} className="w-full">
-            Create User
+            {t("admin.users.create_user")}
           </Button>
         </form>
       </Modal>
@@ -220,9 +220,9 @@ export default function AdminUsersPage() {
         open={!!deleteUser}
         onClose={() => setDeleteUser(null)}
         onConfirm={confirmDelete}
-        title="Delete User"
-        message={`Are you sure you want to delete user "${deleteUser?.name}"? This action cannot be undone.`}
-        confirmLabel="Delete"
+        title={t("admin.users.delete_user")}
+        message={t("admin.users.delete_confirm", { name: deleteUser?.name ?? "" })}
+        confirmLabel={t("common.delete")}
         variant="danger"
         loading={deleting}
       />

@@ -47,9 +47,9 @@ export default function BoardPublishedPage() {
       setRecallOpen(false);
       setRecallReason("");
       refetch();
-      addToast({ type: "success", message: "Term recalled" });
+      addToast({ type: "success", message: t("messages.term_recalled") });
     } catch {
-      addToast({ type: "error", message: "Failed to recall term" });
+      addToast({ type: "error", message: t("messages.term_recall_failed") });
     } finally {
       setRecallLoading(false);
     }
@@ -68,7 +68,7 @@ export default function BoardPublishedPage() {
             setSearch(v);
             setPage(1);
           }}
-          placeholder="Search published terms..."
+          placeholder={t("board.search_published")}
           className="max-w-xl"
         />
 
@@ -85,7 +85,7 @@ export default function BoardPublishedPage() {
                     <div>
                       <div className="flex items-center gap-2">
                         <h3 className="font-semibold text-foreground">
-                          {concept.english_term?.word ?? "Untitled"}
+                          {concept.english_term?.word ?? t("concepts.untitled")}
                         </h3>
                         {concept.winner_candidate && (
                           <span className="text-[13px]" dir="rtl">
@@ -94,7 +94,7 @@ export default function BoardPublishedPage() {
                         )}
                       </div>
                       <div className="mt-1 flex items-center gap-2">
-                        <Badge>{concept.domain?.name ?? "—"}</Badge>
+                        <Badge>{concept.domain?.name ?? t("common.dash")}</Badge>
                         <span className="text-xs text-text-muted">
                           {timeAgo(concept.updated_at)}
                         </span>
@@ -134,9 +134,9 @@ export default function BoardPublishedPage() {
             setRecallReason("");
           }}
           onConfirm={handleRecall}
-          title="Recall Term"
-          message="This will send the term back to Stage 1 with critical priority. All previous voting data will be archived."
-          confirmLabel="Recall"
+          title={t("board.recall")}
+          message={t("board.recall_msg")}
+          confirmLabel={t("board.recall")}
           variant="danger"
           loading={recallLoading}
         >
@@ -144,7 +144,7 @@ export default function BoardPublishedPage() {
             <Textarea
               value={recallReason}
               onChange={(e) => setRecallReason(e.target.value)}
-              placeholder="Reason for recall (required)..."
+              placeholder={t("board.recall_reason_placeholder")}
               rows={3}
             />
           </div>

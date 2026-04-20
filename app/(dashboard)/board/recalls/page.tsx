@@ -120,7 +120,7 @@ function RecallsContent() {
 
   return (
     <div className="space-y-6">
-      <Breadcrumb items={[{ label: "Board", href: "/board/review-queue" }, { label: t("board.recalls") }]} />
+      <Breadcrumb items={[{ label: t("nav.board_review"), href: "/board/review-queue" }, { label: t("board.recalls") }]} />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{t("board.recalls")}</h1>
@@ -137,11 +137,11 @@ function RecallsContent() {
               setPage(1);
             }}
           >
-            <option value="">All Statuses</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
-            <option value="expired">Expired</option>
+            <option value="">{t("concepts.all_statuses")}</option>
+            <option value="pending">{t("statuses.pending")}</option>
+            <option value="approved">{t("statuses.approved")}</option>
+            <option value="rejected">{t("statuses.rejected")}</option>
+            <option value="expired">{t("statuses.expired")}</option>
           </select>
         </div>
       </div>
@@ -171,38 +171,37 @@ function RecallsContent() {
                           onClick={() => recall.concept_id && handleViewConcept(recall.concept_id)}
                           className="font-medium text-gray-900 hover:text-primary"
                         >
-                          {recall.concept?.english_term ?? "Unknown Term"}
+                          {recall.concept?.english_term ?? t("board.unknown_term")}
                         </button>
                         <Badge variant={statusVariant[recall.status] ?? "default"}>
                           {recall.status}
                         </Badge>
                         {isExpired && recall.status === "pending" && (
-                          <Badge variant="default">Expired</Badge>
+                          <Badge variant="default">{t("statuses.expired")}</Badge>
                         )}
                       </div>
                       <p className="mt-2 text-sm text-gray-900">{recall.reason}</p>
                       <div className="mt-3 flex items-center gap-4">
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-medium text-success">
-                            {recall.support_count} Support
+                            {recall.support_count} {t("recalls.support")}
                           </span>
                           <span className="text-sm text-muted">·</span>
                           <span className="text-sm font-medium text-danger">
-                            {recall.oppose_count} Oppose
+                            {recall.oppose_count} {t("recalls.oppose")}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Badge
                             variant={netVotes > 0 ? "success" : netVotes < 0 ? "danger" : "default"}
                           >
-                            Net: {netVotes > 0 ? "+" : ""}
-                            {netVotes}
+                            {t("recalls.net_votes", { votes: `${netVotes > 0 ? "+" : ""}${netVotes}` })}
                           </Badge>
                         </div>
                       </div>
                       <p className="mt-2 text-xs text-muted">
-                        Requested by {recall.requester?.name ?? "Unknown"} ·{" "}
-                        Expires {new Date(recall.expires_at).toLocaleDateString()}
+                        {t("recalls.requested_by")} {recall.requester?.name ?? t("common.unknown")} ·{" "}
+                        {t("recalls.expires_label")} {new Date(recall.expires_at).toLocaleDateString()}
                       </p>
                     </div>
 
@@ -214,7 +213,7 @@ function RecallsContent() {
                           onClick={() => handleApprove(recall)}
                           loading={processingId === recall.id}
                         >
-                          Approve Recall
+                          {t("board.approve_recall")}
                         </Button>
                         <Button
                           size="sm"
@@ -222,7 +221,7 @@ function RecallsContent() {
                           onClick={() => handleReject(recall)}
                           loading={processingId === recall.id}
                         >
-                          Reject
+                          {t("board.reject_recall")}
                         </Button>
                       </div>
                     )}
@@ -243,39 +242,38 @@ function RecallsContent() {
       )}
 
       {/* Approve Modal */}
-      <Modal open={approveOpen} onClose={() => setApproveOpen(false)} title="Approve Recall">
+      <Modal open={approveOpen} onClose={() => setApproveOpen(false)} title={t("board.approve_recall")}>
         <form onSubmit={confirmApprove} className="space-y-4">
           <p className="text-sm text-muted">
-            Approving this recall will return the term to the review stage for reconsideration.
-            Are you sure?
+            {t("board.approve_recall_msg")}
           </p>
           <Textarea
-            label="Notes (Optional)"
-            placeholder="Add any notes about this approval..."
+            label={t("common.notes_optional")}
+            placeholder={t("board.approval_notes_placeholder")}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
           />
           <div className="flex justify-end gap-2">
             <Button type="button" variant="secondary" onClick={() => setApproveOpen(false)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button type="submit" loading={processingId !== null}>
-              Approve Recall
+              {t("board.approve_recall")}
             </Button>
           </div>
         </form>
       </Modal>
 
       {/* Reject Modal */}
-      <Modal open={rejectOpen} onClose={() => setRejectOpen(false)} title="Reject Recall">
+      <Modal open={rejectOpen} onClose={() => setRejectOpen(false)} title={t("board.reject_recall")}>
         <form onSubmit={confirmReject} className="space-y-4">
           <p className="text-sm text-muted">
-            Are you sure you want to reject this recall request? Please provide a reason.
+            {t("board.reject_recall_msg")}
           </p>
           <Textarea
-            label="Rejection Reason"
-            placeholder="Explain why this recall is being rejected..."
+            label={t("board.rejection_reason")}
+            placeholder={t("board.rejection_reason_placeholder")}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
@@ -283,10 +281,10 @@ function RecallsContent() {
           />
           <div className="flex justify-end gap-2">
             <Button type="button" variant="secondary" onClick={() => setRejectOpen(false)}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button type="submit" variant="danger" loading={processingId !== null}>
-              Reject Recall
+              {t("board.reject_recall")}
             </Button>
           </div>
         </form>
