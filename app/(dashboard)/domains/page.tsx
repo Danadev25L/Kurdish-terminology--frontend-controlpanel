@@ -53,7 +53,7 @@ export default function DomainsPage() {
                     <Badge>{domain.slug}</Badge>
                   </div>
                   <div className="mt-3 flex gap-4 text-xs text-text-muted">
-                    <span>{domain.members_count ?? 0} members</span>
+                    <span>{domain.experts_count ?? 0} experts</span>
                     <span>{domain.concepts_count ?? 0} concepts</span>
                   </div>
                 </Card>

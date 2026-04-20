@@ -40,6 +40,7 @@ export interface Domain {
   head_user_id: number;
   head_user?: User;
   members_count?: number;
+  experts_count?: number;
   concepts_count?: number;
   created_at: string;
   updated_at: string;
