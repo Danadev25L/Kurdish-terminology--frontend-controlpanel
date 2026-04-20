@@ -26,8 +26,7 @@ export default function DomainDetailPage() {
   const domainId = params.id as string;
   const { isAdmin, isDomainHead } = useRole();
   const addToast = useToastStore((s) => s.addToast);
-  const canManageMembers = isDomainHead; // backend: add/update member = domain-head only
-  const canRemoveMember = isAdmin || isDomainHead; // backend: remove member = admin,domain-head
+  const canManage = isAdmin || isDomainHead;
   const { t } = useI18n();
 
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -44,7 +43,7 @@ export default function DomainDetailPage() {
     `/api/v1/domains/${domainId}/members`
   );
   const { data: usersData } = useApi<{ data: { id: number; name: string; email: string }[] }>(
-    canManageMembers ? `/api/v1/admin/users?per_page=100` : ""
+    canManage ? `/api/v1/admin/users?per_page=100` : ""
   );
 
   const handleAddMember = useCallback(async () => {
@@ -160,7 +159,7 @@ export default function DomainDetailPage() {
       <Card>
         <CardHeader>
           <CardTitle>{t("domains.detail.members")}</CardTitle>
-          {canManageMembers && <Button size="sm" onClick={() => setAddMemberOpen(true)}>{t("domains.detail.add_member")}</Button>}
+          {canManage && <Button size="sm" onClick={() => setAddMemberOpen(true)}>{t("domains.detail.add_member")}</Button>}
         </CardHeader>
 
         {!members || members.length === 0 ? (
@@ -173,7 +172,7 @@ export default function DomainDetailPage() {
                   <th key="header-user" className="px-3 py-2">{t("common.user")}</th>
                   <th key="header-role" className="px-3 py-2">{t("common.role")}</th>
                   <th key="header-joined" className="px-3 py-2">{t("common.joined")}</th>
-                  {canRemoveMember ? <th key="header-actions" className="px-3 py-2">{t("common.actions")}</th> : null}
+                  {canManage ? <th key="header-actions" className="px-3 py-2">{t("common.actions")}</th> : null}
                 </tr>
               </thead>
               <tbody>
@@ -196,7 +195,7 @@ export default function DomainDetailPage() {
                       </div>
                     </td>
                     <td className="px-3 py-3">
-                      {canManageMembers ? (
+                      {canManage ? (
                         <Select
                           options={[
                             { value: "expert", label: t("roles.expert") },
@@ -215,7 +214,7 @@ export default function DomainDetailPage() {
                     <td className="px-3 py-3 text-[13px] text-text-muted">
                       {member.joined_at}
                     </td>
-                    {canRemoveMember ? (
+                    {canManage ? (
                       <td className="px-3 py-3">
                         <Button
                           variant="ghost"
