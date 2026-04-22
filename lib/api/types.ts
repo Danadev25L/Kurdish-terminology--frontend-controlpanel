@@ -156,6 +156,7 @@ export interface CandidateMetrics {
   std_dev: number;
   consensus_score: number;
   vote_count: number;
+  score_distribution?: Record<number, number>; // 1-10 score counts
 }
 
 // ── Discussions ──

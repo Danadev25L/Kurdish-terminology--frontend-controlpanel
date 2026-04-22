@@ -21,7 +21,15 @@ export function getBoardRecalls(params?: { page?: number; status?: string }) {
   );
 }
 
+/**
+ * Get a single recall by ID
+ * NOTE: The backend does not currently have a GET /api/v1/recalls/{id} endpoint.
+ * This function attempts to call it, but will return a 404.
+ * Workaround: Fetch from getPublicRecalls() or getBoardRecalls() and find by ID.
+ * @unimplemented Backend endpoint missing
+ */
 export function getRecall(id: number | string) {
+  // Backend does not have this endpoint
   return api.get<Recall>(`/api/v1/recalls/${id}`);
 }
 
@@ -34,9 +42,9 @@ export function voteOnRecall(recallId: number, vote: "support" | "oppose") {
 }
 
 export function approveRecall(recallId: number, note?: string) {
-  return api.post<Recall>(`/api/v1/recalls/${recallId}/approve`, { note });
+  return api.post<Recall>(`/api/v1/board/recalls/${recallId}/approve`, { note });
 }
 
 export function rejectRecall(recallId: number, reason: string) {
-  return api.post<Recall>(`/api/v1/recalls/${recallId}/reject`, { reason });
+  return api.post<Recall>(`/api/v1/board/recalls/${recallId}/reject`, { reason });
 }

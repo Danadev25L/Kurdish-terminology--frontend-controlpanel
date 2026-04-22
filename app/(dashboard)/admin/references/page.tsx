@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
+import { useRole } from "@/lib/hooks/use-role";
 import { useApi } from "@/lib/hooks/use-api";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,9 @@ import { Select } from "@/components/ui/select";
 import { Modal } from "@/components/ui/modal";
 import { Pagination } from "@/components/ui/pagination";
 import { Spinner } from "@/components/ui/spinner";
-import { createReferenceSource, importReferenceEntries } from "@/lib/api/references";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { EditReferenceModal } from "@/components/modals/edit-reference-modal";
+import { createReferenceSource, importReferenceEntries, deleteReferenceSource } from "@/lib/api/references";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { useToastStore } from "@/stores/toast-store";
 import type { ReferenceSource, ReferenceSourceType } from "@/lib/api/types";
@@ -33,6 +36,7 @@ const sourceTypeValues: { value: ReferenceSourceType; key: string }[] = [
 ];
 
 export default function AdminReferencesPage() {
+  const { isAdmin } = useRole();
   const addToast = useToastStore((s) => s.addToast);
   const { t } = useI18n();
   const [page, setPage] = useState(1);
@@ -51,6 +55,14 @@ export default function AdminReferencesPage() {
   const [creating, setCreating] = useState(false);
   const [uploadingId, setUploadingId] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Edit modal state
+  const [editSource, setEditSource] = useState<ReferenceSource | null>(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+
+  // Delete confirmation state
+  const [deleteSource, setDeleteSource] = useState<ReferenceSource | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const handleCreate = useCallback(
     async (e: React.FormEvent) => {
@@ -90,8 +102,28 @@ export default function AdminReferencesPage() {
         setUploadingId(null);
       }
     },
-    [refetch, addToast]
+    [refetch, addToast, t]
   );
+
+  const handleDelete = useCallback(async () => {
+    if (!deleteSource) return;
+    setDeleting(true);
+    try {
+      await deleteReferenceSource(deleteSource.id);
+      setDeleteSource(null);
+      refetch();
+      addToast({ type: "success", message: t("messages.reference_deleted") });
+    } catch {
+      addToast({ type: "error", message: t("messages.reference_delete_failed") });
+    } finally {
+      setDeleting(false);
+    }
+  }, [deleteSource, refetch, addToast, t]);
+
+  const handleEdit = useCallback((source: ReferenceSource) => {
+    setEditSource(source);
+    setEditModalOpen(true);
+  }, []);
 
   if (isLoading) {
     return (
@@ -142,11 +174,52 @@ export default function AdminReferencesPage() {
                 >
                   {t("admin.references.import_csv")}
                 </Button>
+                {isAdmin && (
+                  <>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleEdit(source)}
+                    >
+                      {t("common.edit")}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      onClick={() => setDeleteSource(source)}
+                    >
+                      {t("common.delete")}
+                    </Button>
+                  </>
+                )}
               </div>
             </CardHeader>
           </Card>
         ))}
       </div>
+
+      {/* Edit Reference Modal */}
+      <EditReferenceModal
+        open={editModalOpen}
+        onClose={() => {
+          setEditModalOpen(false);
+          setEditSource(null);
+        }}
+        reference={editSource}
+        onSuccess={refetch}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmationDialog
+        open={!!deleteSource}
+        onClose={() => setDeleteSource(null)}
+        onConfirm={handleDelete}
+        title={t("admin.references.delete_reference")}
+        message={t("admin.references.delete_confirm", { name: deleteSource?.name ?? "" })}
+        confirmLabel={t("common.delete")}
+        variant="danger"
+        loading={deleting}
+      />
 
       {sources.length === 0 && (
         <p className="py-8 text-center text-[13px] text-text-muted">

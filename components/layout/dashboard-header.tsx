@@ -3,6 +3,7 @@
 import { useAuth } from "@/lib/hooks/use-auth";
 import { useRole } from "@/lib/hooks/use-role";
 import { useNotificationStore } from "@/stores/notification-store";
+import { usePolling } from "@/lib/hooks/use-polling";
 import { useApi } from "@/lib/hooks/use-api";
 import { markNotificationRead } from "@/lib/api/notifications";
 import { useRouter } from "next/navigation";
@@ -77,12 +78,21 @@ export function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
   const [notifOpen, setNotifOpen] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
 
-  const { data: notifications } = useApi<Notification[]>("/api/v1/notifications");
+  const { data: notifications, refetch: refetchNotifications } = useApi<Notification[]>("/api/v1/notifications");
   const notifStore = useNotificationStore();
 
   useEffect(() => {
     if (notifications) notifStore.setNotifications(notifications);
   }, [notifications]);
+
+  // Poll for notifications every 2 minutes
+  usePolling(async () => {
+    await refetchNotifications();
+  }, {
+    interval: 120000, // 2 minutes
+    enabled: true,
+    immediate: false, // Don't poll immediately, wait for interval
+  });
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {

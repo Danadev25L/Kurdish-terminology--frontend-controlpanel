@@ -375,7 +375,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <ConceptStatusBadge status={item.status as any} />
+                    <ConceptStatusBadge status={item.status as "draft" | "threshold" | "voting" | "review" | "published" | "recalled"} />
                     <span className="text-xs text-text-muted">
                       {new Date(item.updated_at).toLocaleDateString()}
                     </span>

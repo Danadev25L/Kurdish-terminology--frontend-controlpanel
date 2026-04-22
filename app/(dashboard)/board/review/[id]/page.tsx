@@ -14,11 +14,13 @@ import { CloseCallBanner } from "@/components/board/close-call-banner";
 import { ConceptStatusBadge } from "@/components/domain/concept-status-badge";
 import { ConsensusChart } from "@/components/domain/consensus-chart";
 import { DiscussionThread } from "@/components/domain/discussion-thread";
+import { ScoreHistogram } from "@/components/domain/score-histogram";
 import { approveConcept, vetoConcept } from "@/lib/api/board";
+import { getConceptActivity } from "@/lib/api/concepts";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { useToastStore } from "@/stores/toast-store";
 import { formatNumber, formatDate } from "@/lib/utils/format";
-import type { Concept, Candidate } from "@/lib/api/types";
+import type { Concept, Candidate, ConceptActivityEntry } from "@/lib/api/types";
 import { useI18n } from "@/i18n/context";
 
 export default function BoardExaminationPage() {
@@ -41,6 +43,10 @@ export default function BoardExaminationPage() {
 
   const { data: candidates } = useApi<Candidate[]>(
     `/api/v1/concepts/${conceptId}/candidates`
+  );
+
+  const { data: activities } = useApi<ConceptActivityEntry[]>(
+    `/api/v1/concepts/${conceptId}/activity-feed`
   );
 
   const handleApprove = useCallback(async () => {
@@ -169,6 +175,22 @@ export default function BoardExaminationPage() {
           />
         </Card>
 
+        {/* Score Histograms */}
+        {sortedCandidates.length > 0 && sortedCandidates.some(c => c.metrics?.score_distribution) && (
+          <Card>
+            <h3 className="mb-4 text-sm font-bold text-foreground">
+              Score Distribution Breakdown
+            </h3>
+            <div className="grid md:grid-cols-2 gap-4">
+              {sortedCandidates
+                .filter(c => c.metrics?.score_distribution)
+                .map(candidate => (
+                  <ScoreHistogram key={candidate.id} candidate={candidate} />
+                ))}
+            </div>
+          </Card>
+        )}
+
         {/* Runner-up comparison */}
         {runnerUp && (
           <Card>
@@ -197,6 +219,33 @@ export default function BoardExaminationPage() {
           </h3>
           <DiscussionThread conceptId={conceptId} />
         </Card>
+
+        {/* Activity feed */}
+        {activities && activities.length > 0 && (
+          <Card>
+            <h3 className="mb-4 text-sm font-bold text-foreground">
+              {t("concepts.detail.recent_activity_label")}
+            </h3>
+            <div className="space-y-3">
+              {activities.slice(0, 10).map((activity) => (
+                <div key={activity.id} className="flex items-start gap-3 border-b border-border-light pb-3 last:border-0">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface">
+                    <svg className="h-4 w-4 text-text-muted" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.6a8.983 8.983 0 013.361-6.867 8.21 8.21 0 003 2.48z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 18a3.75 3.75 0 00.495-7.467 5.99 5.99 0 00-1.925 3.546 5.974 5.974 0 01-2.133-1A3.75 3.75 0 0012 18z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-foreground">{activity.description}</p>
+                    <p className="text-xs text-text-muted">
+                      {activity.user?.name ?? t("common.unknown")} · {formatDate(activity.created_at)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        )}
 
         {/* Action bar */}
         <div className="sticky bottom-0 flex items-center gap-3 rounded-xl border border-border bg-surface-raised p-4 shadow-lg">

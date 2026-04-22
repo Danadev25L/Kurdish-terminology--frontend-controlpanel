@@ -142,10 +142,15 @@ export function confirmTwoFactor(code: string) {
 
 /**
  * Disable 2FA (requires password)
+ * NOTE: This endpoint has been removed from the backend.
+ * 2FA is now permanent once enabled per security policy.
+ * @deprecated Backend endpoint removed - 2FA cannot be disabled
  */
 export function disableTwoFactor(data: {
   password: string;
   current_code?: string;
 }) {
-  return api.post<{ message: string }>("/api/v1/auth/two-factor/disable", data);
+  // This endpoint no longer exists in the backend
+  // 2FA is permanent once enabled for security reasons
+  return Promise.reject(new Error("Two-factor authentication cannot be disabled once enabled. Please contact an administrator if you need assistance."));
 }

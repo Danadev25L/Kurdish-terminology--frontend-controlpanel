@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useLayoutEffect } from "react";
 import { useApi } from "@/lib/hooks/use-api";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -25,7 +25,9 @@ export default function AdminSettingsPage() {
     [rawSettings]
   );
 
-  useEffect(() => {
+  // Use layout effect for synchronous state initialization during render
+  // This avoids setState-in-effect warning and prevents double-render
+  useLayoutEffect(() => {
     if (rawSettings) {
       const map: Record<string, string> = {};
       Object.values(rawSettings).flat().forEach((s) => {

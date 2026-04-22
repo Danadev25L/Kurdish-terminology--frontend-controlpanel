@@ -18,15 +18,12 @@ import { VoteMatrix } from "@/components/domain/vote-matrix";
 import { ConsensusChart } from "@/components/domain/consensus-chart";
 import { ReferenceSidebar } from "@/components/domain/reference-sidebar";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { EditConceptModal } from "@/components/modals/edit-concept-modal";
 import { useToastStore } from "@/stores/toast-store";
 import { useI18n } from "@/i18n/context";
 import { withdrawCandidate } from "@/lib/api/candidates";
-import { motionToVote, reopenConcept } from "@/lib/api/concepts";
-import {
-  getConceptHistory,
-  getConceptActivity,
-  deleteConcept,
-} from "@/lib/api/concepts";
+import { motionToVote, reopenConcept, advanceConcept, closeVoting, deleteConcept } from "@/lib/api/concepts";
 import type { Concept, Candidate, ConceptHistoryEntry, ConceptActivityEntry } from "@/lib/api/types";
 
 interface BackendConceptMetrics {
@@ -49,11 +46,16 @@ import { formatDate } from "@/lib/utils/format";
 export default function ConceptDetailPage() {
   const params = useParams();
   const conceptId = params.id as string;
-  const { isDomainHead, isAdmin, isMainBoard } = useRole();
+  const { isDomainHead, isAdmin, isMainBoard, isExpert } = useRole();
   const { user } = useAuth();
   const addToast = useToastStore((s) => s.addToast);
   const { t } = useI18n();
   const [activeTab, setActiveTab] = useState("overview");
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isAdvancing, setIsAdvancing] = useState(false);
+  const [isClosingVoting, setIsClosingVoting] = useState(false);
 
   // Concept endpoint already includes candidates - no need for separate call
   const { data: concept, isLoading, refetch } = useApi<Concept>(
@@ -73,7 +75,7 @@ export default function ConceptDetailPage() {
         addToast({ type: "error", message: t("messages.status_update_failed") });
       }
     },
-    [refetch, addToast]
+    [refetch, addToast, t]
   );
 
   const handleMotionToVote = useCallback(async () => {
@@ -84,7 +86,7 @@ export default function ConceptDetailPage() {
     } catch {
       addToast({ type: "error", message: t("messages.status_update_failed") });
     }
-  }, [conceptId, refetch, addToast]);
+  }, [conceptId, refetch, addToast, t]);
 
   const handleReopen = useCallback(async () => {
     try {
@@ -94,7 +96,45 @@ export default function ConceptDetailPage() {
     } catch {
       addToast({ type: "error", message: t("messages.status_update_failed") });
     }
-  }, [conceptId, refetch, addToast]);
+  }, [conceptId, refetch, addToast, t]);
+
+  const handleAdvance = useCallback(async () => {
+    setIsAdvancing(true);
+    try {
+      await advanceConcept(Number(conceptId));
+      refetch();
+      addToast({ type: "success", message: t("messages.concept_advanced") });
+    } catch {
+      addToast({ type: "error", message: t("messages.concept_advance_failed") });
+    } finally {
+      setIsAdvancing(false);
+    }
+  }, [conceptId, refetch, addToast, t]);
+
+  const handleCloseVoting = useCallback(async () => {
+    setIsClosingVoting(true);
+    try {
+      await closeVoting(Number(conceptId));
+      refetch();
+      addToast({ type: "success", message: t("messages.voting_closed") });
+    } catch {
+      addToast({ type: "error", message: t("messages.voting_close_failed") });
+    } finally {
+      setIsClosingVoting(false);
+    }
+  }, [conceptId, refetch, addToast, t]);
+
+  const handleDelete = useCallback(async () => {
+    setIsDeleting(true);
+    try {
+      await deleteConcept(Number(conceptId));
+      addToast({ type: "success", message: t("messages.concept_deleted") });
+      window.location.href = "/concepts";
+    } catch {
+      addToast({ type: "error", message: t("messages.concept_delete_failed") });
+      setIsDeleting(false);
+    }
+  }, [conceptId, addToast, t]);
 
   if (isLoading) {
     return (
@@ -146,19 +186,77 @@ export default function ConceptDetailPage() {
           </p>
         </div>
         <div className="flex gap-2">
+          {(isExpert || isDomainHead || isAdmin) && (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setEditModalOpen(true)}
+            >
+              {t("common.edit")}
+            </Button>
+          )}
           {(isDomainHead || isAdmin) && isDraft && candidateCount > 0 && (
-            <Button onClick={handleMotionToVote}>{t("concepts.detail.motion_to_vote")}</Button>
+            <Button size="sm" onClick={handleMotionToVote}>{t("concepts.detail.motion_to_vote")}</Button>
+          )}
+          {(isDomainHead || isAdmin) && (isDraft || isThreshold) && (
+            <Button
+              size="sm"
+              onClick={handleAdvance}
+              loading={isAdvancing}
+            >
+              {t("concepts.detail.advance_stage")}
+            </Button>
+          )}
+          {(isDomainHead || isAdmin) && isVoting && (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleCloseVoting}
+              loading={isClosingVoting}
+            >
+              {t("concepts.detail.close_voting")}
+            </Button>
           )}
           {(isMainBoard || isAdmin) && (
             <Button
               variant="secondary"
+              size="sm"
               onClick={handleReopen}
             >
               {t("concepts.detail.reopen")}
             </Button>
           )}
+          {isAdmin && (
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={() => setDeleteConfirmOpen(true)}
+            >
+              {t("common.delete")}
+            </Button>
+          )}
         </div>
       </div>
+
+      {/* Edit Concept Modal */}
+      <EditConceptModal
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        concept={concept}
+        onSuccess={refetch}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmationDialog
+        open={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        onConfirm={handleDelete}
+        title={t("concepts.delete_concept")}
+        message={t("concepts.delete_confirm", { term: concept.english_term?.word ?? t("concepts.untitled") })}
+        confirmLabel={t("common.delete")}
+        variant="danger"
+        loading={isDeleting}
+      />
 
       {/* Tabs */}
       <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
@@ -174,6 +272,7 @@ export default function ConceptDetailPage() {
             conceptStatus={concept.status}
             currentUserId={user?.id}
             onWithdraw={handleWithdraw}
+            onRefresh={refetch}
           />
         )}
         {activeTab === "discussions" && (
@@ -271,11 +370,13 @@ function CandidatesTab({
   conceptStatus,
   currentUserId,
   onWithdraw,
+  onRefresh,
 }: {
   candidates: Candidate[];
   conceptStatus: string;
   currentUserId?: number;
   onWithdraw: (id: number) => void;
+  onRefresh?: () => void;
 }) {
   const { t } = useI18n();
   if (candidates.length === 0) {
@@ -294,11 +395,9 @@ function CandidatesTab({
         <CandidateCard
           key={candidate.id}
           candidate={candidate}
-          showActions={
-            conceptStatus === "draft" &&
-            candidate.author_id === currentUserId
-          }
+          showActions={true}
           onWithdraw={onWithdraw}
+          onRefresh={onRefresh}
         />
       ))}
     </div>

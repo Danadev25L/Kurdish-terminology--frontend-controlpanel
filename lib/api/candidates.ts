@@ -5,6 +5,14 @@ export function getCandidates(conceptId: number | string) {
   return api.get<Candidate[]>(`/api/v1/concepts/${conceptId}/candidates`);
 }
 
+/**
+ * GET /api/v1/candidates/{id}
+ * Get a single candidate by ID
+ */
+export function getCandidate(id: number) {
+  return api.get<Candidate>(`/api/v1/candidates/${id}`);
+}
+
 export function createCandidate(
   conceptId: number,
   data: { kurdish_term: string; morphology_notes?: string }

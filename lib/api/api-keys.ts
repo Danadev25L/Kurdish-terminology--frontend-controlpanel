@@ -8,6 +8,8 @@ import type {
 /**
  * GET /api/v1/api-keys
  * Get all API keys for the current user
+ * Backend returns: { data: ApiKey[] }
+ * Note: The api client automatically unwraps { data: ... } responses
  */
 export function getApiKeys() {
   return api.get<ApiKey[]>("/api/v1/api-keys");
@@ -16,6 +18,8 @@ export function getApiKeys() {
 /**
  * GET /api/v1/api-keys/{id}
  * Get a single API key by ID
+ * Backend returns: { data: ApiKey }
+ * Note: The api client automatically unwraps { data: ... } responses
  */
 export function getApiKey(id: number) {
   return api.get<ApiKey>(`/api/v1/api-keys/${id}`);
@@ -25,6 +29,7 @@ export function getApiKey(id: number) {
  * POST /api/v1/api-keys
  * Create a new API key
  * Note: The plain text key is only shown once in the response
+ * Backend returns: { data: { id, name, key, last_four, abilities, expires_at, message, security_note } }
  */
 export function createApiKey(data: CreateApiKeyData) {
   return api.post<CreateApiKeyResponse>("/api/v1/api-keys", data);
@@ -33,10 +38,12 @@ export function createApiKey(data: CreateApiKeyData) {
 /**
  * PATCH /api/v1/api-keys/{id}
  * Update an API key
+ * Backend returns: { message: string, data: ApiKey }
+ * Note: The api client automatically unwraps { data: ... } responses
  */
 export function updateApiKey(
   id: number,
-  data: { name?: string; abilities?: string[]; is_active?: boolean }
+  data: { name?: string; abilities?: string[] }
 ) {
   return api.patch<ApiKey>(`/api/v1/api-keys/${id}`, data);
 }
@@ -44,6 +51,7 @@ export function updateApiKey(
 /**
  * DELETE /api/v1/api-keys/{id}
  * Delete an API key
+ * Backend returns: { message: string }
  */
 export function deleteApiKey(id: number) {
   return api.del<{ message: string }>(`/api/v1/api-keys/${id}`);

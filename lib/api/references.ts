@@ -1,8 +1,36 @@
 import { api } from "./client";
 import type { ReferenceSource, ReferenceEntry } from "./types";
 
+/**
+ * GET /api/v1/domains/reference-sources
+ * Get domain-scoped reference sources
+ */
 export function getReferenceSources() {
   return api.get<ReferenceSource[]>("/api/v1/domains/reference-sources");
+}
+
+/**
+ * GET /api/v1/reference-sources
+ * Get all reference sources (global endpoint)
+ */
+export function getAllReferenceSources() {
+  return api.get<ReferenceSource[]>("/api/v1/reference-sources");
+}
+
+/**
+ * GET /api/v1/domains/reference-sources/{id}
+ * Get a single domain-scoped reference source
+ */
+export function getReferenceSource(id: number) {
+  return api.get<ReferenceSource>(`/api/v1/domains/reference-sources/${id}`);
+}
+
+/**
+ * GET /api/v1/reference-sources/{id}
+ * Get a single reference source (global endpoint)
+ */
+export function getReferenceSourceGlobal(id: number) {
+  return api.get<ReferenceSource>(`/api/v1/reference-sources/${id}`);
 }
 
 export function createReferenceSource(data: {

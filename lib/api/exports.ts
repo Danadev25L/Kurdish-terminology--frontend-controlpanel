@@ -41,7 +41,13 @@ export function getImportTemplate(format: "csv" | "json" = "csv"): Promise<Impor
   return api.get<ImportTemplate>(`/api/v1/import/template?format=${format}`);
 }
 
+/**
+ * Get the direct download URL for import templates
+ * NOTE: The backend serves templates directly from /api/v1/import/template
+ * The /download suffix does not exist - this function now returns the correct endpoint
+ */
 export function downloadImportTemplateURL(format: "csv" | "json" = "csv"): string {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-  return `${baseUrl}/api/v1/import/template/download?format=${format}`;
+  // Fixed: Removed /download suffix - backend serves template directly from /api/v1/import/template
+  return `${baseUrl}/api/v1/import/template?format=${format}`;
 }

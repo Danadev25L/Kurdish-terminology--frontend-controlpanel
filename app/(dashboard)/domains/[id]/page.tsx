@@ -12,6 +12,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Avatar } from "@/components/ui/avatar";
 import { RoleGate } from "@/components/auth/role-gate";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { EditDomainModal } from "@/components/modals/edit-domain-modal";
 import { deleteDomain, addDomainMember, removeDomainMember, updateDomainMember } from "@/lib/api/domains";
 import { getUsers } from "@/lib/api/users";
 import { Modal } from "@/components/ui/modal";
@@ -37,6 +38,9 @@ export default function DomainDetailPage() {
   const [adding, setAdding] = useState(false);
   const [selectedUser, setSelectedUser] = useState<number | "">("");
   const [selectedRole, setSelectedRole] = useState<"expert" | "observer">("expert");
+
+  // Edit domain modal state
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   const { data: domain, isLoading, refetch } = useApi<Domain>(`/api/v1/domains/${domainId}`);
   const { data: members } = useApi<DomainMember[]>(
@@ -146,6 +150,15 @@ export default function DomainDetailPage() {
           </div>
           <div className="flex items-center gap-2">
             <Badge>{domain.slug}</Badge>
+            {canManage && (
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setEditModalOpen(true)}
+              >
+                {t("common.edit")}
+              </Button>
+            )}
             <RoleGate roles={["admin"]}>
               <Button variant="danger" size="sm" onClick={() => setDeleteOpen(true)}>
                 {t("domains.delete_domain")}
@@ -154,6 +167,14 @@ export default function DomainDetailPage() {
           </div>
         </div>
       </Card>
+
+      {/* Edit Domain Modal */}
+      <EditDomainModal
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        domain={domain}
+        onSuccess={refetch}
+      />
 
       {/* Members */}
       <Card>

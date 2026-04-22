@@ -11,6 +11,7 @@ import { Modal } from "@/components/ui/modal";
 import { SkeletonTable } from "@/components/ui/skeleton";
 import { Pagination } from "@/components/ui/pagination";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { EditUserModal } from "@/components/modals/edit-user-modal";
 import { createUser, assignRoles, deleteUser as deleteUserApi } from "@/lib/api/users";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { useToastStore } from "@/stores/toast-store";
@@ -35,6 +36,10 @@ export default function AdminUsersPage() {
   const [deleteUser, setDeleteUser] = useState<User | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [updatingRoleId, setUpdatingRoleId] = useState<number | null>(null);
+
+  // Edit user modal state
+  const [editUser, setEditUser] = useState<User | null>(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   const { data, isLoading, refetch } = useApi<PaginatedResponse<User>>(
     `/api/v1/admin/users?page=${page}`
@@ -119,7 +124,7 @@ export default function AdminUsersPage() {
                   <th className="px-4 py-3">{t("common.email")}</th>
                   <th className="px-4 py-3">{t("common.roles")}</th>
                   <th className="px-4 py-3">{t("common.created")}</th>
-                  <th className="px-4 py-3">{t("common.actions")}</th>
+                  <th className="px-4 py-3 text-end">{t("common.actions")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -154,16 +159,28 @@ export default function AdminUsersPage() {
                     <td className="px-4 py-3 text-[13px] text-text-muted">
                       {user.created_at}
                     </td>
-                    <td className="px-4 py-3">
-                      {user.id !== currentUser?.id && (
+                    <td className="px-4 py-3 text-end">
+                      <div className="flex justify-end gap-2">
                         <Button
                           size="sm"
-                          variant="danger"
-                          onClick={() => setDeleteUser(user)}
+                          variant="secondary"
+                          onClick={() => {
+                            setEditUser(user);
+                            setEditModalOpen(true);
+                          }}
                         >
-                          {t("common.delete")}
+                          {t("common.edit")}
                         </Button>
-                      )}
+                        {user.id !== currentUser?.id && (
+                          <Button
+                            size="sm"
+                            variant="danger"
+                            onClick={() => setDeleteUser(user)}
+                          >
+                            {t("common.delete")}
+                          </Button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -223,6 +240,17 @@ export default function AdminUsersPage() {
           </Button>
         </form>
       </Modal>
+
+      {/* Edit user modal */}
+      <EditUserModal
+        open={editModalOpen}
+        onClose={() => {
+          setEditModalOpen(false);
+          setEditUser(null);
+        }}
+        user={editUser}
+        onSuccess={refetch}
+      />
 
       {/* Delete confirmation dialog */}
       <ConfirmationDialog

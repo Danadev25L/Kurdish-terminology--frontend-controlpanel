@@ -25,6 +25,19 @@ export function getConcepts(filters: ConceptFilters = {}) {
   return api.get<PaginatedResponse<Concept>>(`/api/v1/concepts?${params}`);
 }
 
+/**
+ * GET /api/v1/concepts/inbox
+ * Get personalized inbox concepts for the current user
+ */
+export function getConceptInbox(filters: ConceptFilters = {}) {
+  const params = new URLSearchParams();
+  if (filters.domain_id) params.set("domain_id", String(filters.domain_id));
+  if (filters.status) params.set("status", filters.status);
+  if (filters.page) params.set("page", String(filters.page));
+  if (filters.per_page) params.set("per_page", String(filters.per_page));
+  return api.get<PaginatedResponse<Concept>>(`/api/v1/concepts/inbox?${params}`);
+}
+
 export function getConcept(id: number | string) {
   return api.get<Concept>(`/api/v1/concepts/${id}`);
 }
@@ -69,7 +82,8 @@ export function reopenConcept(id: number) {
 }
 
 export function requestInfo(id: number, note: string) {
-  return api.post(`/api/v1/board/concepts/${id}/request-info`, { note });
+  // Fixed: Backend uses /api/v1/concepts/{id}/request-info, not /api/v1/board/concepts/{id}/request-info
+  return api.post(`/api/v1/concepts/${id}/request-info`, { note });
 }
 
 export function getConceptHistory(id: number | string) {
@@ -82,6 +96,22 @@ export function getConceptMetrics(id: number | string) {
 
 export function getConceptActivity(id: number | string) {
   return api.get<ConceptActivityEntry[]>(`/api/v1/concepts/${id}/activity-feed`);
+}
+
+/**
+ * GET /api/v1/concepts/{id}/consensus-votes
+ * Get all consensus votes for a concept
+ */
+export function getConsensusVotes(id: number | string) {
+  return api.get(`/api/v1/concepts/${id}/consensus-votes`);
+}
+
+/**
+ * GET /api/v1/concepts/{id}/reference-context
+ * Get reference context (dictionary definitions) for a concept
+ */
+export function getReferenceContext(id: number | string) {
+  return api.get(`/api/v1/concepts/${id}/reference-context`);
 }
 
 export function getVotesSummary(id: number | string) {
