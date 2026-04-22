@@ -38,6 +38,18 @@ const PARTS_OF_SPEECH = [
   "interjection",
 ];
 
+function posDisplayName(pos: string | { name: string } | null | undefined): string {
+  if (!pos) return "";
+  if (typeof pos === "object" && "name" in pos) return pos.name;
+  return String(pos);
+}
+
+function posFormValue(pos: string | { name: string } | null | undefined): string {
+  if (!pos) return "";
+  if (typeof pos === "object" && "name" in pos) return pos.name.toLowerCase();
+  return String(pos);
+}
+
 const DIALECTS = [
   "sorani",
   "kurmanji",
@@ -82,7 +94,7 @@ export default function KurdishLexiconPage() {
 
     const payload = {
       word: formData.word.trim(),
-      part_of_speech: formData.part_of_speech,
+      part_of_speech: formData.part_of_speech.charAt(0).toUpperCase() + formData.part_of_speech.slice(1),
       ...(formData.etymology.trim() ? { etymology: formData.etymology.trim() } : {}),
       ...(formData.root_word.trim() ? { root_word: formData.root_word.trim() } : {}),
       ...(formData.dialect_tag.trim() ? { dialect_tag: formData.dialect_tag.trim() } : {}),
@@ -107,7 +119,7 @@ export default function KurdishLexiconPage() {
 
     const payload = {
       word: formData.word.trim(),
-      part_of_speech: formData.part_of_speech,
+      part_of_speech: formData.part_of_speech.charAt(0).toUpperCase() + formData.part_of_speech.slice(1),
       ...(formData.etymology.trim() ? { etymology: formData.etymology.trim() } : {}),
       ...(formData.root_word.trim() ? { root_word: formData.root_word.trim() } : {}),
       ...(formData.dialect_tag.trim() ? { dialect_tag: formData.dialect_tag.trim() } : {}),
@@ -148,7 +160,7 @@ export default function KurdishLexiconPage() {
     setEditingWord(word);
     setFormData({
       word: word.word ?? "",
-      part_of_speech: word.part_of_speech ?? "",
+      part_of_speech: posFormValue(word.part_of_speech),
       etymology: word.etymology ?? "",
       root_word: word.root_word ?? "",
       dialect_tag: word.dialect_tag ?? "",
@@ -256,7 +268,7 @@ export default function KurdishLexiconPage() {
                         {word.word}
                       </h3>
                       <span className="px-2 py-0.5 text-xs rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
-                        {word.part_of_speech}
+                        {posDisplayName(word.part_of_speech)}
                       </span>
                       {word.dialect_tag && (
                         <span className="px-2 py-0.5 text-xs rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300">

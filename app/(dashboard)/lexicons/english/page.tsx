@@ -36,6 +36,18 @@ const PARTS_OF_SPEECH = [
   "interjection",
 ];
 
+function posDisplayName(pos: string | { name: string } | null | undefined): string {
+  if (!pos) return "";
+  if (typeof pos === "object" && "name" in pos) return pos.name;
+  return String(pos);
+}
+
+function posFormValue(pos: string | { name: string } | null | undefined): string {
+  if (!pos) return "";
+  if (typeof pos === "object" && "name" in pos) return pos.name.toLowerCase();
+  return String(pos);
+}
+
 export default function EnglishLexiconPage() {
   const { t } = useI18n();
   const router = useRouter();
@@ -66,7 +78,7 @@ export default function EnglishLexiconPage() {
 
     const payload = {
       word: formData.word.trim(),
-      part_of_speech: formData.part_of_speech,
+      part_of_speech: formData.part_of_speech.charAt(0).toUpperCase() + formData.part_of_speech.slice(1),
       ...(formData.etymology.trim() ? { etymology: formData.etymology.trim() } : {}),
       ...(formData.root_word.trim() ? { root_word: formData.root_word.trim() } : {}),
     };
@@ -90,7 +102,7 @@ export default function EnglishLexiconPage() {
 
     const payload = {
       word: formData.word.trim(),
-      part_of_speech: formData.part_of_speech,
+      part_of_speech: formData.part_of_speech.charAt(0).toUpperCase() + formData.part_of_speech.slice(1),
       ...(formData.etymology.trim() ? { etymology: formData.etymology.trim() } : {}),
       ...(formData.root_word.trim() ? { root_word: formData.root_word.trim() } : {}),
     };
@@ -130,7 +142,7 @@ export default function EnglishLexiconPage() {
     setEditingWord(word);
     setFormData({
       word: word.word ?? "",
-      part_of_speech: word.part_of_speech ?? "",
+      part_of_speech: posFormValue(word.part_of_speech),
       etymology: word.etymology ?? "",
       root_word: word.root_word ?? "",
     });
@@ -198,7 +210,7 @@ export default function EnglishLexiconPage() {
                         {word.word}
                       </h3>
                       <span className="px-2 py-0.5 text-xs rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
-                        {word.part_of_speech}
+                        {posDisplayName(word.part_of_speech)}
                       </span>
                     </div>
                     <div className="mt-2 text-sm text-text-muted">

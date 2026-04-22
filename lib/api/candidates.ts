@@ -15,7 +15,7 @@ export function getCandidate(id: number) {
 
 export function createCandidate(
   conceptId: number,
-  data: { kurdish_term: string; morphology_notes?: string }
+  data: { kurdish_term: string; dialect?: string; morphology_notes?: string }
 ) {
   return api.post<Candidate>(`/api/v1/concepts/${conceptId}/candidates`, data);
 }
