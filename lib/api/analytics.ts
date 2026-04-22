@@ -3,6 +3,7 @@ import type {
   DialectEquityData,
   WordVersatilityData,
   DomainHealthData,
+  MyDashboardData,
 } from "./types";
 
 export function getDialectEquity() {
@@ -48,4 +49,12 @@ export interface ExpertAnalytics {
 
 export function getMyContributions() {
   return api.get<ExpertAnalytics>("/api/v1/analytics/my-contributions");
+}
+
+/**
+ * GET /api/v1/dashboard/me
+ * Get user-specific dashboard data with stats, domains, and role-specific info
+ */
+export function getMyDashboard() {
+  return api.get<MyDashboardData>("/api/v1/dashboard/me");
 }

@@ -545,3 +545,79 @@ export interface MfaEnabledData {
   backup_codes: string[];
   message: string;
 }
+
+// ── My Dashboard ──
+export interface MyDashboardUser {
+  id: number;
+  name: string;
+  email: string;
+  roles: string[];
+  created_at: string;
+}
+
+export interface MyDashboardDomain {
+  id: number;
+  name: string;
+  slug: string;
+  role: string;
+  concepts_count: number;
+}
+
+export interface MyDashboardStats {
+  concepts_contributed: number;
+  votes_cast: number;
+  discussions_posted: number;
+  candidates_proposed: number;
+}
+
+export interface ExpertRoleData {
+  pending_tasks: number;
+  concepts_needing_vote: number;
+  recent_discussions: Array<{
+    id: number;
+    body: string;
+    created_at: string;
+    domain_name: string;
+    english_term: string;
+  }>;
+}
+
+export interface DomainHeadRoleData {
+  managed_domains: Array<{
+    id: number;
+    name: string;
+    slug: string;
+    pending_concepts: number;
+    total_concepts: number;
+  }>;
+  pending_concepts: number;
+}
+
+export interface BoardMemberRoleData {
+  review_queue_count: number;
+  recent_approvals: Array<{
+    id: number;
+    updated_at: string;
+  }>;
+}
+
+export interface AdminRoleData {
+  pending_user_approvals: number;
+  total_domains: number;
+  total_users: number;
+  total_concepts: number;
+}
+
+export interface RoleSpecificData {
+  expert?: ExpertRoleData;
+  domain_head?: DomainHeadRoleData;
+  board_member?: BoardMemberRoleData;
+  admin?: AdminRoleData;
+}
+
+export interface MyDashboardData {
+  user: MyDashboardUser;
+  my_domains: MyDashboardDomain[];
+  my_stats: MyDashboardStats;
+  role_specific: RoleSpecificData;
+}
