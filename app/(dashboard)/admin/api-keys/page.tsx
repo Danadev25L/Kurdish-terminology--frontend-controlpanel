@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useApi } from "@/lib/hooks/use-api";
 import { RoleGate } from "@/components/auth/role-gate";
 import { Card } from "@/components/ui/card";
@@ -42,9 +42,9 @@ export default function ApiKeysPage() {
   }, [addToast]);
 
   // Fetch keys on mount
-  useState(() => {
+  useEffect(() => {
     fetchKeys();
-  });
+  }, []);
 
   const handleCreate = useCallback(async () => {
     if (!newKeyName.trim()) return;

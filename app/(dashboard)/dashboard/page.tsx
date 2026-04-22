@@ -8,22 +8,27 @@ import { Badge } from "@/components/ui/badge";
 import { ConceptStatusBadge } from "@/components/domain/concept-status-badge";
 import { Spinner } from "@/components/ui/spinner";
 import { EmptyState } from "@/components/ui/empty-state";
+import { UserProfileCard } from "@/components/dashboard/user-profile-card";
+import { ExpertSection } from "@/components/dashboard/expert-section";
+import { DomainHeadSection } from "@/components/dashboard/domain-head-section";
+import { BoardSection } from "@/components/dashboard/board-section";
+import { AdminSection } from "@/components/dashboard/admin-section";
+import { useRole } from "@/lib/hooks/use-role";
+import { getMyDashboard } from "@/lib/api/analytics";
+import type { MyDashboardData } from "@/lib/api/types";
+import { useI18n } from "@/i18n/context";
+import { getTwoFactorStatus } from "@/lib/api/auth";
 import {
   BarChart,
   Bar,
-  AreaChart,
-  Area,
   PieChart,
   Pie,
   Cell,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { useI18n } from "@/i18n/context";
-import { getTwoFactorStatus } from "@/lib/api/auth";
 
 type Priority = "critical" | "urgent" | "high" | "normal" | "low";
 
@@ -112,6 +117,7 @@ const STATUS_LABELS: Record<string, string> = {
 export default function DashboardPage() {
   const router = useRouter();
   const { t } = useI18n();
+  const { isAdmin, isMainBoard, isDomainHead, isExpert } = useRole();
 
   const [twoFactorStatus, setTwoFactorStatus] = useState<{
     enabled: boolean;
@@ -120,13 +126,22 @@ export default function DashboardPage() {
     setup_required: boolean;
   } | null>(null);
 
+  const [myDashboardData, setMyDashboardData] = useState<MyDashboardData | null>(null);
+  const [myDashboardLoading, setMyDashboardLoading] = useState(true);
+
+  // Fetch 2FA status and user dashboard data
   useEffect(() => {
     getTwoFactorStatus()
       .then(setTwoFactorStatus)
       .catch(() => setTwoFactorStatus({ enabled: false, confirmed: false, requires_mfa: false, setup_required: false }));
+
+    getMyDashboard()
+      .then((response) => setMyDashboardData(response.data))
+      .catch(() => {})
+      .finally(() => setMyDashboardLoading(false));
   }, []);
 
-  // Fetch all dashboard data
+  // Fetch global platform statistics
   const { data: stats, isLoading: statsLoading } = useApi<DashboardStats>("/api/v1/dashboard/stats");
   const { data: conceptsByDomain, isLoading: domainLoading } = useApi<ConceptByDomain[]>("/api/v1/dashboard/concepts-by-domain");
   const { data: publicationTrend, isLoading: trendLoading } = useApi<PublicationTrend[]>("/api/v1/dashboard/publication-trend");
@@ -155,11 +170,9 @@ export default function DashboardPage() {
     cumulative: publicationTrend.slice(0, index + 1).reduce((sum, i) => sum + i.count, 0),
   })) || [];
 
-  const isLoading = statsLoading || domainLoading || trendLoading || statusLoading || priorityLoading || activityLoading;
+  const isLoading = statsLoading || domainLoading || trendLoading || statusLoading || priorityLoading || activityLoading || myDashboardLoading;
 
-  const hasError = !stats && !isLoading;
-
-  if (isLoading && !stats) {
+  if (isLoading && !stats && !myDashboardData) {
     return (
       <div className="flex justify-center py-12">
         <Spinner size="lg" />
@@ -193,6 +206,41 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
+
+      {/* User Profile Card - Shows for all users */}
+      {myDashboardData && <UserProfileCard data={myDashboardData} />}
+
+      {/* Role-Specific Sections */}
+      {isExpert && myDashboardData?.role_specific?.expert && (
+        <>
+          <h2 className="text-lg font-bold text-foreground">Expert Dashboard</h2>
+          <ExpertSection data={myDashboardData.role_specific.expert} />
+        </>
+      )}
+
+      {isDomainHead && myDashboardData?.role_specific?.domain_head && (
+        <>
+          <h2 className="text-lg font-bold text-foreground">Domain Head Dashboard</h2>
+          <DomainHeadSection data={myDashboardData.role_specific.domain_head} />
+        </>
+      )}
+
+      {isMainBoard && myDashboardData?.role_specific?.board_member && (
+        <>
+          <h2 className="text-lg font-bold text-foreground">Board Dashboard</h2>
+          <BoardSection data={myDashboardData.role_specific.board_member} />
+        </>
+      )}
+
+      {isAdmin && myDashboardData?.role_specific?.admin && (
+        <>
+          <h2 className="text-lg font-bold text-foreground">Admin Dashboard</h2>
+          <AdminSection data={myDashboardData.role_specific.admin} />
+        </>
+      )}
+
+      {/* Platform-wide Statistics Section */}
+      <h2 className="text-lg font-bold text-foreground">Platform Overview</h2>
 
       {/* Stats Overview Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -263,22 +311,24 @@ export default function DashboardPage() {
           <div className="h-48 px-4 border-t">
             {statusData.length > 0 ? (
               <div className="w-full h-full flex items-center justify-center">
-                <PieChart width={200} height={180}>
-                  <Pie
-                    data={statusData}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={70}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={({name, percent}) => `${percent.toFixed(0)}%`}
-                  >
-                    {statusData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={statusData}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={70}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({name, percent}) => `${percent.toFixed(0)}%`}
+                    >
+                      {statusData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
             ) : (
               <div className="flex items-center justify-center h-full text-text-muted text-sm">
@@ -296,11 +346,13 @@ export default function DashboardPage() {
           <div className="h-64 px-4">
             {conceptsByDomain && conceptsByDomain.length > 0 ? (
               <div className="w-full h-full flex items-center">
-                <BarChart width={280} height={200} data={conceptsByDomain}>
-                  <XAxis dataKey="name" tick={{fontSize: 10}} />
-                  <YAxis tick={{fontSize: 10}} />
-                  <Bar dataKey="count" fill="#2563eb" radius={[4, 4, 0, 0]} />
-                </BarChart>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={conceptsByDomain}>
+                    <XAxis dataKey="name" tick={{fontSize: 10}} />
+                    <YAxis tick={{fontSize: 10}} />
+                    <Bar dataKey="count" fill="#2563eb" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             ) : (
               <div className="flex items-center justify-center h-full text-text-muted text-sm">
@@ -438,110 +490,5 @@ function StatCard({ icon, value, label, color, change }: StatCardProps) {
         )}
       </div>
     </Card>
-  );
-}
-
-// Area Chart Component
-function AreaChartComp({ data }: { data: Array<{ date: string; count: number; cumulative: number }> }) {
-  return (
-    <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-      <defs>
-        <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="5%" stopColor={COLORS.primary} stopOpacity={0.3}/>
-          <stop offset="95%" stopColor={COLORS.primary} stopOpacity={0}/>
-        </linearGradient>
-      </defs>
-      <XAxis
-        dataKey="date"
-        tick={{ fontSize: 11 }}
-        stroke="#6b7280"
-        tickFormatter={(value) => value}
-      />
-      <YAxis tick={{ fontSize: 11 }} stroke="#6b7280" />
-      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-      <Tooltip
-        contentStyle={{
-          backgroundColor: "white",
-          border: "1px solid #e5e7eb",
-          borderRadius: "8px",
-          fontSize: "12px",
-        }}
-      />
-      <Area
-        type="monotone"
-        dataKey="count"
-        stroke={COLORS.primary}
-        fillOpacity={1}
-        fill="url(#colorCount)"
-        animationDuration={1000}
-      />
-    </AreaChart>
-  );
-}
-
-// Pie Chart Component
-function PieChartComp({ data }: { data: Array<{ name: string; value: number; color: string }> }) {
-  return (
-    <PieChart margin={{ top: 10, right: 10, left: 10, bottom: 10 }}>
-      <Pie
-        data={data}
-        cx="50%"
-        cy="50%"
-        labelLine={false}
-        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-        outerRadius={80}
-        fill="#8884d8"
-        dataKey="value"
-        animationDuration={1000}
-      >
-        {data.map((entry, index) => (
-          <Cell key={`cell-${index}`} fill={entry.color} />
-        ))}
-      </Pie>
-      <Tooltip
-        contentStyle={{
-          backgroundColor: "white",
-          border: "1px solid #e5e7eb",
-          borderRadius: "8px",
-          fontSize: "12px",
-        }}
-      />
-    </PieChart>
-  );
-}
-
-// Bar Chart Component
-function BarChartComp({ data, horizontal = false }: { data: Array<{ name?: string; value?: number; count?: number }>; horizontal?: boolean }) {
-  const chartData = data.map(d => ({
-    name: d.name || String(d.value || ""),
-    value: d.value || d.count || 0,
-  }));
-
-  return (
-    <BarChart
-      data={chartData}
-      layout={horizontal ? "vertical" : "horizontal"}
-      margin={{ top: 10, right: 10, left: horizontal ? 60 : 0, bottom: 0 }}
-    >
-      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-      <XAxis
-        dataKey="name"
-        tick={{ fontSize: 11 }}
-        stroke="#6b7280"
-        angle={horizontal ? 0 : -45}
-        textAnchor={horizontal ? "middle" : "end"}
-        height={horizontal ? 20 : 60}
-      />
-      <YAxis tick={{ fontSize: 11 }} stroke="#6b7280" />
-      <Tooltip
-        contentStyle={{
-          backgroundColor: "white",
-          border: "1px solid #e5e7eb",
-          borderRadius: "8px",
-          fontSize: "12px",
-        }}
-      />
-      <Bar dataKey="value" fill={COLORS.primary} radius={[4, 4, 0, 0]} animationDuration={1000} />
-    </BarChart>
   );
 }
