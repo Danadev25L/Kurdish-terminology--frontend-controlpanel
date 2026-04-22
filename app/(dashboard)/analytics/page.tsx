@@ -33,7 +33,7 @@ export default function ExpertAnalyticsPage() {
   const alignedVotes = analytics?.aligned_votes ?? 0;
 
   return (
-    <RoleGate roles={["admin", "main_board", "domain-head", "expert"]}>
+    <RoleGate roles={["admin", "main_board", "domain_head", "expert"]}>
       <div className="space-y-6">
         <Breadcrumb
           items={[

@@ -19,7 +19,7 @@ import type { User, PaginatedResponse } from "@/lib/api/types";
 import { useI18n } from "@/i18n/context";
 import { Download } from "lucide-react";
 
-const allRoles = ["admin", "main_board", "domain-head", "expert"];
+const allRoles = ["admin", "main_board", "domain_head", "expert"];
 
 export default function AdminUsersPage() {
   const { user: currentUser } = useAuth();

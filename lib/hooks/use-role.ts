@@ -11,7 +11,7 @@ export function useRole() {
 
   const isAdmin = hasRole("admin");
   const isMainBoard = hasRole("main_board");
-  const isDomainHead = hasRole("domain-head");
+  const isDomainHead = hasRole("domain_head");
   const isExpert = hasRole("expert");
   const isObserver = hasRole("observer");
 

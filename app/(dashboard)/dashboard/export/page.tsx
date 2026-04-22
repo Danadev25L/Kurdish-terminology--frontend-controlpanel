@@ -175,7 +175,7 @@ export default function ExportImportPage() {
 
       {/* Domain Exports */}
       {domains && domains.length > 0 && (
-        <RoleGate roles={["admin", "domain-head"]}>
+        <RoleGate roles={["admin", "domain_head"]}>
           <div>
             <h2 className="mb-4 text-lg font-semibold text-gray-900">{t("export.export_by_domain")}</h2>
             <Card>

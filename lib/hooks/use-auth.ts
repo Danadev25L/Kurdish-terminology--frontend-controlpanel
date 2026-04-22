@@ -64,7 +64,7 @@ export function useAuth() {
    * Check if user is domain head
    */
   const isDomainHead = (): boolean => {
-    return hasRole("domain-head");
+    return hasRole("domain_head");
   };
 
   /**
