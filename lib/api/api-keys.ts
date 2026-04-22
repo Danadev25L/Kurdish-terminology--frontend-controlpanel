@@ -53,6 +53,6 @@ export function updateApiKey(
  * Delete an API key
  * Backend returns: { message: string }
  */
-export function deleteApiKey(id: number) {
+export function deleteApiKey(id: string) {
   return api.del<{ message: string }>(`/api/v1/api-keys/${id}`);
 }

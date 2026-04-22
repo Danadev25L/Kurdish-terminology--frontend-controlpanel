@@ -23,11 +23,11 @@ export default function ApiKeysPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showNewKeyModal, setShowNewKeyModal] = useState(false);
   const [newKeyName, setNewKeyName] = useState("");
   const [newKeyData, setNewKeyData] = useState<CreateApiKeyResponse | null>(null);
-  const [showKey, setShowKey] = useState<Record<number, boolean>>({});
+  const [showKey, setShowKey] = useState<Record<string, boolean>>({});
 
   const fetchKeys = useCallback(async () => {
     setIsLoading(true);
