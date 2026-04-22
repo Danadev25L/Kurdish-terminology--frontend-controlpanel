@@ -171,15 +171,6 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">{t("dashboard.title")}</h1>
 
-      {/* Debug: Show errors if any */}
-      {(statsError || domainError) && (
-        <div className="bg-danger/20 border border-danger/50 rounded-lg p-4 text-sm">
-          <p className="font-semibold text-danger">API Error:</p>
-          <p className="text-text-muted">{statsError || domainError}</p>
-          <p className="text-xs mt-2">Make sure you're logged in and the backend is running on localhost:8000</p>
-        </div>
-      )}
-
       {/* 2FA Setup Banner */}
       {twoFactorStatus && !twoFactorStatus.enabled && (
         <div className="rounded-lg bg-warning-light/20 border border-warning/30 px-4 py-3">
