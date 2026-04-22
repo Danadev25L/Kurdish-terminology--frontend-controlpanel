@@ -83,7 +83,7 @@ export function useAuth() {
     mfaPending,
     pendingCredentials,
     requiresPasswordConfirmation,
-    isAuthenticated: !!user && !!token,
+    isAuthenticated: !!user,
 
     // Actions
     login: handleLogin,

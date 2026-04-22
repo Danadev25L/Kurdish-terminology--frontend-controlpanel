@@ -23,6 +23,7 @@ interface AuthState {
   isLoading: boolean;
   _hydrated: boolean;  // Track if Zustand persist has finished hydrating
   isAuthenticated: boolean;  // Computed property for auth status
+  _isHydrating: boolean;  // Prevent multiple simultaneous hydrate calls
 
   // MFA state
   mfaPending: boolean;
@@ -62,6 +63,7 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,  // Start as false to avoid loading spinner
       _hydrated: false,  // Track if Zustand persist has finished hydrating
       isAuthenticated: false,  // Auth status flag
+      _isHydrating: false,  // Prevent multiple simultaneous hydrate calls
       mfaPending: false,
       pendingCredentials: null,
       requiresPasswordConfirmation: false,
@@ -180,17 +182,42 @@ _hydrated: true,  // Mark as hydrated since we just set the state
 
       // Hydrate user from token
       hydrate: async () => {
+        // Prevent multiple simultaneous hydrate calls
+        if (get()._isHydrating) {
+          return;
+        }
+
         const token = get().token;
         const skipHydrate = get()._skipNextHydrate;
 
         // Reset skip flag
         if (skipHydrate) {
-          set({ _skipNextHydrate: false, isLoading: false });
+          set({ _skipNextHydrate: false, isLoading: false, _isHydrating: false });
           return;
         }
 
+        // Set hydrating flag
+        set({ _isHydrating: true, isLoading: true });
+
         if (!token) {
-          set({ isLoading: false });
+          // Still check if user is authenticated via HTTP-only cookies
+          try {
+            const fetched = await api.get<User>("/api/v1/auth/me");
+            const existing = get().user;
+            const user: User = {
+              ...fetched,
+              roles: fetched.roles?.length ? fetched.roles : existing?.roles ?? [],
+            };
+            set({ user, isAuthenticated: true, isLoading: false, _isHydrating: false });
+          } catch (err) {
+            // Only clear auth state on 401 (invalid session)
+            if (err instanceof ApiError && err.status === 401) {
+              set({ user: null, token: null, refreshToken: null, isAuthenticated: false, isLoading: false, _isHydrating: false });
+            } else {
+              // For other errors (network, 500, etc.), just stop loading
+              set({ isLoading: false, _isHydrating: false });
+            }
+          }
           return;
         }
 
@@ -201,15 +228,15 @@ _hydrated: true,  // Mark as hydrated since we just set the state
             ...fetched,
             roles: fetched.roles?.length ? fetched.roles : existing?.roles ?? [],
           };
-          set({ user, isAuthenticated: true, isLoading: false });
+          set({ user, isAuthenticated: true, isLoading: false, _isHydrating: false });
         } catch (err) {
           // Only clear auth state on 401 (invalid token)
           // For other errors (network, 500, etc.), keep the user logged in
           if (err instanceof ApiError && err.status === 401) {
-            set({ user: null, token: null, refreshToken: null, isAuthenticated: false, isLoading: false });
+            set({ user: null, token: null, refreshToken: null, isAuthenticated: false, isLoading: false, _isHydrating: false });
           } else {
             // For other errors, just stop loading but keep auth state
-            set({ isLoading: false });
+            set({ isLoading: false, _isHydrating: false });
           }
         }
       },
