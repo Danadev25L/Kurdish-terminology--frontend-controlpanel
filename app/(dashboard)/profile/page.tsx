@@ -71,7 +71,7 @@ export default function ProfilePage() {
       const data = await getTwoFactorStatus();
       setTwoFactorStatus(data);
     } catch {
-      addToast({ type: "error", message: "Failed to load 2FA status" });
+      addToast({ type: "error", message: t("common.error_generic") });
     }
   };
 
@@ -83,9 +83,9 @@ export default function ProfilePage() {
         name: profileData.name,
         preferred_language: "en",
       });
-      addToast({ type: "success", message: "Profile updated successfully" });
+      addToast({ type: "success", message: t("messages.user_updated") });
     } catch {
-      addToast({ type: "error", message: "Failed to update profile" });
+      addToast({ type: "error", message: t("messages.user_update_failed") });
     } finally {
       setSavingProfile(false);
     }
@@ -101,10 +101,9 @@ export default function ProfilePage() {
         password_confirmation: passwordData.password_confirmation,
       });
       setPasswordData({ current_password: "", password: "", password_confirmation: "" });
-      addToast({ type: "success", message: "Password changed successfully. Please login again." });
+      addToast({ type: "success", message: t("profile.password_title") });
     } catch (err: any) {
-      // Extract error message from API response
-      const errorMessage = err?.message || err?.response?.data?.message || "Failed to change password";
+      const errorMessage = err?.message || err?.response?.data?.message || t("common.error_generic");
       addToast({ type: "error", message: errorMessage });
     } finally {
       setSavingPassword(false);
@@ -121,7 +120,7 @@ export default function ProfilePage() {
       setRecoveryCodes(data.recovery_codes);
       setShow2FASetup(true);
     } catch {
-      addToast({ type: "error", message: "Failed to enable 2FA" });
+      addToast({ type: "error", message: t("common.error_generic") });
     } finally {
       setLoading2FA(false);
     }
@@ -145,7 +144,7 @@ export default function ProfilePage() {
       const downloadedCodes = data.recovery_codes ?? recoveryCodes;
       if (downloadedCodes.length > 0) {
         const codesText = [
-          "KTP Recovery Codes",
+          t("profile.recovery_file_title"),
           "===================",
           ...downloadedCodes,
         ].join("\n");
@@ -161,9 +160,9 @@ export default function ProfilePage() {
         URL.revokeObjectURL(url);
       }
 
-      addToast({ type: "success", message: "2FA enabled successfully. Recovery codes downloaded!" });
+      addToast({ type: "success", message: t("profile.2fa_title") });
     } catch {
-      addToast({ type: "error", message: "Invalid verification code" });
+      addToast({ type: "error", message: t("common.error_generic") });
     } finally {
       setConfirming2FA(false);
     }
@@ -174,29 +173,29 @@ export default function ProfilePage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">Profile</h1>
+      <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">{t("profile.title")}</h1>
 
       {/* Profile Information */}
       <Card>
         <CardHeader>
-          <CardTitle>Profile Information</CardTitle>
+          <CardTitle>{t("profile.info_title")}</CardTitle>
         </CardHeader>
         <div className="space-y-4 p-6 pt-0">
           <div>
             <Input
-              label="Name"
+              label={t("common.name")}
               value={profileData.name}
               onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
             />
           </div>
           <div>
             <Input
-              label="Email"
+              label={t("common.email")}
               value={profileData.email}
               disabled
               className="bg-surface opacity-60"
             />
-            <p className="mt-1 text-xs text-text-muted">Email cannot be changed</p>
+            <p className="mt-1 text-xs text-text-muted">{t("profile.email_fixed")}</p>
           </div>
           <div className="flex justify-end">
             <Button
@@ -205,7 +204,7 @@ export default function ProfilePage() {
               loading={savingProfile}
               disabled={profileData.name === user?.name}
             >
-              Save Changes
+              {t("profile.save_changes")}
             </Button>
           </div>
         </div>
@@ -214,26 +213,26 @@ export default function ProfilePage() {
       {/* Change Password */}
       <Card>
         <CardHeader>
-          <CardTitle>Change Password</CardTitle>
+          <CardTitle>{t("profile.password_title")}</CardTitle>
         </CardHeader>
         <div className="space-y-4 p-6 pt-0">
           <PasswordInput
-            label="Current Password"
+            label={t("profile.current_password")}
             value={passwordData.current_password}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPasswordData({ ...passwordData, current_password: e.target.value })}
           />
           <PasswordInput
-            label="New Password"
+            label={t("profile.new_password")}
             value={passwordData.password}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPasswordData({ ...passwordData, password: e.target.value })}
           />
           <PasswordInput
-            label="Confirm New Password"
+            label={t("profile.confirm_password")}
             value={passwordData.password_confirmation}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPasswordData({ ...passwordData, password_confirmation: e.target.value })}
             error={
               passwordData.password_confirmation && passwordData.password !== passwordData.password_confirmation
-                ? "Passwords do not match"
+                ? t("profile.password_mismatch")
                 : undefined
             }
           />
@@ -250,7 +249,7 @@ export default function ProfilePage() {
                 passwordData.password !== passwordData.password_confirmation
               }
             >
-              Change Password
+              {t("profile.change_password")}
             </Button>
           </div>
         </div>
@@ -260,9 +259,9 @@ export default function ProfilePage() {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Two-Factor Authentication</CardTitle>
+            <CardTitle>{t("profile.2fa_title")}</CardTitle>
             {twoFactorStatus?.enabled && (
-              <Badge variant="success">Enabled</Badge>
+              <Badge variant="success">{t("profile.enabled")}</Badge>
             )}
           </div>
         </CardHeader>
@@ -270,8 +269,7 @@ export default function ProfilePage() {
           {twoFactorStatus && !twoFactorStatus.enabled && (
             <div className="mb-4 rounded-lg bg-warning-light/20 border border-warning/30 px-4 py-3">
               <p className="text-sm text-warning">
-                <span className="font-semibold">2FA Required:</span> Your account requires two-factor authentication.
-                Please enable it to continue.
+                <span className="font-semibold">{t("profile.2fa_required")}</span> {t("profile.2fa_required_msg")}
               </p>
             </div>
           )}
@@ -279,23 +277,23 @@ export default function ProfilePage() {
           {!show2FASetup && (
             <div className="space-y-4">
               <p className="text-sm text-text-muted">
-                Add an extra layer of security to your account by requiring a code from your authenticator app.
+                {t("profile.2fa_description")}
               </p>
 
               {twoFactorStatus?.enabled ? (
                 <div className="space-y-4">
                   <div className="rounded-lg bg-success-light/20 border border-success/30 p-4">
-                    <p className="text-sm font-medium text-success">2FA is currently enabled</p>
+                    <p className="text-sm font-medium text-success">{t("profile.2fa_active")}</p>
                     <p className="mt-1 text-xs text-text-muted">
-                      Your account is protected with two-factor authentication.
+                      {t("profile.2fa_active_msg")}
                     </p>
                   </div>
 
                   {twoFactorStatus.has_recovery_codes && (
                     <div className="rounded-lg bg-surface p-4">
-                      <p className="text-sm font-medium text-foreground">Recovery Codes</p>
+                      <p className="text-sm font-medium text-foreground">{t("profile.recovery_codes")}</p>
                       <p className="mt-1 text-xs text-text-muted">
-                        Save these codes in a safe place. You can use them to access your account if you lose your authenticator device.
+                        {t("profile.recovery_codes_save")}
                       </p>
                     </div>
                   )}
@@ -307,7 +305,7 @@ export default function ProfilePage() {
                     onClick={handleEnable2FA}
                     loading={loading2FA}
                   >
-                    Enable Two-Factor Authentication
+                    {t("profile.enable_2fa")}
                   </Button>
                 </div>
               )}
@@ -318,9 +316,9 @@ export default function ProfilePage() {
           {show2FASetup && (
             <div className="space-y-6">
               <div className="text-center">
-                <h3 className="text-lg font-semibold text-foreground">Setup Two-Factor Authentication</h3>
+                <h3 className="text-lg font-semibold text-foreground">{t("profile.setup_2fa")}</h3>
                 <p className="mt-1 text-sm text-text-muted">
-                  Scan the QR code below with your authenticator app
+                  {t("profile.scan_qr")}
                 </p>
               </div>
 
@@ -335,7 +333,7 @@ export default function ProfilePage() {
                       includeMargin={false}
                     />
                   </div>
-                  <p className="text-xs text-text-muted text-center mb-2">Or enter this code manually:</p>
+                  <p className="text-xs text-text-muted text-center mb-2">{t("profile.manual_code")}</p>
                   <code className="text-sm font-mono bg-surface px-3 py-2 rounded block text-center">
                     {twoFactorSecret}
                   </code>
@@ -345,9 +343,9 @@ export default function ProfilePage() {
               {/* Recovery Codes */}
               {recoveryCodes.length > 0 && (
                 <div className="rounded-lg bg-warning-light/20 border border-warning/30 p-4">
-                  <p className="text-sm font-medium text-warning">Recovery Codes</p>
+                  <p className="text-sm font-medium text-warning">{t("profile.recovery_codes")}</p>
                   <p className="mt-1 text-xs text-text-muted mb-3">
-                    Save these codes in a safe place. Each code can only be used once.
+                    {t("profile.recovery_codes_single")}
                   </p>
                   <div className="grid grid-cols-2 gap-2">
                     {recoveryCodes.map((code, i) => (
@@ -362,7 +360,7 @@ export default function ProfilePage() {
               {/* Verification Code Input */}
               <div>
                 <Input
-                  label="Verification Code"
+                  label={t("profile.verification_code")}
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]{6}"
@@ -386,7 +384,7 @@ export default function ProfilePage() {
                     setVerificationCode("");
                   }}
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
                 <Button
                   size="sm"
@@ -394,7 +392,7 @@ export default function ProfilePage() {
                   loading={confirming2FA}
                   disabled={verificationCode.length !== 6}
                 >
-                  Confirm & Enable
+                  {t("profile.confirm_enable")}
                 </Button>
               </div>
             </div>
