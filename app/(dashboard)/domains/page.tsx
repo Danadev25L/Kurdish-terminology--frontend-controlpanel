@@ -44,12 +44,17 @@ export default function DomainsPage() {
               >
                 <Card className="transition-shadow hover:shadow-md cursor-pointer">
                   <div className="flex items-start justify-between">
-                    <div>
+                    <div className="flex-1">
                       <h3 className="font-semibold text-foreground">
                         {domain.name}
+                        {domain.name_i18n?.ku && (
+                          <span className="mr-2 text-sm font-normal text-text-muted" dir="rtl">
+                            {domain.name_i18n.ku}
+                          </span>
+                        )}
                       </h3>
                       <p className="mt-1 text-[13px] text-text-muted line-clamp-2">
-                        {domain.description}
+                        {domain.description || domain.description_i18n?.ku}
                       </p>
                     </div>
                     <Badge>{domain.slug}</Badge>

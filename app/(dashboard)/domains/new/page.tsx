@@ -6,8 +6,6 @@ import { api } from "@/lib/api/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Spinner } from "@/components/ui/spinner";
 import { RoleGate } from "@/components/auth/role-gate";
 import { useI18n } from "@/i18n/context";
@@ -17,9 +15,11 @@ export default function NewDomainPage() {
   const router = useRouter();
   const { t } = useI18n();
 
-  const [name, setName] = useState("");
+  const [nameEn, setNameEn] = useState("");
+  const [nameKu, setNameKu] = useState("");
   const [slug, setSlug] = useState("");
-  const [description, setDescription] = useState("");
+  const [descriptionEn, setDescriptionEn] = useState("");
+  const [descriptionKu, setDescriptionKu] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,9 +30,11 @@ export default function NewDomainPage() {
 
     try {
       const result = await api.post("/api/v1/domains", {
-        name,
-        slug: slug || name.toLowerCase().replace(/\s+/g, "-"),
-        description: description || null,
+        name: nameEn,
+        name_i18n: { ku: nameKu },
+        slug: slug || nameEn.toLowerCase().replace(/\s+/g, "-"),
+        description: descriptionEn || null,
+        description_i18n: { ku: descriptionKu || null },
       });
 
       router.push("/domains");
@@ -67,19 +69,37 @@ export default function NewDomainPage() {
               </div>
             )}
 
+            {/* English Name */}
             <div>
-              <Label htmlFor="name">Domain Name *</Label>
+              <label htmlFor="nameEn" className="block text-sm font-medium mb-1">
+                Domain Name (English) *
+              </label>
               <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                id="nameEn"
+                value={nameEn}
+                onChange={(e) => setNameEn(e.target.value)}
                 placeholder="e.g., Technology"
                 required
               />
             </div>
 
+            {/* Kurdish Name */}
             <div>
-              <Label htmlFor="slug">Slug</Label>
+              <label htmlFor="nameKu" className="block text-sm font-medium mb-1">
+                ناوی دۆمەین (کوردی) *
+              </label>
+              <Input
+                id="nameKu"
+                value={nameKu}
+                onChange={(e) => setNameKu(e.target.value)}
+                placeholder="بۆ نموونە: تەکنەلۆجیا"
+                required
+                dir="rtl"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="slug" className="block text-sm font-medium mb-1">Slug</label>
               <Input
                 id="slug"
                 value={slug}
@@ -91,19 +111,39 @@ export default function NewDomainPage() {
               </p>
             </div>
 
+            {/* English Description */}
             <div>
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+              <label htmlFor="descriptionEn" className="block text-sm font-medium mb-1">
+                Description (English)
+              </label>
+              <textarea
+                id="descriptionEn"
+                value={descriptionEn}
+                onChange={(e) => setDescriptionEn(e.target.value)}
                 placeholder="Brief description of this domain..."
                 rows={3}
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+              />
+            </div>
+
+            {/* Kurdish Description */}
+            <div>
+              <label htmlFor="descriptionKu" className="block text-sm font-medium mb-1">
+                وەسفی (کوردی)
+              </label>
+              <textarea
+                id="descriptionKu"
+                value={descriptionKu}
+                onChange={(e) => setDescriptionKu(e.target.value)}
+                placeholder="وەسفی کورت لەم دۆمەینە..."
+                rows={3}
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm"
+                dir="rtl"
               />
             </div>
 
             <div className="flex gap-3 pt-4">
-              <Button type="submit" disabled={isLoading || !name}>
+              <Button type="submit" disabled={isLoading || !nameEn || !nameKu}>
                 {isLoading ? (
                   <>
                     <Spinner size="sm" className="mr-2" />
@@ -115,7 +155,7 @@ export default function NewDomainPage() {
               </Button>
               <Button
                 type="button"
-                variant="outline"
+                variant="secondary"
                 onClick={() => router.back()}
                 disabled={isLoading}
               >

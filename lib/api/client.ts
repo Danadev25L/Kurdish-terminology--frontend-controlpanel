@@ -88,15 +88,61 @@ async function refreshAccessToken(): Promise<string | null> {
 // PASSWORD CONFIRMATION
 // ============================================
 
-let passwordConfirmationSubscribers: Array<() => void> = [];
-
-function subscribePasswordConfirmation(cb: () => void) {
-  passwordConfirmationSubscribers.push(cb);
+// Store pending request details for retry after password confirmation
+interface PendingRequest {
+  endpoint: string;
+  options: RequestInit;
+  resolve: (value: any) => void;
+  reject: (reason: any) => void;
 }
 
-function onPasswordConfirmed() {
-  passwordConfirmationSubscribers.forEach((cb) => cb());
-  passwordConfirmationSubscribers = [];
+let pendingRequest: PendingRequest | null = null;
+
+/**
+ * Retry the pending request after password has been confirmed
+ * This is called by the auth store after successful password confirmation
+ */
+export async function retryPendingRequestAfterPasswordConfirmation(password: string): Promise<void> {
+  if (!pendingRequest) return;
+
+  const { endpoint, options, resolve, reject } = pendingRequest;
+
+  try {
+    // First, send the password confirmation to the backend
+    const confirmResponse = await fetch(`${API_URL}/api/v1/auth/confirm-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${useAuthStore.getState().token}`,
+      },
+      body: JSON.stringify({ password }),
+      credentials: 'include',
+    });
+
+    if (!confirmResponse.ok) {
+      const errorData = await confirmResponse.json().catch(() => ({}));
+      throw new Error(errorData.message || 'Password confirmation failed');
+    }
+
+    // Now retry the original request
+    const result = await apiClient(endpoint, options);
+    resolve(result);
+  } catch (error) {
+    reject(error);
+  } finally {
+    pendingRequest = null;
+  }
+}
+
+/**
+ * Cancel the pending password confirmation request
+ */
+export function cancelPendingPasswordConfirmation() {
+  if (pendingRequest) {
+    pendingRequest.reject(new PasswordConfirmationRequiredError());
+    pendingRequest = null;
+  }
 }
 
 // ============================================
@@ -164,15 +210,14 @@ async function apiClient<T>(
   // Handle 423 Locked = Password Confirmation Required (Fortify)
   if (res.status === 423) {
     return new Promise<T>((resolve, reject) => {
-      subscribePasswordConfirmation(() => {
-        apiClient<T>(endpoint, options).then(resolve).catch(reject);
-      });
+      // Store the pending request for retry after password confirmation
+      pendingRequest = { endpoint, options, resolve, reject };
 
-      authStore.executeSensitiveAction(async () => {
-        onPasswordConfirmed();
-        return {} as T;
-      }).catch(() => {
-        reject(new PasswordConfirmationRequiredError());
+      // Trigger the password confirmation modal by updating auth store state
+      const store = useAuthStore as unknown as { setState: (partial: any) => void };
+      store.setState({
+        requiresPasswordConfirmation: true,
+        pendingPasswordCallback: null,
       });
     });
   }

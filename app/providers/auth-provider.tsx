@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useAuthStore } from "@/stores/auth-store";
 import { PasswordConfirmationModal } from "@/components/ui/password-confirmation-modal";
+import { cancelPendingPasswordConfirmation } from "@/lib/api/client";
 
 /**
  * Auth Provider Component
@@ -44,6 +45,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       requiresPasswordConfirmation: false,
       pendingPasswordCallback: null,
     });
+    // Cancel the pending request
+    cancelPendingPasswordConfirmation();
   };
 
   if (!isClient) {

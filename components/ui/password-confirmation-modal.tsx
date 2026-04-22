@@ -41,13 +41,10 @@ export function PasswordConfirmationModal({
     setIsLoading(true);
 
     try {
-      // First confirm the password
+      // The confirmPassword function now handles:
+      // 1. Sending password to backend
+      // 2. Retrying the original pending request
       await confirmPassword(password);
-
-      // Then execute the pending action (retry original request)
-      if (pendingPasswordCallback) {
-        await pendingPasswordCallback(password);
-      }
 
       setPassword("");
       onClose();

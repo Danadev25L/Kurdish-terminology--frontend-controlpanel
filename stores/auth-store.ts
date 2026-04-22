@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { api, MfaRequiredError, ApiError } from "@/lib/api/client";
+import { api, MfaRequiredError, ApiError, retryPendingRequestAfterPasswordConfirmation, cancelPendingPasswordConfirmation } from "@/lib/api/client";
 import { confirmPassword } from "@/lib/api/auth";
 import type { User, LoginResponse } from "@/lib/api/types";
 
@@ -254,6 +254,9 @@ _hydrated: true,  // Mark as hydrated since we just set the state
           requiresPasswordConfirmation: false,
           pendingPasswordCallback: null,
         });
+
+        // Trigger retry of pending request if any
+        await retryPendingRequestAfterPasswordConfirmation(password);
       },
 
       // Execute sensitive action with automatic password confirmation

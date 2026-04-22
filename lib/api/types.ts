@@ -29,19 +29,24 @@ export interface LoginResponse {
 export interface DomainSummary {
   id: number;
   name: string;
+  name_i18n?: { ku?: string };
   slug: string;
 }
 
 export interface Domain {
   id: number;
   name: string;
+  name_i18n?: { ku?: string };
   slug: string;
-  description: string;
-  head_user_id: number;
+  description: string | null;
+  description_i18n?: { ku?: string };
+  head_user_id: number | null;
   head_user?: User;
   members_count?: number;
   experts_count?: number;
   concepts_count?: number;
+  is_active?: boolean;
+  is_featured?: boolean;
   created_at: string;
   updated_at: string;
 }
