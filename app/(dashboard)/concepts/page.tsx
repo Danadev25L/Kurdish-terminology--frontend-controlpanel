@@ -117,31 +117,31 @@ export default function ConceptsPage() {
             const canWithdraw = isPending && user?.id === authorId;
 
             return (
-              <Card
+              <button
                 key={concept.id}
-                className="hover:shadow-md transition-shadow cursor-pointer"
-                padding={false}
                 onClick={() => router.push(`/concepts/${concept.id}`)}
+                className="w-full text-left hover:shadow-md transition-shadow"
               >
-                <div className="flex items-center justify-between p-4">
-                  <div className="flex items-center gap-4">
-                    <div>
-                      <h3 className="font-semibold text-foreground">
-                        {concept.english_term?.word ?? t("concepts.untitled")}
-                      </h3>
-                      <p className="mt-0.5 text-sm text-text-muted line-clamp-1">
-                        {concept.definition}
-                      </p>
+                <Card padding={false}>
+                  <div className="flex items-center justify-between p-4">
+                    <div className="flex items-center gap-4">
+                      <div>
+                        <h3 className="font-semibold text-foreground">
+                          {concept.english_term?.word ?? t("concepts.untitled")}
+                        </h3>
+                        <p className="mt-0.5 text-sm text-text-muted line-clamp-1">
+                          {concept.definition}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {canWithdraw && (
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleWithdraw(concept.id);
+                    <div className="flex items-center gap-3">
+                      {canWithdraw && (
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleWithdraw(concept.id);
                         }}
                         aria-label={t("common.delete")}
                       >
@@ -154,7 +154,8 @@ export default function ConceptsPage() {
                     </span>
                   </div>
                 </div>
-              </Card>
+                </Card>
+              </button>
             );
           })}
           <Pagination
