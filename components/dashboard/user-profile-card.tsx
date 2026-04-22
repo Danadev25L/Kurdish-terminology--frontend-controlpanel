@@ -8,10 +8,10 @@ interface UserProfileCardProps {
   data: MyDashboardData;
 }
 
-const ROLE_COLORS: Record<string, "primary" | "success" | "warning" | "info" | "danger"> = {
+const ROLE_COLORS: Record<string, "default" | "primary" | "success" | "warning" | "danger"> = {
   admin: "danger",
   main_board: "warning",
-  domain_head: "info",
+  domain_head: "primary",
   expert: "success",
   observer: "default",
 };

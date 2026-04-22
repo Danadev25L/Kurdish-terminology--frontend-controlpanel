@@ -56,5 +56,5 @@ export function getMyContributions() {
  * Get user-specific dashboard data with stats, domains, and role-specific info
  */
 export function getMyDashboard() {
-  return api.get<MyDashboardData>("/api/v1/dashboard/me");
+  return api.get<MyDashboardData>("/api/v1/dashboard/me") as Promise<MyDashboardData>;
 }

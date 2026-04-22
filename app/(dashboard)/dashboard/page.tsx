@@ -136,7 +136,7 @@ export default function DashboardPage() {
       .catch(() => setTwoFactorStatus({ enabled: false, confirmed: false, requires_mfa: false, setup_required: false }));
 
     getMyDashboard()
-      .then((response) => setMyDashboardData(response.data))
+      .then((data) => setMyDashboardData(data))
       .catch(() => {})
       .finally(() => setMyDashboardLoading(false));
   }, []);
