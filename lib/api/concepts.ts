@@ -52,6 +52,14 @@ export function motionToVote(id: number) {
   return api.post<Concept>(`/api/v1/concepts/${id}/motion-to-vote`);
 }
 
+/**
+ * POST /api/v1/concepts/{id}/advance
+ * Advance concept to next stage (Domain Head, Admin only)
+ */
+export function advanceConcept(id: number) {
+  return api.post<Concept>(`/api/v1/concepts/${id}/advance`);
+}
+
 export function closeVoting(id: number) {
   return api.post<Concept>(`/api/v1/concepts/${id}/close-voting`);
 }

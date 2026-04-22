@@ -22,3 +22,21 @@ export function updateCandidate(
 export function withdrawCandidate(id: number) {
   return api.post<Candidate>(`/api/v1/candidates/${id}/withdraw`);
 }
+
+/**
+ * DELETE /api/v1/candidates/{id}
+ * Delete a candidate (Admin only)
+ */
+export function deleteCandidate(id: number) {
+  return api.del(`/api/v1/candidates/${id}`);
+}
+
+/**
+ * GET /api/v1/candidates/{id}/metrics
+ * Get candidate metrics (mean, std_dev, consensus_score)
+ */
+export function getCandidateMetrics(id: number) {
+  return api.get<{ mean: number; std_dev: number; consensus_score: number }>(
+    `/api/v1/candidates/${id}/metrics`
+  );
+}
