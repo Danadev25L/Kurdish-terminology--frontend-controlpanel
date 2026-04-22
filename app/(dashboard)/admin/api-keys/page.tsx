@@ -166,8 +166,8 @@ export default function ApiKeysPage() {
                   </p>
                 </div>
                 <div>
-                  <span className="text-text-muted">{t("api_keys_page.abilities")}:</span>
-                  <p className="font-medium">{newKeyData.abilities.join(", ")}</p>
+                  <span className="text-text-muted">{t("api_keys_page.scopes")}:</span>
+                  <p className="font-medium">{newKeyData.scopes.join(", ")}</p>
                 </div>
               </div>
             </div>
@@ -248,16 +248,16 @@ export default function ApiKeysPage() {
                   </div>
                 </div>
 
-                {key.abilities && key.abilities.length > 0 && (
+                {key.scopes && key.scopes.length > 0 && (
                   <div className="border-t border-border-light px-4 py-2 bg-surface">
                     <p className="text-xs text-text-muted">
                       {t("api_keys_page.permissions")}:{" "}
-                      {key.abilities.map((a) => (
+                      {key.scopes.map((s) => (
                         <span
-                          key={a}
+                          key={s}
                           className="inline-block px-2 py-0.5 rounded bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 mr-1 mb-1"
                         >
-                          {a}
+                          {s}
                         </span>
                       ))}
                     </p>

@@ -500,29 +500,35 @@ export interface DomainExpert {
 
 // ── API Keys ──
 export interface ApiKey {
-  id: number;
+  id: string; // Passport uses string IDs
   name: string;
   last_four: string;
   last_used_at: string | null;
-  expires_at: string | null;
-  is_active: boolean;
-  abilities: string[];
+  last_used_ip: string | null;
   created_at: string;
+  expires_at: string | null;
+  scopes: string[]; // Changed from abilities to scopes (Passport uses scopes)
+  use_count: number;
+  is_active: boolean;
+  has_ip_restriction: boolean;
+  allowed_ips_count: number;
 }
 
 export interface CreateApiKeyData {
   name: string;
-  abilities?: string[];
+  scopes?: string[]; // Changed from abilities to scopes
   expires_in_days?: number;
+  allowed_ips?: string[]; // New field for IP restrictions
 }
 
 export interface CreateApiKeyResponse {
-  id: number;
+  id: string;
   name: string;
   key: string; // Only shown on creation!
   last_four: string;
+  scopes: string[]; // Changed from abilities to scopes
   expires_at: string | null;
-  abilities: string[];
+  allowed_ips: string[] | null; // New field
   message: string;
 }
 
