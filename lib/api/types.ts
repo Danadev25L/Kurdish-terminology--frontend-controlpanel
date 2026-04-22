@@ -564,7 +564,7 @@ export interface MyDashboardDomain {
 }
 
 export interface MyDashboardStats {
-  concepts_contributed: number;
+  domains_count: number;
   votes_cast: number;
   discussions_posted: number;
   candidates_proposed: number;
