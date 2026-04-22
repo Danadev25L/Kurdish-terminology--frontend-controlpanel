@@ -153,11 +153,17 @@ _hydrated: true,  // Mark as hydrated since we just set the state
 
       // Logout
       logout: async () => {
-        try {
-          await api.post("/api/v1/auth/logout");
-        } catch {
-          // Token may already be invalid
+        const token = get().token;
+
+        // Only call logout API if we have a token
+        if (token) {
+          try {
+            await api.post("/api/v1/auth/logout");
+          } catch {
+            // Token may already be invalid - ignore
+          }
         }
+
         set({
           user: null,
           token: null,
@@ -283,9 +289,11 @@ _hydrated: true,  // Mark as hydrated since we just set the state
     {
       name: "ktp-auth",
       partialize: (state) => ({
-        // SECURITY: Do NOT persist tokens to localStorage
-        // Tokens are stored in HTTP-only cookies by the backend
+        // Persist tokens to localStorage for session persistence
+        // Note: In production, consider using more secure storage
         user: state.user,
+        token: state.token,
+        refreshToken: state.refreshToken,
         isAuthenticated: state.isAuthenticated,
         _skipNextHydrate: state._skipNextHydrate,
       }),

@@ -74,6 +74,9 @@ export function useAuth() {
     return hasRole("expert");
   };
 
+  // Get isAuthenticated from the store directly
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+
   return {
     // State
     user,
@@ -83,7 +86,7 @@ export function useAuth() {
     mfaPending,
     pendingCredentials,
     requiresPasswordConfirmation,
-    isAuthenticated: !!user,
+    isAuthenticated,
 
     // Actions
     login: handleLogin,

@@ -115,8 +115,10 @@ async function apiClient<T>(
     ...((options.headers as Record<string, string>) ?? {}),
   };
 
-  // SECURITY: Do NOT send Authorization header - tokens are in HTTP-only cookies
-  // Cookies are sent automatically by the browser with credentials: 'include'
+  // Add Authorization header if we have a token
+  if (authStore.token) {
+    (headers as Record<string, string>)["Authorization"] = `Bearer ${authStore.token}`;
+  }
 
   const url = endpoint.startsWith('http') ? endpoint : `${API_URL}${endpoint}`;
   const res = await fetch(url, {
@@ -195,7 +197,8 @@ async function apiClient<T>(
         endpoint.includes('/auth/login') ||
         endpoint.includes('/auth/refresh') ||
         endpoint.includes('/auth/logout') ||
-        endpoint.includes('/auth/confirm-password');
+        endpoint.includes('/auth/confirm-password') ||
+        endpoint.includes('/auth/me');  // Don't redirect on hydration failure
 
       if (!isAuthEndpoint && authStore.refreshToken && !isRefreshing) {
         isRefreshing = true;
@@ -212,9 +215,19 @@ async function apiClient<T>(
         }
       }
 
-      authStore.logout();
-      if (typeof window !== "undefined") {
-        window.location.href = "/login";
+      // Only redirect if not already on login page and not an auth endpoint
+      const isAlreadyOnLoginPage = typeof window !== "undefined" && window.location.pathname === "/login";
+
+      if (!isAuthEndpoint && !isAlreadyOnLoginPage) {
+        authStore.logout();
+        if (typeof window !== "undefined") {
+          window.location.href = "/login";
+        }
+      }
+
+      // For /auth/me endpoint (hydration) or when already on login page, just clear auth state
+      if (isAuthEndpoint || isAlreadyOnLoginPage) {
+        authStore.logout();
       }
     }
 
@@ -260,7 +273,13 @@ export const api = {
   upload: <T>(url: string, formData: FormData) =>
     apiClient<T>(url, { method: "POST", headers: {}, body: formData }),
   download: async (url: string): Promise<Blob> => {
+    const authStore = useAuthStore.getState();
     const headers: HeadersInit = { Accept: "*/*" };
+
+    // Add Authorization header if we have a token
+    if (authStore.token) {
+      (headers as Record<string, string>)["Authorization"] = `Bearer ${authStore.token}`;
+    }
 
     const fullUrl = url.startsWith("http") ? url : `${API_URL}${url}`;
     const res = await fetch(fullUrl, {
