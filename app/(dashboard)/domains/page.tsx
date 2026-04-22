@@ -20,7 +20,7 @@ export default function DomainsPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">{t("domains.title")}</h1>
         <RoleGate roles={["admin"]}>
-          <Button>{t("domains.add_domain")}</Button>
+          <Button onClick={() => router.push("/domains/new")}>{t("domains.add_domain")}</Button>
         </RoleGate>
       </div>
 
