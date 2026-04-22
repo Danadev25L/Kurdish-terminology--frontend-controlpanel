@@ -64,9 +64,16 @@ export default function EnglishLexiconPage() {
   const handleCreate = useCallback(async () => {
     if (!formData.word.trim() || !formData.part_of_speech) return;
 
+    const payload = {
+      word: formData.word.trim(),
+      part_of_speech: formData.part_of_speech,
+      ...(formData.etymology.trim() ? { etymology: formData.etymology.trim() } : {}),
+      ...(formData.root_word.trim() ? { root_word: formData.root_word.trim() } : {}),
+    };
+
     setIsLoading(true);
     try {
-      await createLexiconWord("english", formData);
+      await createLexiconWord("english", payload);
       setCreateModalOpen(false);
       setFormData({ word: "", part_of_speech: "", etymology: "", root_word: "" });
       addToast({ type: "success", message: "Word added successfully" });
@@ -81,9 +88,16 @@ export default function EnglishLexiconPage() {
   const handleUpdate = useCallback(async () => {
     if (!editingWord || !formData.word.trim() || !formData.part_of_speech) return;
 
+    const payload = {
+      word: formData.word.trim(),
+      part_of_speech: formData.part_of_speech,
+      ...(formData.etymology.trim() ? { etymology: formData.etymology.trim() } : {}),
+      ...(formData.root_word.trim() ? { root_word: formData.root_word.trim() } : {}),
+    };
+
     setIsLoading(true);
     try {
-      await updateLexiconWord("english", editingWord.id, formData);
+      await updateLexiconWord("english", editingWord.id, payload);
       setEditModalOpen(false);
       setEditingWord(null);
       setFormData({ word: "", part_of_speech: "", etymology: "", root_word: "" });
@@ -129,22 +143,22 @@ export default function EnglishLexiconPage() {
         <Breadcrumb
           items={[
             { label: t("nav.dashboard"), href: "/dashboard" },
-            { label: "English Lexicon" },
+            { label: t("lexicons_page.english_title") },
           ]}
         />
 
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">
-              English Lexicon
+              {t("lexicons_page.english_title")}
             </h1>
             <p className="mt-1 text-sm text-text-muted">
-              Manage English vocabulary words and their properties
+              {t("lexicons_page.english_description")}
             </p>
           </div>
           <Button onClick={() => setCreateModalOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
-            Add Word
+            {t("lexicons.add_word")}
           </Button>
         </div>
 
@@ -155,7 +169,7 @@ export default function EnglishLexiconPage() {
             setSearch(value);
             setPage(1);
           }}
-          placeholder="Search words..."
+          placeholder={t("lexicons_page.search_words")}
           className="w-64"
         />
 
@@ -169,7 +183,7 @@ export default function EnglishLexiconPage() {
             <div className="text-center py-8">
               <BookOpen className="h-12 w-12 text-text-muted mx-auto mb-3" />
               <p className="text-text-muted">
-                {search ? "No words match your search" : "No words in the lexicon yet"}
+                {search ? t("lexicons_page.no_search_match") : t("lexicons_page.no_words")}
               </p>
             </div>
           </Card>
@@ -237,7 +251,7 @@ export default function EnglishLexiconPage() {
           formData={formData}
           setFormData={setFormData}
           loading={isLoading}
-          title="Add English Word"
+          title={t("lexicons_page.add_english_word")}
         />
 
         {/* Edit Modal */}
@@ -252,7 +266,7 @@ export default function EnglishLexiconPage() {
           formData={formData}
           setFormData={setFormData}
           loading={isLoading}
-          title="Edit English Word"
+          title={t("lexicons_page.edit_english_word")}
         />
 
         {/* Delete Confirmation */}
@@ -260,9 +274,9 @@ export default function EnglishLexiconPage() {
           open={deleteId !== null}
           onClose={() => setDeleteId(null)}
           onConfirm={handleDelete}
-          title="Delete Word"
-          message="Are you sure you want to delete this word? This action cannot be undone."
-          confirmLabel="Delete"
+          title={t("lexicons.delete_word")}
+          message={t("lexicons_page.delete_message")}
+          confirmLabel={t("common.delete")}
           variant="danger"
           loading={isLoading}
         />

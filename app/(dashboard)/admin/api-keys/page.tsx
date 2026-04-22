@@ -93,22 +93,22 @@ export default function ApiKeysPage() {
         <Breadcrumb
           items={[
             { label: t("nav.admin"), href: "/admin" },
-            { label: "API Keys" },
+            { label: t("nav.api_keys") },
           ]}
         />
 
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">
-              API Keys
+              {t("nav.api_keys")}
             </h1>
             <p className="mt-1 text-sm text-text-muted">
-              Manage API keys for external access to the platform
+              {t("api_keys_page.subtitle")}
             </p>
           </div>
           <Button onClick={() => setShowNewKeyModal(true)}>
             <Plus className="h-4 w-4 mr-2" />
-            Generate Key
+            {t("api_keys_page.generate_key")}
           </Button>
         </div>
 
@@ -119,9 +119,9 @@ export default function ApiKeysPage() {
               <div className="flex items-start gap-3">
                 <Key className="h-5 w-5 text-primary-600 mt-0.5" />
                 <div className="flex-1">
-                  <h3 className="font-semibold text-foreground">Your New API Key</h3>
+                  <h3 className="font-semibold text-foreground">{t("api_keys_page.new_key_title")}</h3>
                   <p className="text-sm text-text-muted">
-                    Save this key now. You won't be able to see it again.
+                    {t("api_keys_page.new_key_message")}
                   </p>
                 </div>
                 <Button
@@ -129,7 +129,7 @@ export default function ApiKeysPage() {
                   size="sm"
                   onClick={() => setNewKeyData(null)}
                 >
-                  Dismiss
+                  {t("common.close")}
                 </Button>
               </div>
 
@@ -150,23 +150,23 @@ export default function ApiKeysPage() {
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
                 <div>
-                  <span className="text-text-muted">Name:</span>
+                  <span className="text-text-muted">{t("common.name")}:</span>
                   <p className="font-medium">{newKeyData.name}</p>
                 </div>
                 <div>
-                  <span className="text-text-muted">Last Four:</span>
+                  <span className="text-text-muted">{t("api_keys_page.last_four")}:</span>
                   <p className="font-medium">{newKeyData.last_four}</p>
                 </div>
                 <div>
-                  <span className="text-text-muted">Expires:</span>
+                  <span className="text-text-muted">{t("api_keys_page.expires")}:</span>
                   <p className="font-medium">
                     {newKeyData.expires_at
                       ? formatDate(newKeyData.expires_at)
-                      : "Never"}
+                      : t("api_keys_page.never")}
                   </p>
                 </div>
                 <div>
-                  <span className="text-text-muted">Abilities:</span>
+                  <span className="text-text-muted">{t("api_keys_page.abilities")}:</span>
                   <p className="font-medium">{newKeyData.abilities.join(", ")}</p>
                 </div>
               </div>
@@ -183,9 +183,9 @@ export default function ApiKeysPage() {
           <Card>
             <div className="text-center py-8">
               <Key className="h-12 w-12 text-text-muted mx-auto mb-3" />
-              <p className="text-text-muted">No API keys yet</p>
+              <p className="text-text-muted">{t("api_keys_page.empty_title")}</p>
               <p className="text-sm text-text-muted mt-1">
-                Generate a key to enable external API access
+                {t("api_keys_page.empty_message")}
               </p>
             </div>
           </Card>
@@ -203,10 +203,10 @@ export default function ApiKeysPage() {
                       <div className="flex items-center gap-3 mt-1 text-sm text-text-muted">
                         <span className="font-mono">•••• {key.last_four}</span>
                         {key.last_used_at && (
-                          <span>Last used: {formatDate(key.last_used_at)}</span>
+                          <span>{t("api_keys_page.last_used")}: {formatDate(key.last_used_at)}</span>
                         )}
                         {key.expires_at && (
-                          <span>Expires: {formatDate(key.expires_at)}</span>
+                          <span>{t("api_keys_page.expires")}: {formatDate(key.expires_at)}</span>
                         )}
                         <span
                           className={`inline-flex items-center gap-1 ${
@@ -215,7 +215,7 @@ export default function ApiKeysPage() {
                               : "text-red-600 dark:text-red-400"
                           }`}
                         >
-                          {key.is_active ? "Active" : "Inactive"}
+                          {key.is_active ? t("statuses.active") : t("api_keys_page.inactive")}
                         </span>
                       </div>
                     </div>
@@ -251,7 +251,7 @@ export default function ApiKeysPage() {
                 {key.abilities && key.abilities.length > 0 && (
                   <div className="border-t border-border-light px-4 py-2 bg-surface">
                     <p className="text-xs text-text-muted">
-                      Permissions:{" "}
+                      {t("api_keys_page.permissions")}:{" "}
                       {key.abilities.map((a) => (
                         <span
                           key={a}
@@ -277,27 +277,26 @@ export default function ApiKeysPage() {
               setNewKeyName("");
             }}
             onConfirm={handleCreate}
-            title="Generate API Key"
-            message="Give your API key a descriptive name to help you identify it later."
-            confirmLabel="Generate"
+            title={t("api_keys_page.generate_key")}
+            message={t("api_keys_page.generate_message")}
+            confirmLabel={t("api_keys_page.generate")}
             loading={isCreating}
           >
             <div className="space-y-3">
               <p className="text-sm text-text-muted">
-                Give your API key a descriptive name to help you identify it
-                later.
+                {t("api_keys_page.generate_message")}
               </p>
               <Input
-                label="Key Name"
+                label={t("api_keys_page.key_name")}
                 value={newKeyName}
                 onChange={(e) => setNewKeyName(e.target.value)}
-                placeholder="e.g., Production App, Development Script"
+                placeholder={t("api_keys_page.key_name_placeholder")}
                 autoFocus
               />
               <div className="rounded-lg bg-amber-50 dark:bg-amber-900/20 p-3 text-sm text-amber-800 dark:text-amber-300">
-                <p className="font-medium">Security Notice</p>
+                <p className="font-medium">{t("api_keys_page.security_notice")}</p>
                 <p className="mt-1">
-                  The API key will only be shown once. Save it securely.
+                  {t("api_keys_page.security_message")}
                 </p>
               </div>
             </div>
@@ -309,9 +308,9 @@ export default function ApiKeysPage() {
           open={deleteId !== null}
           onClose={() => setDeleteId(null)}
           onConfirm={handleDelete}
-          title="Delete API Key"
-          message="Are you sure you want to delete this API key? This action cannot be undone."
-          confirmLabel="Delete"
+          title={t("api_keys_page.delete_title")}
+          message={t("api_keys_page.delete_message")}
+          confirmLabel={t("common.delete")}
           variant="danger"
           loading={isDeleting}
         />

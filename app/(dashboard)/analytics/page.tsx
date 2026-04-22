@@ -38,16 +38,16 @@ export default function ExpertAnalyticsPage() {
         <Breadcrumb
           items={[
             { label: t("nav.dashboard"), href: "/dashboard" },
-            { label: "My Analytics" },
+            { label: t("analytics_page.my_analytics") },
           ]}
         />
 
         <div>
           <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">
-            My Contribution Analytics
+            {t("analytics_page.title")}
           </h1>
           <p className="mt-1 text-sm text-text-muted">
-            Track your voting history and alignment with final consensus
+            {t("analytics_page.subtitle")}
           </p>
         </div>
 
@@ -55,25 +55,25 @@ export default function ExpertAnalyticsPage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard
             icon={<Activity className="h-5 w-5" />}
-            label="Total Votes"
+            label={t("analytics_page.total_votes")}
             value={totalVotes.toString()}
             color="blue"
           />
           <StatCard
             icon={<Target className="h-5 w-5" />}
-            label="Aligned Votes"
+            label={t("analytics_page.aligned_votes")}
             value={alignedVotes.toString()}
             color="green"
           />
           <StatCard
             icon={<TrendingUp className="h-5 w-5" />}
-            label="Alignment Rate"
+            label={t("analytics_page.alignment_rate")}
             value={`${alignmentRate.toFixed(1)}%`}
             color={alignmentRate >= 70 ? "green" : alignmentRate >= 50 ? "yellow" : "red"}
           />
           <StatCard
             icon={<Award className="h-5 w-5" />}
-            label="Active Domains"
+            label={t("analytics_page.active_domains")}
             value={(analytics?.by_domain?.length ?? 0).toString()}
             color="purple"
           />
@@ -82,7 +82,7 @@ export default function ExpertAnalyticsPage() {
         {/* Domain Breakdown */}
         {analytics?.by_domain && analytics.by_domain.length > 0 && (
           <Card>
-            <h3 className="mb-4 text-sm font-bold text-foreground">Performance by Domain</h3>
+            <h3 className="mb-4 text-sm font-bold text-foreground">{t("analytics_page.performance_by_domain")}</h3>
             <div className="space-y-3">
               {analytics.by_domain.map((domain) => {
                 const rate = domain.total_votes > 0
@@ -96,7 +96,7 @@ export default function ExpertAnalyticsPage() {
                           {domain.domain_name}
                         </span>
                         <span className="text-xs text-text-muted">
-                          {domain.aligned_votes}/{domain.total_votes} votes
+                          {domain.aligned_votes}/{domain.total_votes} {t("board.votes").toLowerCase()}
                         </span>
                       </div>
                       <div className="h-2 rounded-full bg-surface overflow-hidden">
@@ -124,18 +124,18 @@ export default function ExpertAnalyticsPage() {
 
         {/* Contribution History */}
         <Card>
-          <h3 className="mb-4 text-sm font-bold text-foreground">Recent Contributions</h3>
+          <h3 className="mb-4 text-sm font-bold text-foreground">{t("analytics_page.recent_contributions")}</h3>
           {analytics?.contributions && analytics.contributions.length > 0 ? (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border-light text-start text-[11px] font-semibold uppercase tracking-[0.05em] text-text-muted">
-                    <th className="px-4 py-3">Concept</th>
-                    <th className="px-4 py-3">Domain</th>
-                    <th className="px-4 py-3">Status</th>
-                    <th className="px-4 py-3">Voted</th>
-                    <th className="px-4 py-3">Aligned</th>
-                    <th className="px-4 py-3">Date</th>
+                    <th className="px-4 py-3">{t("concepts.title")}</th>
+                    <th className="px-4 py-3">{t("concepts.domain")}</th>
+                    <th className="px-4 py-3">{t("common.status")}</th>
+                    <th className="px-4 py-3">{t("analytics_page.voted")}</th>
+                    <th className="px-4 py-3">{t("analytics_page.aligned")}</th>
+                    <th className="px-4 py-3">{t("admin.audit.date")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -198,7 +198,7 @@ export default function ExpertAnalyticsPage() {
             </div>
           ) : (
             <p className="py-8 text-center text-sm text-text-muted">
-              No contribution data available yet. Start voting on concepts to see your analytics here.
+              {t("analytics_page.no_data")}
             </p>
           )}
         </Card>
@@ -209,10 +209,10 @@ export default function ExpertAnalyticsPage() {
             <Target className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
             <div>
               <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-200">
-                Improving Your Alignment
+                {t("analytics_page.tips_title")}
               </h4>
               <p className="mt-1 text-xs text-blue-700 dark:text-blue-300">
-                Your alignment rate measures how often your votes match the final consensus. A higher rate indicates your expertise is well-aligned with the community. Focus on domains where you have specialized knowledge for better alignment.
+                {t("analytics_page.tips_message")}
               </p>
             </div>
           </div>

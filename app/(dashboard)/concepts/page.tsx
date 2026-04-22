@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useApi } from "@/lib/hooks/use-api";
+import { useAuth } from "@/lib/hooks/use-auth";
 import { useRole } from "@/lib/hooks/use-role";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,9 +15,14 @@ import { SkeletonCard } from "@/components/ui/skeleton";
 import type { PaginatedResponse, Concept } from "@/lib/api/types";
 import { timeAgo } from "@/lib/utils/format";
 import { useI18n } from "@/i18n/context";
+import { deleteConcept } from "@/lib/api/concepts";
+import { useToastStore } from "@/stores/toast-store";
+import { Trash2 } from "lucide-react";
 
 export default function ConceptsPage() {
   const router = useRouter();
+  const { user } = useAuth();
+  const addToast = useToastStore((s) => s.addToast);
   const { t } = useI18n();
   const { isExpert, isDomainHead, isAdmin } = useRole();
 
@@ -40,7 +46,7 @@ export default function ConceptsPage() {
   if (search) params.set("q", search);
   params.set("page", String(page));
 
-  const { data, isLoading } = useApi<PaginatedResponse<Concept>>(
+  const { data, isLoading, refetch } = useApi<PaginatedResponse<Concept>>(
     `/api/v1/concepts?${params}`
   );
 
@@ -48,6 +54,22 @@ export default function ConceptsPage() {
     setSearch(value);
     setPage(1);
   }, []);
+
+  const handleWithdraw = useCallback(
+    async (conceptId: number) => {
+      const confirmed = window.confirm(t("concepts.withdraw_confirm"));
+      if (!confirmed) return;
+
+      try {
+        await deleteConcept(conceptId);
+        addToast({ type: "success", message: t("messages.concept_deleted") });
+        refetch();
+      } catch {
+        addToast({ type: "error", message: t("messages.concept_delete_failed") });
+      }
+    },
+    [addToast, refetch, t]
+  );
 
   return (
     <div className="space-y-6">
@@ -87,13 +109,20 @@ export default function ConceptsPage() {
         </div>
       ) : data?.data && data.data.length > 0 ? (
         <div className="space-y-3">
-          {data.data.map((concept) => (
-            <button
-              key={concept.id}
-              onClick={() => router.push(`/concepts/${concept.id}`)}
-              className="w-full text-start"
-            >
-              <Card className="hover:shadow-md transition-shadow cursor-pointer" padding={false}>
+          {data.data.map((concept) => {
+            const authorId = (concept as Concept & { authorId?: number; author_id?: number }).authorId
+              ?? (concept as Concept & { authorId?: number; author_id?: number }).author_id
+              ?? concept.created_by;
+            const isPending = ["draft", "threshold", "voting", "review"].includes(concept.status);
+            const canWithdraw = isPending && user?.id === authorId;
+
+            return (
+              <Card
+                key={concept.id}
+                className="hover:shadow-md transition-shadow cursor-pointer"
+                padding={false}
+                onClick={() => router.push(`/concepts/${concept.id}`)}
+              >
                 <div className="flex items-center justify-between p-4">
                   <div className="flex items-center gap-4">
                     <div>
@@ -106,6 +135,19 @@ export default function ConceptsPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
+                    {canWithdraw && (
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleWithdraw(concept.id);
+                        }}
+                        aria-label={t("common.delete")}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
                     <ConceptStatusBadge status={concept.status} />
                     <span className="text-xs text-text-muted">
                       {timeAgo(concept.updated_at)}
@@ -113,8 +155,8 @@ export default function ConceptsPage() {
                   </div>
                 </div>
               </Card>
-            </button>
-          ))}
+            );
+          })}
           <Pagination
             currentPage={data.current_page}
             lastPage={data.last_page}

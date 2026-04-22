@@ -1,18 +1,23 @@
+"use client";
+
 import Link from "next/link";
 import { RoleGate } from "@/components/auth/role-gate";
 import { Card } from "@/components/ui/card";
 import { BookOpen, Languages } from "lucide-react";
+import { useI18n } from "@/i18n/context";
 
 export default function LexiconsPage() {
+  const { t } = useI18n();
+
   return (
     <RoleGate roles={["admin", "main_board"]}>
       <div className="space-y-6">
         <div>
           <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">
-            Lexicons
+            {t("nav.lexicons")}
           </h1>
           <p className="mt-1 text-sm text-text-muted">
-            Manage the English and Kurdish vocabulary databases
+            {t("lexicons_page.subtitle")}
           </p>
         </div>
 
@@ -24,9 +29,9 @@ export default function LexiconsPage() {
                   <BookOpen className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-foreground">English Lexicon</h2>
+                  <h2 className="text-lg font-semibold text-foreground">{t("lexicons_page.english_title")}</h2>
                   <p className="mt-1 text-sm text-text-muted">
-                    Manage English words, parts of speech, etymology, and root words.
+                    {t("lexicons_page.english_description")}
                   </p>
                 </div>
               </div>
@@ -40,9 +45,9 @@ export default function LexiconsPage() {
                   <Languages className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-foreground">Kurdish Lexicon</h2>
+                  <h2 className="text-lg font-semibold text-foreground">{t("lexicons_page.kurdish_title")}</h2>
                   <p className="mt-1 text-sm text-text-muted">
-                    Manage Kurdish words, parts of speech, dialects, and etymology.
+                    {t("lexicons_page.kurdish_description")}
                   </p>
                 </div>
               </div>

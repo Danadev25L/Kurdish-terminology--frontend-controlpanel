@@ -24,12 +24,12 @@ export default function MyTasksPage() {
   const { isAdmin, isMainBoard, isExpert, isDomainHead } = useRole();
 
   const statusOptions = [
-    { value: "", label: "All Statuses" },
-    { value: "draft", label: "Draft" },
-    { value: "threshold", label: "Threshold" },
-    { value: "voting", label: "Voting" },
-    { value: "review", label: "Review" },
-    { value: "recalled", label: "Recalled" },
+    { value: "", label: t("concepts.all_statuses") },
+    { value: "draft", label: t("statuses.draft") },
+    { value: "threshold", label: t("statuses.threshold") },
+    { value: "voting", label: t("statuses.voting") },
+    { value: "review", label: t("statuses.review") },
+    { value: "recalled", label: t("statuses.recalled") },
   ];
 
   const [status, setStatus] = useState("");
@@ -82,15 +82,15 @@ export default function MyTasksPage() {
   const getActionNeeded = (concept: Concept): string | null => {
     switch (concept.status) {
       case "draft":
-        return isDomainHead || isAdmin ? "Review & Advance" : null;
+        return isDomainHead || isAdmin ? t("my_tasks.actions.review_advance") : null;
       case "threshold":
-        return isExpert ? "Cast Threshold Vote" : null;
+        return isExpert ? t("my_tasks.actions.cast_threshold_vote") : null;
       case "voting":
-        return isExpert ? "Submit Consensus Scores" : null;
+        return isExpert ? t("my_tasks.actions.submit_consensus_scores") : null;
       case "review":
-        return isMainBoard || isAdmin ? "Board Review" : null;
+        return isMainBoard || isAdmin ? t("my_tasks.actions.board_review") : null;
       case "recalled":
-        return isExpert ? "Address Recall" : null;
+        return isExpert ? t("my_tasks.actions.address_recall") : null;
       default:
         return null;
     }
@@ -101,14 +101,14 @@ export default function MyTasksPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">
-            My Tasks
+            {t("nav.my_tasks")}
           </h1>
           <p className="mt-1 text-sm text-text-muted">
-            Prioritized action items based on your role and deadlines
+            {t("my_tasks.subtitle")}
           </p>
         </div>
         <Button onClick={() => refetch()}>
-          Refresh
+          {t("my_tasks.refresh")}
         </Button>
       </div>
 
@@ -117,7 +117,7 @@ export default function MyTasksPage() {
         <SearchInput
           value={search}
           onChange={handleSearch}
-          placeholder="Search tasks..."
+          placeholder={t("my_tasks.search_placeholder")}
           className="w-64"
         />
         <Select
@@ -127,7 +127,7 @@ export default function MyTasksPage() {
             setStatus(e.target.value);
             setPage(1);
           }}
-          placeholder="Filter by status"
+          placeholder={t("my_tasks.filter_status")}
           className="w-44"
         />
       </div>
@@ -139,10 +139,10 @@ export default function MyTasksPage() {
             <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
             <div>
               <p className="font-medium text-amber-900 dark:text-amber-200">
-                Urgent actions required
+                {t("my_tasks.urgent_title")}
               </p>
               <p className="text-sm text-amber-700 dark:text-amber-400">
-                You have items with approaching deadlines that need your attention.
+                {t("my_tasks.urgent_message")}
               </p>
             </div>
           </div>
@@ -205,7 +205,7 @@ export default function MyTasksPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="font-semibold text-foreground truncate">
-                            {concept.english_term?.word ?? "Untitled Concept"}
+                            {concept.english_term?.word ?? t("my_tasks.untitled_concept")}
                           </h3>
                           <ConceptStatusBadge status={concept.status} />
                           <PriorityIndicator priority={concept.priority} />
@@ -229,7 +229,7 @@ export default function MyTasksPage() {
                           <div className="flex items-center gap-1 mt-2 text-xs text-amber-600 dark:text-amber-400">
                             <Clock className="h-3 w-3" />
                             <span>
-                              Deadline: {timeAgo(concept.threshold_deadline ?? concept.voting_deadline!)}
+                              {t("my_tasks.deadline")}: {timeAgo(concept.threshold_deadline ?? concept.voting_deadline!)}
                             </span>
                           </div>
                         )}
@@ -255,7 +255,7 @@ export default function MyTasksPage() {
           <div className="text-center py-8">
             <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-3" />
             <p className="text-sm text-text-muted">
-              No pending tasks. Great job!
+              {t("my_tasks.empty")}
             </p>
           </div>
         </Card>

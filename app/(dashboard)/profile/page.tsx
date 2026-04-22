@@ -61,36 +61,6 @@ export default function ProfilePage() {
   // const [disablePassword, setDisablePassword] = useState("");
   // const [disabling2FA, setDisabling2FA] = useState(false);
 
-  // Download recovery codes as text file
-  const downloadRecoveryCodes = (codes: string[], username: string) => {
-    const content = `
-KURDISH TERMINOLOGY PLATFORM
-================================
-TWO-FACTOR AUTHENTICATION RECOVERY CODES
-================================
-Username: ${username}
-Generated: ${new Date().toLocaleString()}
-
-⚠️  IMPORTANT: Keep these codes in a safe place!
-Each code can only be used once.
-
-${codes.map((code, i) => `${i + 1}. ${code}`).join('\n')}
-
-================================
-If you lose your authenticator device, use one of these codes to sign in.
-Store them securely - do not share with anyone!
-`;
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `2fa-recovery-codes-${username}-${Date.now()}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
   // Load 2FA status
   useEffect(() => {
     load2FAStatus();
@@ -172,9 +142,23 @@ Store them securely - do not share with anyone!
       setShow2FASetup(false);
       setVerificationCode("");
 
-      // Auto-download recovery codes as file
-      if (recoveryCodes.length > 0) {
-        downloadRecoveryCodes(recoveryCodes, user?.email ?? "user");
+      const downloadedCodes = data.recovery_codes ?? recoveryCodes;
+      if (downloadedCodes.length > 0) {
+        const codesText = [
+          "KTP Recovery Codes",
+          "===================",
+          ...downloadedCodes,
+        ].join("\n");
+        const blob = new Blob([codesText], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "ktp-recovery-codes.txt";
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
       }
 
       addToast({ type: "success", message: "2FA enabled successfully. Recovery codes downloaded!" });
@@ -283,7 +267,7 @@ Store them securely - do not share with anyone!
           </div>
         </CardHeader>
         <div className="p-6 pt-0">
-          {twoFactorStatus?.setup_required && (
+          {twoFactorStatus && !twoFactorStatus.enabled && (
             <div className="mb-4 rounded-lg bg-warning-light/20 border border-warning/30 px-4 py-3">
               <p className="text-sm text-warning">
                 <span className="font-semibold">2FA Required:</span> Your account requires two-factor authentication.

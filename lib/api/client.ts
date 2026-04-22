@@ -312,6 +312,8 @@ export const api = {
   get: <T>(url: string) => apiClient<T>(url, { method: "GET" }),
   post: <T>(url: string, body?: unknown) =>
     apiClient<T>(url, { method: "POST", body: body ? JSON.stringify(body) : undefined }),
+  put: <T>(url: string, body?: unknown) =>
+    apiClient<T>(url, { method: "PUT", body: body ? JSON.stringify(body) : undefined }),
   patch: <T>(url: string, body?: unknown) =>
     apiClient<T>(url, { method: "PATCH", body: body ? JSON.stringify(body) : undefined }),
   del: <T>(url: string) => apiClient<T>(url, { method: "DELETE" }),
