@@ -223,6 +223,27 @@
       "word_versatility": "Word Versatility"
     }
   },
+  "lexicons": {
+    "title": "Lexicons",
+    "english": "English",
+    "kurdish": "Kurdish",
+    "parts_of_speech": "Parts of Speech",
+    "dialects": "Dialects",
+    "synonyms": "Synonyms",
+    "manage_synonyms": "Manage Synonyms",
+    "add_synonym": "Add Synonym",
+    "remove_synonym": "Remove Synonym",
+    "no_synonyms": "No synonyms yet",
+    "search_synonyms": "Search for synonyms...",
+    "synonyms_pending_msg": "Word-specific synonym viewing requires backend endpoint",
+    "add_word": "Add Word",
+    "edit_word": "Edit Word",
+    "delete_word": "Delete Word",
+    "word": "Word",
+    "etymology": "Etymology",
+    "root_word": "Root Word",
+    "dialect": "Dialect"
+  },
   "admin": {
     "title": "Admin",
     "users": {

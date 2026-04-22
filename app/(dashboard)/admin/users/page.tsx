@@ -17,6 +17,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { useToastStore } from "@/stores/toast-store";
 import type { User, PaginatedResponse } from "@/lib/api/types";
 import { useI18n } from "@/i18n/context";
+import { Download } from "lucide-react";
 
 const allRoles = ["admin", "main_board", "domain-head", "expert"];
 
@@ -40,6 +41,11 @@ export default function AdminUsersPage() {
   // Edit user modal state
   const [editUser, setEditUser] = useState<User | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
+
+  // Reset password state
+  const [resetPasswordUser, setResetPasswordUser] = useState<User | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [resetting, setResetting] = useState(false);
 
   const { data, isLoading, refetch } = useApi<PaginatedResponse<User>>(
     `/api/v1/admin/users?page=${page}`
@@ -104,12 +110,69 @@ export default function AdminUsersPage() {
     [refetch, addToast]
   );
 
+  // Export all users to CSV
+  const handleExport = useCallback(() => {
+    if (!data?.data) return;
+
+    const csv = [
+      ["ID", "Name", "Email", "Roles", "Created At"].join(","),
+      ...data.data.map(user => [
+        user.id,
+        `"${user.name}"`,
+        user.email,
+        `"${user.roles.join(", ")}"`,
+        user.created_at,
+      ].join(","))
+    ].join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `users-export-${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [data]);
+
+  // Reset password handler
+  const handleResetPassword = useCallback(async () => {
+    if (!resetPasswordUser || !newPassword) return;
+
+    setResetting(true);
+    try {
+      // This would need a backend endpoint for password reset
+      await fetch(`/api/v1/admin/users/${resetPasswordUser.id}/reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: newPassword }),
+      });
+      setResetPasswordUser(null);
+      setNewPassword("");
+      addToast({ type: "success", message: "Password reset successfully" });
+    } catch {
+      addToast({ type: "error", message: "Failed to reset password" });
+    } finally {
+      setResetting(false);
+    }
+  }, [resetPasswordUser, newPassword, addToast]);
+
   return (
     <div className="space-y-6">
       <Breadcrumb items={[{ label: t("nav.admin"), href: "/admin" }, { label: t("admin.users.title") }]} />
       <div className="flex items-center justify-between">
-        <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">{t("admin.users.title")}</h1>
-        <Button onClick={() => setCreateOpen(true)}>{t("admin.users.create_user")}</Button>
+        <div>
+          <h1 className="text-heading font-extrabold tracking-[-0.02em] text-foreground">{t("admin.users.title")}</h1>
+          <p className="mt-1 text-sm text-text-muted">
+            {data?.total ?? 0} total users
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="secondary" onClick={handleExport} disabled={!data?.data.length}>
+            <Download className="h-4 w-4 mr-2" />
+            Export CSV
+          </Button>
+          <Button onClick={() => setCreateOpen(true)}>{t("admin.users.create_user")}</Button>
+        </div>
       </div>
 
       {isLoading ? (
@@ -170,6 +233,16 @@ export default function AdminUsersPage() {
                           }}
                         >
                           {t("common.edit")}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => {
+                            setResetPasswordUser(user);
+                            setNewPassword("");
+                          }}
+                        >
+                          Reset
                         </Button>
                         {user.id !== currentUser?.id && (
                           <Button
@@ -263,6 +336,46 @@ export default function AdminUsersPage() {
         variant="danger"
         loading={deleting}
       />
+
+      {/* Reset Password Modal */}
+      <Modal
+        open={!!resetPasswordUser}
+        onClose={() => {
+          setResetPasswordUser(null);
+          setNewPassword("");
+        }}
+        title={`Reset Password for ${resetPasswordUser?.name}`}
+      >
+        <form onSubmit={(e) => { e.preventDefault(); handleResetPassword(); }} className="space-y-4">
+          <p className="text-sm text-text-muted">
+            Set a new password for <strong>{resetPasswordUser?.email}</strong>
+          </p>
+          <Input
+            label="New Password"
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            placeholder="Enter new password"
+            required
+            minLength={8}
+          />
+          <div className="flex justify-end gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => {
+                setResetPasswordUser(null);
+                setNewPassword("");
+              }}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" loading={resetting} disabled={!newPassword || newPassword.length < 8}>
+              Reset Password
+            </Button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

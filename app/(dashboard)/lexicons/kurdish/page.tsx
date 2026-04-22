@@ -20,9 +20,11 @@ import {
   updateLexiconWord,
   deleteLexiconWord,
 } from "@/lib/api/lexicons";
-import type { LexiconWord, PaginatedResponse } from "@/lib/api/types";
+import { createSynonym, deleteSynonym } from "@/lib/api/synonyms";
+import type { LexiconWord, PaginatedResponse, LexiconSynonym } from "@/lib/api/types";
 import { useI18n } from "@/i18n/context";
-import { Languages, Edit, Trash2, Plus } from "lucide-react";
+import { Languages, Edit, Trash2, Plus, Network } from "lucide-react";
+import { Modal } from "@/components/ui/modal";
 import { formatDate } from "@/lib/utils/format";
 
 const PARTS_OF_SPEECH = [
@@ -54,8 +56,12 @@ export default function KurdishLexiconPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [synonymsModalOpen, setSynonymsModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [editingWord, setEditingWord] = useState<LexiconWord | null>(null);
+  const [synonymsWord, setSynonymsWord] = useState<LexiconWord | null>(null);
+  const [synonymSearch, setSynonymSearch] = useState("");
+  const [selectedSynonymId, setSelectedSynonymId] = useState<number | null>(null);
   const [formData, setFormData] = useState({
     word: "",
     part_of_speech: "",
@@ -133,6 +139,45 @@ export default function KurdishLexiconPage() {
     });
     setEditModalOpen(true);
   }, []);
+
+  const openSynonymsModal = useCallback((word: LexiconWord) => {
+    setSynonymsWord(word);
+    setSynonymSearch("");
+    setSelectedSynonymId(null);
+    setSynonymsModalOpen(true);
+  }, []);
+
+  const handleAddSynonym = useCallback(async () => {
+    if (!synonymsWord || !selectedSynonymId) return;
+
+    setIsLoading(true);
+    try {
+      await createSynonym({
+        word_id: synonymsWord.id,
+        synonym_id: selectedSynonymId,
+      });
+      addToast({ type: "success", message: "Synonym added successfully" });
+      setSelectedSynonymId(null);
+      refetch();
+    } catch {
+      addToast({ type: "error", message: "Failed to add synonym" });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [synonymsWord, selectedSynonymId, addToast, refetch]);
+
+  const handleDeleteSynonym = useCallback(async (synonymId: number) => {
+    setIsLoading(true);
+    try {
+      await deleteSynonym(synonymId);
+      addToast({ type: "success", message: "Synonym removed" });
+      refetch();
+    } catch {
+      addToast({ type: "error", message: "Failed to remove synonym" });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [addToast, refetch]);
 
   return (
     <RoleGate roles={["admin", "main_board"]}>
@@ -217,6 +262,14 @@ export default function KurdishLexiconPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => openSynonymsModal(word)}
+                    >
+                      <Network className="h-4 w-4 mr-1" />
+                      Synonyms
+                    </Button>
+                    <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => openEditModal(word)}
@@ -282,6 +335,22 @@ export default function KurdishLexiconPage() {
           variant="danger"
           loading={isLoading}
         />
+
+        {/* Synonyms Modal */}
+        {synonymsWord && (
+          <SynonymsModal
+            open={synonymsModalOpen}
+            onClose={() => setSynonymsModalOpen(false)}
+            word={synonymsWord}
+            onAddSynonym={handleAddSynonym}
+            onDeleteSynonym={handleDeleteSynonym}
+            searchValue={synonymSearch}
+            onSearchChange={setSynonymSearch}
+            selectedId={selectedSynonymId}
+            onSelectId={setSelectedSynonymId}
+            loading={isLoading}
+          />
+        )}
       </div>
     </RoleGate>
   );
@@ -358,5 +427,114 @@ function WordFormModal({
         />
       </div>
     </ConfirmationDialog>
+  );
+}
+
+interface SynonymsModalProps {
+  open: boolean;
+  onClose: () => void;
+  word: LexiconWord;
+  onAddSynonym: () => void;
+  onDeleteSynonym: (id: number) => void;
+  searchValue: string;
+  onSearchChange: (value: string) => void;
+  selectedId: number | null;
+  onSelectId: (id: number | null) => void;
+  loading: boolean;
+}
+
+function SynonymsModal({
+  open,
+  onClose,
+  word,
+  onAddSynonym,
+  onDeleteSynonym,
+  searchValue,
+  onSearchChange,
+  selectedId,
+  onSelectId,
+  loading,
+}: SynonymsModalProps) {
+  const { data: allWords } = useApi<PaginatedResponse<LexiconWord>>(
+    `/api/v1/lexicons/kurdish?per_page=100`
+  );
+
+  // Filter out the current word and search results
+  const availableWords = (allWords?.data ?? [])
+    .filter(w => w.id !== word.id)
+    .filter(w => !searchValue || w.word.toLowerCase().includes(searchValue.toLowerCase()));
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      title={`Manage Synonyms for "${word.word}"`}
+      className="max-w-lg"
+    >
+      <div className="space-y-4 mt-4">
+        {/* Add Synonym Section */}
+        <div className="border border-border-light rounded-lg p-3 bg-surface">
+          <h4 className="text-sm font-semibold text-foreground mb-2">Add New Synonym</h4>
+          <div className="flex gap-2">
+            <Input
+              placeholder="Search for a word..."
+              value={searchValue}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="flex-1"
+              dir="rtl"
+            />
+            <Button
+              size="sm"
+              onClick={onAddSynonym}
+              disabled={!selectedId || loading}
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              Add
+            </Button>
+          </div>
+          {searchValue && availableWords.length > 0 && (
+            <div className="mt-2 max-h-32 overflow-y-auto rounded border border-border-light bg-surface-raised">
+              {availableWords.slice(0, 10).map(w => (
+                <button
+                  key={w.id}
+                  onClick={() => onSelectId(w.id)}
+                  className={`w-full text-right px-3 py-2 text-sm hover:bg-surface/80 transition-colors ${
+                    selectedId === w.id ? "bg-primary/10 text-primary" : ""
+                  }`}
+                >
+                  <span dir="rtl" className="font-medium">{w.word}</span>
+                  <span className="text-text-muted mr-2">({w.part_of_speech})</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Existing Synonyms - Placeholder */}
+        <div className="border border-border-light rounded-lg p-3 bg-surface">
+          <h4 className="text-sm font-semibold text-foreground mb-2">
+            Current Synonyms
+            <span className="ml-2 text-xs font-normal text-text-muted">
+              (Backend endpoint GET /api/v1/lexicons/kurdish/{word.id}/synonyms pending)
+            </span>
+          </h4>
+          <p className="text-xs text-text-muted">
+            Synonym relationships will be displayed here once the backend implements the word-specific synonyms endpoint.
+          </p>
+        </div>
+
+        {/* Info */}
+        <div className="text-xs text-text-muted bg-blue-50 dark:bg-blue-900/20 rounded p-2">
+          <strong>Note:</strong> This feature uses global synonym links. Word-specific synonym viewing requires backend endpoint:{" "}
+          <code className="text-xs bg-surface px-1 rounded">GET /api/v1/lexicons/kurdish/{word.id}/synonyms</code>
+        </div>
+
+        <div className="flex justify-end pt-2 border-t border-border-light">
+          <Button variant="secondary" size="sm" onClick={onClose}>
+            Close
+          </Button>
+        </div>
+      </div>
+    </Modal>
   );
 }

@@ -410,6 +410,72 @@ function HistoryTab({ conceptId }: { conceptId: string }) {
     `/api/v1/concepts/${conceptId}/history`
   );
 
+  // Get icon and color based on event type
+  const getEventStyle = (eventType: string) => {
+    const styles: Record<string, { icon: string; color: string; bg: string }> = {
+      created: {
+        icon: `<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>`,
+        color: "text-emerald-500",
+        bg: "bg-emerald-50 dark:bg-emerald-950",
+      },
+      updated: {
+        icon: `<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>`,
+        color: "text-blue-500",
+        bg: "bg-blue-50 dark:bg-blue-950",
+      },
+      status_changed: {
+        icon: `<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>`,
+        color: "text-amber-500",
+        bg: "bg-amber-50 dark:bg-amber-950",
+      },
+      candidate_added: {
+        icon: `<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM3.75 15h2.25m2.25 0h2.25m-9-2.25h12m0 0V21m0-3a3 3 0 01-3 3h-3a3 3 0 01-3-3v-6a3 3 0 013-3h3a3 3 0 013 3v2.25" /></svg>`,
+        color: "text-purple-500",
+        bg: "bg-purple-50 dark:bg-purple-950",
+      },
+      candidate_withdrawn: {
+        icon: `<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75-0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" /></svg>`,
+        color: "text-red-500",
+        bg: "bg-red-50 dark:bg-red-950",
+      },
+      voting_started: {
+        icon: `<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" /><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" /></svg>`,
+        color: "text-indigo-500",
+        bg: "bg-indigo-50 dark:bg-indigo-950",
+      },
+      voting_closed: {
+        icon: `<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`,
+        color: "text-slate-500",
+        bg: "bg-slate-50 dark:bg-slate-950",
+      },
+      approved: {
+        icon: `<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`,
+        color: "text-green-600",
+        bg: "bg-green-50 dark:bg-green-950",
+      },
+      vetoed: {
+        icon: `<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>`,
+        color: "text-red-600",
+        bg: "bg-red-50 dark:bg-red-950",
+      },
+      recalled: {
+        icon: `<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>`,
+        color: "text-orange-500",
+        bg: "bg-orange-50 dark:bg-orange-950",
+      },
+      reopened: {
+        icon: `<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>`,
+        color: "text-cyan-500",
+        bg: "bg-cyan-50 dark:bg-cyan-950",
+      },
+    };
+    return styles[eventType] || {
+      icon: `<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`,
+      color: "text-gray-500",
+      bg: "bg-gray-50 dark:bg-gray-950",
+    };
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-12">
@@ -428,23 +494,55 @@ function HistoryTab({ conceptId }: { conceptId: string }) {
 
   return (
     <Card>
-      <h3 className="mb-4 text-[14px] font-bold text-foreground">{t("concepts.concept_history")}</h3>
-      <div className="space-y-3">
-        {history.map((entry) => (
-          <div key={entry.id} className="flex items-start gap-3 border-b border-border-light pb-3 last:border-0">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-light">
-              <svg className="h-4 w-4 text-primary-500" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-foreground">{entry.description}</p>
-              <p className="text-xs text-text-muted">
-                {entry.user?.name ?? t("common.unknown")} · {formatDate(entry.created_at)}
-              </p>
-            </div>
-          </div>
-        ))}
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="text-[14px] font-bold text-foreground">{t("concepts.concept_history")}</h3>
+        <span className="text-xs text-text-muted">{history.length} {t("concepts.events")}</span>
+      </div>
+      <div className="relative">
+        {/* Timeline line */}
+        <div className="absolute left-[15px] top-2 h-[calc(100%-16px)] w-0.5 bg-border-light" />
+
+        <div className="space-y-4">
+          {history.map((entry, index) => {
+            const style = getEventStyle(entry.event_type);
+            return (
+              <div key={entry.id} className="relative flex items-start gap-4">
+                {/* Timeline dot */}
+                <div className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${style.bg} ${style.color}`}>
+                  <div dangerouslySetInnerHTML={{ __html: style.icon }} />
+                </div>
+
+                {/* Content */}
+                <div className={`min-w-0 flex-1 rounded-lg border ${index === 0 ? "border-primary-light bg-primary-light/5" : "border-border-light bg-surface"} p-3`}>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-foreground">{entry.description}</p>
+                      {entry.metadata && Object.keys(entry.metadata).length > 0 && (
+                        <details className="mt-2 group">
+                          <summary className="cursor-pointer text-xs text-primary-600 hover:text-primary-700">
+                            {t("concepts.view_details")}
+                          </summary>
+                          <div className="mt-2 space-y-1 rounded bg-surface p-2 text-xs">
+                            {Object.entries(entry.metadata).map(([key, value]) => (
+                              <div key={key} className="flex gap-2">
+                                <span className="font-medium text-text-muted">{key}:</span>
+                                <span className="text-foreground">{String(value)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </details>
+                      )}
+                    </div>
+                    <div className=" shrink-0 text-right">
+                      <p className="text-xs text-text-muted">{entry.user?.name ?? t("common.unknown")}</p>
+                      <p className="text-[10px] text-text-muted">{formatDate(entry.created_at)}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </Card>
   );
