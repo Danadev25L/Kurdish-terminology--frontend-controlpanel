@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/hooks/use-auth";
 import { useRole } from "@/lib/hooks/use-role";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { Select } from "@/components/ui/select";
 import { SearchInput } from "@/components/ui/search-input";
 import { Pagination } from "@/components/ui/pagination";
@@ -39,6 +40,7 @@ export default function ConceptsPage() {
   const [domainId, setDomainId] = useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
 
   const params = new URLSearchParams();
   if (status) params.set("status", status);
@@ -57,11 +59,9 @@ export default function ConceptsPage() {
 
   const handleWithdraw = useCallback(
     async (conceptId: number) => {
-      const confirmed = window.confirm(t("concepts.withdraw_confirm"));
-      if (!confirmed) return;
-
       try {
         await deleteConcept(conceptId);
+        setDeleteConfirmId(null);
         addToast({ type: "success", message: t("messages.concept_deleted") });
         refetch();
       } catch {
@@ -141,7 +141,7 @@ export default function ConceptsPage() {
                           size="sm"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleWithdraw(concept.id);
+                            setDeleteConfirmId(concept.id);
                         }}
                         aria-label={t("common.delete")}
                       >
@@ -171,6 +171,17 @@ export default function ConceptsPage() {
           </p>
         </Card>
       )}
+
+      {/* Delete Confirmation */}
+      <ConfirmationDialog
+        open={deleteConfirmId !== null}
+        onClose={() => setDeleteConfirmId(null)}
+        onConfirm={() => handleWithdraw(deleteConfirmId!)}
+        title={t("concepts.delete_concept")}
+        message={t("concepts.withdraw_confirm")}
+        confirmLabel={t("concepts.withdraw")}
+        variant="danger"
+      />
     </div>
   );
 }

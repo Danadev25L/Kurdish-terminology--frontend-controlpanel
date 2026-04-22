@@ -76,10 +76,10 @@ export default function EnglishLexiconPage() {
       await createLexiconWord("english", payload);
       setCreateModalOpen(false);
       setFormData({ word: "", part_of_speech: "", etymology: "", root_word: "" });
-      addToast({ type: "success", message: "Word added successfully" });
+      addToast({ type: "success", message: t("messages.source_created") });
       refetch();
     } catch {
-      addToast({ type: "error", message: "Failed to add word" });
+      addToast({ type: "error", message: t("messages.source_create_failed") });
     } finally {
       setIsLoading(false);
     }
@@ -101,14 +101,14 @@ export default function EnglishLexiconPage() {
       setEditModalOpen(false);
       setEditingWord(null);
       setFormData({ word: "", part_of_speech: "", etymology: "", root_word: "" });
-      addToast({ type: "success", message: "Word updated successfully" });
+      addToast({ type: "success", message: t("messages.source_updated") });
       refetch();
     } catch {
-      addToast({ type: "error", message: "Failed to update word" });
+      addToast({ type: "error", message: t("messages.source_update_failed") });
     } finally {
       setIsLoading(false);
     }
-  }, [editingWord, formData, addToast, refetch]);
+  }, [editingWord, formData, addToast, refetch, t]);
 
   const handleDelete = useCallback(async () => {
     if (deleteId === null) return;
@@ -117,14 +117,14 @@ export default function EnglishLexiconPage() {
     try {
       await deleteLexiconWord("english", deleteId);
       setDeleteId(null);
-      addToast({ type: "success", message: "Word deleted successfully" });
+      addToast({ type: "success", message: t("messages.source_deleted") });
       refetch();
     } catch {
-      addToast({ type: "error", message: "Failed to delete word" });
+      addToast({ type: "error", message: t("messages.source_delete_failed") });
     } finally {
       setIsLoading(false);
     }
-  }, [deleteId, addToast, refetch]);
+  }, [deleteId, addToast, refetch, t]);
 
   const openEditModal = useCallback((word: LexiconWord) => {
     setEditingWord(word);
@@ -204,11 +204,11 @@ export default function EnglishLexiconPage() {
                     <div className="mt-2 text-sm text-text-muted">
                       <div className="flex gap-4">
                         {word.etymology && (
-                          <span>Etymology: {word.etymology}</span>
+                          <span>{t("lexicons.etymology")}: {word.etymology}</span>
                         )}
-                        {word.root_word && <span>Root: {word.root_word}</span>}
+                        {word.root_word && <span>{t("lexicons.root_word")}: {word.root_word}</span>}
                         <span className="text-text-muted">
-                          Added: {formatDate(word.created_at)}
+                          {t("common.created")}: {formatDate(word.created_at)}
                         </span>
                       </div>
                     </div>
@@ -304,44 +304,45 @@ function WordFormModal({
   loading,
   title,
 }: WordFormModalProps) {
+  const { t } = useI18n();
   return (
     <ConfirmationDialog
       open={open}
       onClose={onClose}
       onConfirm={onSubmit}
       title={title}
-      message="Fill in the word details below."
-      confirmLabel="Save"
+      message={t("lexicons_page.add_english_word")}
+      confirmLabel={t("common.save")}
       loading={loading}
     >
       <div className="space-y-3 mt-3">
         <Input
-          label="Word"
+          label={t("lexicons.word")}
           value={formData.word}
           onChange={(e) => setFormData({ ...formData, word: e.target.value })}
-          placeholder="Enter the word"
+          placeholder={t("lexicons.word")}
           autoFocus
         />
         <Select
           options={[
-            { value: "", label: "Select part of speech" },
+            { value: "", label: t("lexicons.parts_of_speech") },
             ...PARTS_OF_SPEECH.map((pos) => ({ value: pos, label: pos.charAt(0).toUpperCase() + pos.slice(1) })),
           ]}
           value={formData.part_of_speech}
           onChange={(e) => setFormData({ ...formData, part_of_speech: e.target.value })}
-          label="Part of Speech"
+          label={t("lexicons.parts_of_speech")}
         />
         <Input
-          label="Etymology (optional)"
+          label={`${t("lexicons.etymology")} (${t("common.notes_optional").replace(/[()]/g, "")})`}
           value={formData.etymology}
           onChange={(e) => setFormData({ ...formData, etymology: e.target.value })}
-          placeholder="Language of origin or derivation"
+          placeholder={t("lexicons.etymology")}
         />
         <Input
-          label="Root Word (optional)"
+          label={`${t("lexicons.root_word")} (${t("common.notes_optional").replace(/[()]/g, "")})`}
           value={formData.root_word}
           onChange={(e) => setFormData({ ...formData, root_word: e.target.value })}
-          placeholder="Root or base word"
+          placeholder={t("lexicons.root_word")}
         />
       </div>
     </ConfirmationDialog>

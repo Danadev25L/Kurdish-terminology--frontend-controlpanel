@@ -35,11 +35,11 @@ export default function ApiKeysPage() {
       const data = await getApiKeys();
       setKeys(data);
     } catch {
-      addToast({ type: "error", message: "Failed to load API keys" });
+      addToast({ type: "error", message: t("common.error_generic") });
     } finally {
       setIsLoading(false);
     }
-  }, [addToast]);
+  }, [addToast, t]);
 
   // Fetch keys on mount
   useEffect(() => {
@@ -57,14 +57,14 @@ export default function ApiKeysPage() {
       setNewKeyData(data);
       setShowNewKeyModal(false);
       setNewKeyName("");
-      addToast({ type: "success", message: "API key created successfully" });
+      addToast({ type: "success", message: t("messages.source_created") });
       fetchKeys();
     } catch {
-      addToast({ type: "error", message: "Failed to create API key" });
+      addToast({ type: "error", message: t("messages.source_create_failed") });
     } finally {
       setIsCreating(false);
     }
-  }, [newKeyName, addToast, fetchKeys]);
+  }, [newKeyName, addToast, fetchKeys, t]);
 
   const handleDelete = useCallback(async () => {
     if (deleteId === null) return;
@@ -74,18 +74,18 @@ export default function ApiKeysPage() {
       await deleteApiKey(deleteId);
       setKeys((prev) => prev.filter((k) => k.id !== deleteId));
       setDeleteId(null);
-      addToast({ type: "success", message: "API key deleted successfully" });
+      addToast({ type: "success", message: t("messages.source_deleted") });
     } catch {
-      addToast({ type: "error", message: "Failed to delete API key" });
+      addToast({ type: "error", message: t("messages.source_delete_failed") });
     } finally {
       setIsDeleting(false);
     }
-  }, [deleteId, addToast]);
+  }, [deleteId, addToast, t]);
 
   const copyToClipboard = useCallback((text: string) => {
     navigator.clipboard.writeText(text);
-    addToast({ type: "success", message: "Copied to clipboard" });
-  }, [addToast]);
+    addToast({ type: "success", message: t("common.save") });
+  }, [addToast, t]);
 
   return (
     <RoleGate roles={["admin"]}>

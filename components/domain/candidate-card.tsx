@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRole } from "@/lib/hooks/use-role";
+import { useAuth } from "@/lib/hooks/use-auth";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -29,6 +30,7 @@ export function CandidateCard({
   onRefresh,
 }: CandidateCardProps) {
   const { isExpert, isDomainHead, isAdmin } = useRole();
+  const { user } = useAuth();
   const { t } = useI18n();
   const addToast = useToastStore((s) => s.addToast);
   const term = candidate.kurdish_term;
@@ -39,6 +41,7 @@ export function CandidateCard({
 
   const canEdit = isExpert || isDomainHead || isAdmin;
   const canDelete = isAdmin;
+  const canWithdraw = user?.id === candidate.author_id;
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -117,7 +120,7 @@ export function CandidateCard({
                   {t("common.delete")}
                 </Button>
               )}
-              {onWithdraw && !candidate.withdrawn_at && (
+              {onWithdraw && canWithdraw && !candidate.withdrawn_at && (
                 <Button
                   variant="ghost"
                   size="sm"

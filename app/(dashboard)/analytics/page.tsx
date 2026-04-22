@@ -165,7 +165,9 @@ export default function ExpertAnalyticsPage() {
                               : "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400"
                           }`}
                         >
-                          {contribution.status}
+                          {t(`statuses.${contribution.status}`) !== `statuses.${contribution.status}`
+                            ? t(`statuses.${contribution.status}`)
+                            : contribution.status}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-sm">

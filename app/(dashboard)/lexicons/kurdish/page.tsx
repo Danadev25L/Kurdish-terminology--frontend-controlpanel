@@ -93,10 +93,10 @@ export default function KurdishLexiconPage() {
       await createLexiconWord("kurdish", payload);
       setCreateModalOpen(false);
       setFormData({ word: "", part_of_speech: "", etymology: "", root_word: "", dialect_tag: "" });
-      addToast({ type: "success", message: "Word added successfully" });
+      addToast({ type: "success", message: t("messages.source_created") });
       refetch();
     } catch {
-      addToast({ type: "error", message: "Failed to add word" });
+      addToast({ type: "error", message: t("messages.source_create_failed") });
     } finally {
       setIsLoading(false);
     }
@@ -119,14 +119,14 @@ export default function KurdishLexiconPage() {
       setEditModalOpen(false);
       setEditingWord(null);
       setFormData({ word: "", part_of_speech: "", etymology: "", root_word: "", dialect_tag: "" });
-      addToast({ type: "success", message: "Word updated successfully" });
+      addToast({ type: "success", message: t("messages.source_updated") });
       refetch();
     } catch {
-      addToast({ type: "error", message: "Failed to update word" });
+      addToast({ type: "error", message: t("messages.source_update_failed") });
     } finally {
       setIsLoading(false);
     }
-  }, [editingWord, formData, addToast, refetch]);
+  }, [editingWord, formData, addToast, refetch, t]);
 
   const handleDelete = useCallback(async () => {
     if (deleteId === null) return;
@@ -135,14 +135,14 @@ export default function KurdishLexiconPage() {
     try {
       await deleteLexiconWord("kurdish", deleteId);
       setDeleteId(null);
-      addToast({ type: "success", message: "Word deleted successfully" });
+      addToast({ type: "success", message: t("messages.source_deleted") });
       refetch();
     } catch {
-      addToast({ type: "error", message: "Failed to delete word" });
+      addToast({ type: "error", message: t("messages.source_delete_failed") });
     } finally {
       setIsLoading(false);
     }
-  }, [deleteId, addToast, refetch]);
+  }, [deleteId, addToast, refetch, t]);
 
   const openEditModal = useCallback((word: LexiconWord) => {
     setEditingWord(word);
@@ -172,11 +172,11 @@ export default function KurdishLexiconPage() {
         word_id: synonymsWord.id,
         synonym_id: selectedSynonymId,
       });
-      addToast({ type: "success", message: "Synonym added successfully" });
+      addToast({ type: "success", message: t("messages.member_added") });
       setSelectedSynonymId(null);
       refetch();
     } catch {
-      addToast({ type: "error", message: "Failed to add synonym" });
+      addToast({ type: "error", message: t("messages.member_add_failed") });
     } finally {
       setIsLoading(false);
     }
@@ -186,10 +186,10 @@ export default function KurdishLexiconPage() {
     setIsLoading(true);
     try {
       await deleteSynonym(synonymId);
-      addToast({ type: "success", message: "Synonym removed" });
+      addToast({ type: "success", message: t("messages.member_removed") });
       refetch();
     } catch {
-      addToast({ type: "error", message: "Failed to remove synonym" });
+      addToast({ type: "error", message: t("messages.member_remove_failed") });
     } finally {
       setIsLoading(false);
     }
@@ -267,11 +267,11 @@ export default function KurdishLexiconPage() {
                     <div className="mt-2 text-sm text-text-muted">
                       <div className="flex gap-4 flex-wrap">
                         {word.etymology && (
-                          <span>Etymology: {word.etymology}</span>
+                          <span>{t("lexicons.etymology")}: {word.etymology}</span>
                         )}
-                        {word.root_word && <span>Root: {word.root_word}</span>}
+                        {word.root_word && <span>{t("lexicons.root_word")}: {word.root_word}</span>}
                         <span className="text-text-muted">
-                          Added: {formatDate(word.created_at)}
+                          {t("common.created")}: {formatDate(word.created_at)}
                         </span>
                       </div>
                     </div>
@@ -391,54 +391,55 @@ function WordFormModal({
   loading,
   title,
 }: WordFormModalProps) {
+  const { t } = useI18n();
   return (
     <ConfirmationDialog
       open={open}
       onClose={onClose}
       onConfirm={onSubmit}
       title={title}
-      message="Fill in the word details below."
-      confirmLabel="Save"
+      message={t("lexicons_page.add_kurdish_word")}
+      confirmLabel={t("common.save")}
       loading={loading}
     >
       <div className="space-y-3 mt-3">
         <Input
-          label="Word (Kurdish)"
+          label={t("lexicons.kurdish")}
           value={formData.word}
           onChange={(e) => setFormData({ ...formData, word: e.target.value })}
-          placeholder="Enter the Kurdish word"
+          placeholder={t("lexicons.kurdish")}
           dir="rtl"
           autoFocus
         />
         <Select
           options={[
-            { value: "", label: "Select part of speech" },
+            { value: "", label: t("lexicons.parts_of_speech") },
             ...PARTS_OF_SPEECH.map((pos) => ({ value: pos, label: pos.charAt(0).toUpperCase() + pos.slice(1) })),
           ]}
           value={formData.part_of_speech}
           onChange={(e) => setFormData({ ...formData, part_of_speech: e.target.value })}
-          label="Part of Speech"
+          label={t("lexicons.parts_of_speech")}
         />
         <Select
           options={[
-            { value: "", label: "Select dialect (optional)" },
+            { value: "", label: `${t("lexicons.dialects")} (${t("common.notes_optional").replace(/[()]/g, "")})` },
             ...DIALECTS.map((d) => ({ value: d, label: d.charAt(0).toUpperCase() + d.slice(1) })),
           ]}
           value={formData.dialect_tag}
           onChange={(e) => setFormData({ ...formData, dialect_tag: e.target.value })}
-          label="Dialect"
+          label={t("lexicons.dialect")}
         />
         <Input
-          label="Etymology (optional)"
+          label={`${t("lexicons.etymology")} (${t("common.notes_optional").replace(/[()]/g, "")})`}
           value={formData.etymology}
           onChange={(e) => setFormData({ ...formData, etymology: e.target.value })}
-          placeholder="Language of origin or derivation"
+          placeholder={t("lexicons.etymology")}
         />
         <Input
-          label="Root Word (optional)"
+          label={`${t("lexicons.root_word")} (${t("common.notes_optional").replace(/[()]/g, "")})`}
           value={formData.root_word}
           onChange={(e) => setFormData({ ...formData, root_word: e.target.value })}
-          placeholder="Root or base word"
+          placeholder={t("lexicons.root_word")}
           dir="rtl"
         />
       </div>
