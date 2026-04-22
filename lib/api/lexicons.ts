@@ -24,7 +24,7 @@ export function updateLexiconWord(
   id: number,
   data: Partial<{ word: string; part_of_speech: string; etymology: string; root_word: string; dialect_tag: string }>
 ) {
-  return api.put<LexiconWord>(`/api/v1/lexicons/${id}`, data).catch((error) => {
+  return api.put<LexiconWord>(`/api/v1/lexicons/${type}/${id}`, data).catch((error) => {
     if (error instanceof ApiError && (error.status === 404 || error.status === 405)) {
       return api.patch<LexiconWord>(`/api/v1/lexicons/${type}/${id}`, data);
     }

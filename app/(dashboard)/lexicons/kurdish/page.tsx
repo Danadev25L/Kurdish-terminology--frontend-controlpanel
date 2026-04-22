@@ -147,8 +147,8 @@ export default function KurdishLexiconPage() {
   const openEditModal = useCallback((word: LexiconWord) => {
     setEditingWord(word);
     setFormData({
-      word: word.word,
-      part_of_speech: word.part_of_speech,
+      word: word.word ?? "",
+      part_of_speech: word.part_of_speech ?? "",
       etymology: word.etymology ?? "",
       root_word: word.root_word ?? "",
       dialect_tag: word.dialect_tag ?? "",
