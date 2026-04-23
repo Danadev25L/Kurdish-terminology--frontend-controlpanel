@@ -1,14 +1,44 @@
 import { api } from "./client";
-import type { ExportOptions, ImportResult, ImportTemplate } from "./types";
+import type { ImportResult, ImportTemplate } from "./types";
 
+const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+
+export type ExportFormat = "json" | "csv" | "pdf";
+
+export interface ExportFilters {
+  domain_id?: number;
+  status?: string;
+  date_from?: string;
+  date_to?: string;
+}
+
+function buildExportUrl(format: ExportFormat, filters?: ExportFilters): string {
+  const params = new URLSearchParams({ format });
+  if (filters) {
+    if (filters.domain_id) params.set("domain_id", String(filters.domain_id));
+    if (filters.status) params.set("status", filters.status);
+    if (filters.date_from) params.set("date_from", filters.date_from);
+    if (filters.date_to) params.set("date_to", filters.date_to);
+  }
+  return `${baseUrl}/api/v1/concepts/export?${params.toString()}`;
+}
+
+export function exportConcepts(format: ExportFormat, filters?: ExportFilters) {
+  const url = buildExportUrl(format, filters);
+  return api.download(url);
+}
+
+export function downloadExportUrl(format: ExportFormat, filters?: ExportFilters): string {
+  return buildExportUrl(format, filters);
+}
+
+// Legacy helpers — kept for backward compat with existing page code
 export function exportConceptsCSV(domainId?: number) {
-  const params = domainId ? `?domain_id=${domainId}` : "";
-  return api.download(`/api/v1/exports/concepts/csv${params}`);
+  return exportConcepts("csv", domainId ? { domain_id: domainId } : undefined);
 }
 
 export function exportConceptsJSON(domainId?: number) {
-  const params = domainId ? `?domain_id=${domainId}` : "";
-  return api.download(`/api/v1/exports/concepts/json${params}`);
+  return exportConcepts("json", domainId ? { domain_id: domainId } : undefined);
 }
 
 export function exportDomainCSV(domainId: number) {
@@ -41,13 +71,6 @@ export function getImportTemplate(format: "csv" | "json" = "csv"): Promise<Impor
   return api.get<ImportTemplate>(`/api/v1/import/template?format=${format}`);
 }
 
-/**
- * Get the direct download URL for import templates
- * NOTE: The backend serves templates directly from /api/v1/import/template
- * The /download suffix does not exist - this function now returns the correct endpoint
- */
 export function downloadImportTemplateURL(format: "csv" | "json" = "csv"): string {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-  // Fixed: Removed /download suffix - backend serves template directly from /api/v1/import/template
   return `${baseUrl}/api/v1/import/template?format=${format}`;
 }

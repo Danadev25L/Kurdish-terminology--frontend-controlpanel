@@ -354,6 +354,8 @@
     "all_concepts_csv_desc": "هەناردنی هەموو چەمکەکان لە هەموو بوارەکان بۆ فۆرماتی CSV",
     "all_concepts_json": "هەموو چەمکەکان (JSON)",
     "all_concepts_json_desc": "هەناردنی هەموو چەمکەکان بە تەواوی مێتاداتا بۆ فۆرماتی JSON",
+    "all_concepts_pdf": "هەموو چەمکەکان (PDF)",
+    "all_concepts_pdf_desc": "هەناردنی هەموو چەمکەکان وەک بەڵگەنامەیەکی PDF",
     "public_terms_csv": "زاراوە بڵاوکراوەکان (CSV)",
     "public_terms_csv_desc": "هەناردنی هەموو زاراوە بڵاوکراوەکان بۆ فۆرماتی CSV",
     "domain_csv": "{{name}} (CSV)",
