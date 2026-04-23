@@ -114,7 +114,7 @@ export default function ApiKeysPage() {
 
         {/* New Key Display */}
         {newKeyData && (
-          <Card className="border-primary-500 bg-primary-50 dark:bg-primary-900/20">
+          <Card className="border-2 border-primary-500 bg-primary-50">
             <div className="space-y-3">
               <div className="flex items-start gap-3">
                 <Key className="h-5 w-5 text-primary-600 mt-0.5" />
@@ -133,9 +133,9 @@ export default function ApiKeysPage() {
                 </Button>
               </div>
 
-              <div className="rounded-lg bg-white dark:bg-gray-900 p-3">
+              <div className="rounded-lg border border-border bg-surface p-3">
                 <div className="flex items-center justify-between gap-2">
-                  <code className="text-sm font-mono text-foreground break-all">
+                  <code className="flex-1 min-w-0 text-sm font-mono text-foreground break-all">
                     {newKeyData.key}
                   </code>
                   <Button
@@ -195,8 +195,8 @@ export default function ApiKeysPage() {
               <Card key={key.id} padding={false}>
                 <div className="flex items-center justify-between p-4">
                   <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
-                      <Shield className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                    <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
+                      <Shield className="h-5 w-5 text-primary-600" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-foreground">{key.name}</h3>
@@ -211,8 +211,8 @@ export default function ApiKeysPage() {
                         <span
                           className={`inline-flex items-center gap-1 ${
                             key.is_active
-                              ? "text-green-600 dark:text-green-400"
-                              : "text-red-600 dark:text-red-400"
+                              ? "text-green-600"
+                              : "text-red-600"
                           }`}
                         >
                           {key.is_active ? t("statuses.active") : t("api_keys_page.inactive")}
@@ -255,7 +255,7 @@ export default function ApiKeysPage() {
                       {key.scopes.map((s) => (
                         <span
                           key={s}
-                          className="inline-block px-2 py-0.5 rounded bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 mr-1 mb-1"
+                          className="inline-block px-2 py-0.5 rounded bg-primary-100 text-primary-700 mr-1 mb-1"
                         >
                           {s}
                         </span>
@@ -293,7 +293,7 @@ export default function ApiKeysPage() {
                 placeholder={t("api_keys_page.key_name_placeholder")}
                 autoFocus
               />
-              <div className="rounded-lg bg-amber-50 dark:bg-amber-900/20 p-3 text-sm text-amber-800 dark:text-amber-300">
+              <div className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
                 <p className="font-medium">{t("api_keys_page.security_notice")}</p>
                 <p className="mt-1">
                   {t("api_keys_page.security_message")}
