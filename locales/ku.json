@@ -113,6 +113,8 @@
     "consensus_scores": "خاڵەکانی ڕێککەوتن",
     "english_term": "زاراوەی ئینگلیزی",
     "english_term_placeholder": "زاراوەی ئینگلیزی بنووسە",
+    "definition": "پێناسە",
+    "definition_placeholder": "پێناسەکە بنووسە",
     "domain": "بووار",
     "stage_entered": "چوونە قۆناغ",
     "priority": "لە پێشینە",
@@ -127,7 +129,6 @@
     "veto_term_msg": "ئەمە چەمکەکە دەگەڕێنێتەوە قۆناغی ١ بە پێشینەیی گرنگ.",
     "edit_concept": "دەستکاریکردنی چەمک",
     "edit_candidate": "دەستکاریکردنی بەکاندید",
-    "advance_stage": "پێشخستنی قۆناغ",
     "delete_concept": "سڕینەوەی چەمک",
     "delete_confirm": "دڵنیایت لە سڕینەوەی \"{{term}}\"؟ ئەم کردارە ناگەڕێتەوە.",
     "delete_candidate": "سڕینەوەی بەکاندید",
@@ -178,7 +179,8 @@
       "total_votes": "کۆی دەنگەکان",
       "avg_consensus": "تێکڕای ڕێککەوتن",
       "threshold_turnout": "بەشداری ئەستێرە",
-      "recent_activity_label": "چالاکی کۆتایی"
+      "recent_activity_label": "چالاکی کۆتایی",
+      "advance_stage": "پێشخستنی قۆناغ"
     }
   },
   "board": {

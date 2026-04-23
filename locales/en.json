@@ -113,6 +113,8 @@
     "consensus_scores": "Consensus Scores",
     "english_term": "English Term",
     "english_term_placeholder": "Enter the English term",
+    "definition": "Definition",
+    "definition_placeholder": "Enter the definition",
     "domain": "Domain",
     "stage_entered": "Stage Entered",
     "priority": "Priority",
@@ -134,7 +136,6 @@
     "discussion_history": "Discussion History",
     "edit_concept": "Edit Concept",
     "edit_candidate": "Edit Candidate",
-    "advance_stage": "Advance Stage",
     "delete_concept": "Delete Concept",
     "delete_confirm": "Are you sure you want to delete \"{{term}}\"? This action cannot be undone.",
     "delete_candidate": "Delete Candidate",
@@ -178,7 +179,8 @@
       "total_votes": "Total Votes",
       "avg_consensus": "Avg Consensus",
       "threshold_turnout": "Threshold Turnout",
-      "recent_activity_label": "Recent Activity"
+      "recent_activity_label": "Recent Activity",
+      "advance_stage": "Advance Stage"
     }
   },
   "board": {
